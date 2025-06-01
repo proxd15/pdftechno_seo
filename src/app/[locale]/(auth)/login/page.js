@@ -71,7 +71,7 @@ export default function LoginPage() {
     sessionStorage.setItem('rememberMe', rememberMe.toString());
     
     // Redirect to Django's Google OAuth URL (keeping original URL structure)
-    window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/accounts/google/login/`;
+    window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL}/accounts/google/login/`;
   };
   
   return (
