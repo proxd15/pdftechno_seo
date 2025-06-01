@@ -1,0 +1,122 @@
+{
+    "navbar": {
+      "home": "Accueil",
+      "allTools": "Tous les Outils",
+      "login": "Connexion",
+      "signUp": "S'inscrire",
+      "organize": {
+        "title": "Organiser PDF",
+        "merge": "Fusionner PDF",
+        "split": "Diviser PDF",
+        "rotate": "Pivoter PDF",
+        "organize": "Organiser PDF"
+      },
+      "convertTo": {
+        "title": "Convertir en PDF",
+        "word": "Word en PDF",
+        "excel": "Excel en PDF",
+        "powerpoint": "Powerpoint en PDF",
+        "image": "Image en PDF"
+      },
+      "convertFrom": {
+        "title": "Convertir depuis PDF",
+        "word": "PDF en Word",
+        "powerpoint": "PDF en Powerpoint",
+        "image": "PDF en Image",
+        "excel": "PDF en Excel",
+        "pdfa": "PDF en PDF/A"
+      },
+      "security": {
+        "title": "Sécurité PDF",
+        "unlock": "Déverrouiller PDF",
+        "protect": "Protéger PDF",
+        "sign": "Signer PDF",
+        "watermark": "Filigrane PDF"
+      },
+      "optimize": {
+        "title": "Optimiser PDF",
+        "compress": "Compresser PDF",
+        "repair": "Réparer PDF",
+        "reader": "Lecteur PDF",
+        "ocr": "OCR PDF",
+        "scan": "Numériser PDF"
+      },
+      "edit": {
+        "title": "Éditer PDF",
+        "pageNumbers": "Ajouter Numéros de Page",
+        "edit": "Éditer PDF"
+      },
+      "languages": {
+        "en": "English (en)",
+        "es": "Español (es)",
+        "fr": "Français (fr)"
+      }
+    },
+    "footer": {
+      "companyDescription": "Votre solution tout-en-un pour le traitement, la conversion et la gestion de PDF.",
+      "popularTools": "Outils Populaires",
+      "company": "Entreprise",
+      "aboutUs": "À Propos de Nous",
+      "contact": "Contact",
+      "termsOfService": "Conditions d'Utilisation",
+      "privacyPolicy": "Politique de Confidentialité",
+      "connectWithUs": "Connectez-vous avec Nous",
+      "copyright": "© {year} PDF Techno. Tous droits réservés."
+    },
+    "home": {
+      "title": "PDF Techno - Votre Solution Tout-en-Un pour PDF",
+      "features": {
+        "convert": {
+          "title": "Convertir des Fichiers PDF",
+          "description": "Transformez vos PDF en Word, Excel, PowerPoint et plus",
+          "cta": "Commencer"
+        },
+        "secure": {
+          "title": "Sécurisez vos PDF",
+          "description": "Protégez, signez et ajoutez des filigranes à vos documents importants",
+          "cta": "Commencer"
+        },
+        "edit": {
+          "title": "Éditer et Organiser",
+          "description": "Fusionnez, divisez, compressez et éditez vos fichiers PDF facilement",
+          "cta": "Commencer"
+        }
+      },
+      "popularTools": {
+        "title": "Outils les Plus Populaires",
+        "pdfToWord": "PDF en Word",
+        "pdfToImage": "PDF en Image",
+        "mergePdf": "Fusionner PDF",
+        "compressPdf": "Compresser PDF"
+      }
+    },"Auth": {
+    "login": "Connexion",
+    "sign": "S'",
+    "up": "inscrire",
+    "signUp": "S'inscrire",
+    "emailPlaceholder": "E-mail",
+    "passwordPlaceholder": "Mot de passe",
+    "fullNamePlaceholder": "Nom complet",
+    "phonePlaceholder": "Numéro de téléphone (Optionnel)",
+    "confirmPasswordPlaceholder": "Confirmer le mot de passe",
+    "rememberMe": "Se souvenir de moi",
+    "forgotPassword": "Mot de passe oublié?",
+    "loggingIn": "Connexion en cours...",
+    "signingUp": "Inscription en cours...",
+    "or": "Ou",
+    "google": "Google",
+    "noAccount": "Vous n'avez pas de compte?",
+    "createAccount": "Créer un compte",
+    "haveAccount": "Vous avez déjà un compte?",
+    "loginToAccount": "Se connecter",
+    "emailRequired": "L'email est requis",
+    "validEmail": "Veuillez entrer une adresse email valide",
+    "passwordRequired": "Le mot de passe est requis",
+    "passwordLength": "Le mot de passe doit contenir au moins 8 caractères",
+    "passwordsMatch": "Les mots de passe ne correspondent pas",
+    "nameRequired": "Le nom complet est requis",
+    "loginFailed": "Échec de la connexion. Veuillez vérifier vos identifiants.",
+    "registrationFailed": "Échec de l'inscription. Veuillez réessayer.",
+    "unexpectedError": "Une erreur inattendue s'est produite"
+  }
+  }

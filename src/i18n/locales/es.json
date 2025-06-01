@@ -1,0 +1,122 @@
+{
+  "navbar": {
+    "home": "Inicio",
+    "allTools": "Todas las Herramientas",
+    "login": "Iniciar Sesión",
+    "signUp": "Registrarse",
+    "organize": {
+      "title": "Organizar PDF",
+      "merge": "Combinar PDF",
+      "split": "Dividir PDF",
+      "rotate": "Rotar PDF",
+      "organize": "Organizar PDF"
+    },
+    "convertTo": {
+      "title": "Convertir a PDF",
+      "word": "Word a PDF",
+      "excel": "Excel a PDF",
+      "powerpoint": "Powerpoint a PDF",
+      "image": "Imagen a PDF"
+    },
+    "convertFrom": {
+      "title": "Convertir desde PDF",
+      "word": "PDF a Word",
+      "powerpoint": "PDF a Powerpoint",
+      "image": "PDF a Imagen",
+      "excel": "PDF a Excel",
+      "pdfa": "PDF a PDF/A"
+    },
+    "security": {
+      "title": "Seguridad PDF",
+      "unlock": "Desbloquear PDF",
+      "protect": "Proteger PDF",
+      "sign": "Firmar PDF",
+      "watermark": "Marca de agua PDF"
+    },
+    "optimize": {
+      "title": "Optimizar PDF",
+      "compress": "Comprimir PDF",
+      "repair": "Reparar PDF",
+      "reader": "Lector PDF",
+      "ocr": "OCR PDF",
+      "scan": "Escanear PDF"
+    },
+    "edit": {
+      "title": "Editar PDF",
+      "pageNumbers": "Añadir Números de Página",
+      "edit": "Editar PDF"
+    },
+    "languages": {
+      "en": "English (en)",
+      "es": "Español (es)",
+      "fr": "Français (fr)"
+    }
+  },
+  "footer": {
+    "companyDescription": "Su solución todo en uno para procesamiento, conversión y gestión de PDF.",
+    "popularTools": "Herramientas Populares",
+    "company": "Empresa",
+    "aboutUs": "Sobre Nosotros",
+    "contact": "Contacto",
+    "termsOfService": "Términos de Servicio",
+    "privacyPolicy": "Política de Privacidad",
+    "connectWithUs": "Conéctese con Nosotros",
+    "copyright": "© {year} PDF Techno. Todos los derechos reservados."
+  },
+  "home": {
+    "title": "PDF Techno - Su Solución Todo en Uno para PDF",
+    "features": {
+      "convert": {
+        "title": "Convertir Archivos PDF",
+        "description": "Transforme sus PDFs a Word, Excel, PowerPoint y más",
+        "cta": "Comenzar"
+      },
+      "secure": {
+        "title": "Asegure sus PDFs",
+        "description": "Proteja, firme y agregue marcas de agua a sus documentos importantes",
+        "cta": "Comenzar"
+      },
+      "edit": {
+        "title": "Editar y Organizar",
+        "description": "Combine, divida, comprima y edite sus archivos PDF con facilidad",
+        "cta": "Comenzar"
+      }
+    },
+    "popularTools": {
+      "title": "Herramientas Más Populares",
+      "pdfToWord": "PDF a Word",
+      "pdfToImage": "PDF a Imagen",
+      "mergePdf": "Combinar PDF",
+      "compressPdf": "Comprimir PDF"
+    }
+  },"Auth": {
+    "login": "Iniciar Sesión",
+    "sign": "Crear",
+    "up": "Cuenta",
+    "signUp": "Registrarse",
+    "emailPlaceholder": "Correo electrónico",
+    "passwordPlaceholder": "Contraseña",
+    "fullNamePlaceholder": "Nombre Completo",
+    "phonePlaceholder": "Número de Teléfono (Opcional)",
+    "confirmPasswordPlaceholder": "Confirmar Contraseña",
+    "rememberMe": "Recordarme",
+    "forgotPassword": "¿Olvidó su Contraseña?",
+    "loggingIn": "Iniciando sesión...",
+    "signingUp": "Registrando...",
+    "or": "O",
+    "google": "Google",
+    "noAccount": "¿No tiene una cuenta?",
+    "createAccount": "Crear una Cuenta",
+    "haveAccount": "¿Ya tiene una cuenta?",
+    "loginToAccount": "Iniciar Sesión",
+    "emailRequired": "El correo electrónico es obligatorio",
+    "validEmail": "Por favor ingrese un correo electrónico válido",
+    "passwordRequired": "La contraseña es obligatoria",
+    "passwordLength": "La contraseña debe tener al menos 8 caracteres",
+    "passwordsMatch": "Las contraseñas no coinciden",
+    "nameRequired": "El nombre completo es obligatorio",
+    "loginFailed": "Error al iniciar sesión. Verifique sus credenciales.",
+    "registrationFailed": "Error al registrarse. Por favor intente de nuevo.",
+    "unexpectedError": "Ocurrió un error inesperado"
+  }
+}

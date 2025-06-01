@@ -1,0 +1,34 @@
+"use client"
+
+import Script from 'next/script';
+import PDFMerger from '@/components/tools/PDFMerger';
+import DragOverlay from '@/components/tools_utility/DragOverlay';
+import PDFRotator from '@/components/tools/PDFRotator';
+import PDFSplitter from '@/components/tools/PDFSplitter';
+import PDFWatermark from '@/components/tools/PDFWatermark';
+import WordToPdfConverter from '@/components/tools/WordToPdfConverter';
+import PowerPointToPdfConverter from '@/components/tools/PowerPointToPdfConverter';
+
+export default function PDFMergePage() {
+  return (
+    <>
+      {/* Load PDF.js library and worker from CDN */}
+      <Script
+        src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.min.js"
+        strategy="beforeInteractive"
+        onLoad={() => {
+          // Configure PDF.js worker
+          window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.min.js';
+          console.log('PDF.js loaded and worker configured successfully');
+        }}
+      />
+      
+      <main className="container mx-auto px-4 py-8 bg-white min-h-screen">
+        <PowerPointToPdfConverter/>
+      </main>
+      
+      {/* Drag and drop overlay */}
+      <DragOverlay />
+    </>
+  );
+}

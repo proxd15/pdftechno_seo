@@ -1,0 +1,121 @@
+{
+  "navbar": {
+    "home": "Home",
+    "allTools": "All Tools",
+    "login": "Login",
+    "signUp": "Sign Up",
+    "organize": {
+      "title": "Organize PDF",
+      "merge": "Merge PDF",
+      "split": "Split PDF",
+      "rotate": "Rotate PDF",
+      "organize": "Organize PDF"
+    },
+    "convertTo": {
+      "title": "Convert to PDF",
+      "word": "Word to PDF",
+      "excel": "Excel to PDF",
+      "powerpoint": "Powerpoint to PDF",
+      "image": "Image to PDF"
+    },
+    "convertFrom": {
+      "title": "Convert from PDF",
+      "word": "PDF to Word",
+      "powerpoint": "PDF to Powerpoint",
+      "image": "PDF to Image",
+      "excel": "PDF to Excel",
+      "pdfa": "PDF to PDF/A"
+    },
+    "security": {
+      "title": "PDF Security",
+      "unlock": "Unlock PDF",
+      "protect": "Protect PDF",
+      "sign": "Sign PDF",
+      "watermark": "WaterMark PDF"
+    },
+    "optimize": {
+      "title": "Optimize PDF",
+      "compress": "Compress PDF",
+      "repair": "Repair PDF",
+      "reader": "PDF Reader",
+      "ocr": "OCR PDF",
+      "scan": "Scan PDF"
+    },
+    "edit": {
+      "title": "Edit PDF",
+      "pageNumbers": "Add Page Numbers",
+      "edit": "Edit PDF"
+    },
+    "languages": {
+      "en": "English (en)",
+      "es": "Español (es)",
+      "fr": "Français (fr)"
+    }
+  },
+  "footer": {
+    "companyDescription": "Your all-in-one solution for PDF processing, conversion, and management.",
+    "popularTools": "Popular Tools",
+    "company": "Company",
+    "aboutUs": "About Us",
+    "contact": "Contact",
+    "termsOfService": "Terms of Service",
+    "privacyPolicy": "Privacy Policy",
+    "connectWithUs": "Connect With Us",
+    "copyright": "© {year} PDF Techno. All rights reserved."
+  },
+  "home": {
+    "title": "PDF Techno - Your All-in-One PDF Solution",
+    "features": {
+      "convert": {
+        "title": "Convert PDF Files",
+        "description": "Transform your PDFs to Word, Excel, PowerPoint and more",
+        "cta": "Get Started"
+      },
+      "secure": {
+        "title": "Secure Your PDFs",
+        "description": "Protect, sign, and add watermarks to your important documents",
+        "cta": "Get Started"
+      },
+      "edit": {
+        "title": "Edit & Organize",
+        "description": "Merge, split, compress, and edit your PDF files with ease",
+        "cta": "Get Started"
+      }
+    },
+    "popularTools": {
+      "title": "Most Popular Tools",
+      "pdfToWord": "PDF to Word",
+      "pdfToImage": "PDF to Image",
+      "mergePdf": "Merge PDF",
+      "compressPdf": "Compress PDF"
+    }
+  },
+  "login": "Login",
+  "sign": "Sign",
+  "up": "Up",
+  "signUp": "Sign Up",
+  "emailPlaceholder": "E-mail",
+  "passwordPlaceholder": "Password",
+  "fullNamePlaceholder": "Full Name",
+  "phonePlaceholder": "Phone Number (Optional)",
+  "confirmPasswordPlaceholder": "Confirm Password",
+  "rememberMe": "Remember Me",
+  "forgotPassword": "Forgot Password?",
+  "loggingIn": "Logging in...",
+  "signingUp": "Signing Up...",
+  "or": "Or",
+  "google": "Google",
+  "noAccount": "Don't have an Account?",
+  "createAccount": "Create an Account",
+  "haveAccount": "Have an Account?",
+  "loginToAccount": "Login to Account",
+  "emailRequired": "Email is required",
+  "validEmail": "Please enter a valid email address",
+  "passwordRequired": "Password is required",
+  "passwordLength": "Password must be at least 8 characters long",
+  "passwordsMatch": "Passwords do not match",
+  "nameRequired": "Full Name is required",
+  "loginFailed": "Login failed. Please check your credentials.",
+  "registrationFailed": "Registration failed. Please try again.",
+  "unexpectedError": "An unexpected error occurred"
+}
