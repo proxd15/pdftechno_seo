@@ -1,6 +1,6 @@
 // services/authService.js
 
-const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api';
+const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
 
 // Helper function to handle API responses
 const handleResponse = async (response) => {
@@ -49,7 +49,7 @@ export const loginUser = async (email, password) => {
     // Include current locale in the request headers
     const currentLocale = getCurrentLocale();
     
-    const response = await fetch(`${API_URL}/auth/login/`, {
+    const response = await fetch(`${API_URL}/api/auth/login/`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -94,7 +94,7 @@ export const registerUser = async (userData) => {
     
     console.log("Sending registration data:", JSON.stringify(requestData));
     
-    const response = await fetch(`${API_URL}/auth/register/`, {
+    const response = await fetch(`${API_URL}/api/auth/register/`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -168,7 +168,7 @@ export const logoutUser = async (refreshToken) => {
     }
     
     // Explicitly sending the refresh token in the body
-    const response = await fetch(`${API_URL}/auth/logout/`, {
+    const response = await fetch(`${API_URL}/api/auth/logout/`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -190,7 +190,7 @@ export const refreshToken = async (refresh) => {
   try {
     const currentLocale = getCurrentLocale();
     
-    const response = await fetch(`${API_URL}/auth/refresh/`, {
+    const response = await fetch(`${API_URL}/api/auth/refresh/`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -216,7 +216,7 @@ export const getUserProfile = async () => {
       throw new Error('Authentication token not found');
     }
     
-    const response = await fetch(`${API_URL}/auth/profile/`, {
+    const response = await fetch(`${API_URL}/api/auth/profile/`, {
       method: 'GET',
       headers: { 
         'Content-Type': 'application/json',
