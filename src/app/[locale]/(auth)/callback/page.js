@@ -13,7 +13,7 @@ export default function AuthCallback() {
     async function fetchTokens() {
       try {
         // Get tokens from your Django endpoint
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/accounts/google/callback/`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/accounts/google/callback/`, {
           credentials: 'include' // Important to include cookies!
         });
         
