@@ -145,18 +145,18 @@ export default TestimonialsSection;
 
 function AIPowered() {
     return (
-        <div className="flex items-center gap-24 justify-between mt-4 p-8 bg-white rounded-lg">
+        <div className="flex flex-col lg:flex-row items-center gap-6 lg:gap-24 justify-between mt-4 p-4 lg:p-8 bg-white rounded-lg">
             {/* Image Section */}
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 w-full lg:w-auto">
                 <img
                     src="/images/ai_image.png"
                     alt="AI Powered"
-                    className="w-full h-full object-cover rounded-lg shadow-sm"
+                    className="w-full h-48 lg:h-full object-cover rounded-lg shadow-sm"
                 />
             </div>
             
             {/* Content Section */}
-            <div className="flex-1 space-y-4">
+            <div className="flex-1 space-y-4 text-center lg:text-left">
                 {/* Badge */}
                 <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-50 border border-red-200 rounded-full text-sm font-medium text-red-700">
                     <Sparkles className="w-4 h-4" />
@@ -164,24 +164,24 @@ function AIPowered() {
                 </div>
                 
                 {/* Heading */}
-                <h1 className="text-3xl font-bold text-gray-900">
+                <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">
                     Free AI powered PDF Tool
                 </h1>
                 
                 {/* Description */}
-                <p className="text-gray-600 leading-relaxed">
+                <p className="text-gray-600 leading-relaxed text-sm lg:text-base">
                     Effortlessly manage and transform your PDF documents with our advanced AI-powered tool. 
                     Designed for simplicity and efficiency, our tool offers a range of features to handle all your PDF needs with ease.
                 </p>
                 
-                <p className="text-gray-600 leading-relaxed">
+                <p className="text-gray-600 leading-relaxed text-sm lg:text-base">
                     Experience seamless document management and transformation with the power of artificial intelligence. 
                     From editing and signing to converting and organizing, our tool provides a comprehensive solution for your PDF tasks.
                 </p>
                 
                 {/* CTA Button */}
                 <div className="pt-2">
-                    <button className="px-6 py-3 bg-red-600 cursor-pointer hover:bg-red-700 text-white font-semibold rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg">
+                    <button className="w-full sm:w-auto px-6 py-3 bg-red-600 cursor-pointer hover:bg-red-700 text-white font-semibold rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg">
                         Get Started Free
                     </button>
                 </div>
