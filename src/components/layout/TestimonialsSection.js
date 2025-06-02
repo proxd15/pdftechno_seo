@@ -178,13 +178,6 @@ function AIPowered() {
                     Experience seamless document management and transformation with the power of artificial intelligence. 
                     From editing and signing to converting and organizing, our tool provides a comprehensive solution for your PDF tasks.
                 </p>
-                
-                {/* CTA Button */}
-                <div className="pt-2">
-                    <button className="w-full sm:w-auto px-6 py-3 bg-red-600 cursor-pointer hover:bg-red-700 text-white font-semibold rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg">
-                        Get Started Free
-                    </button>
-                </div>
             </div>
         </div>
     );
