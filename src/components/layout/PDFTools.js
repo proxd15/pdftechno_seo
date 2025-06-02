@@ -225,10 +225,10 @@ const PDFTools = () => {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="mb-8">
-            <h1 className="text-5xl md:text-5xl font-bold bg-black bg-clip-text text-transparent mb-4">
+            <h1 className="text-2xl md:text-5xl sm:text-2xl font-bold bg-black bg-clip-text text-transparent mb-4">
               Transform Documents
             </h1>
-            <h2 className="text-5xl md:text-5xl font-bold mb-2">
+            <h2 className="text-2xl md:text-5xl sm:text-2xl font-bold mb-2">
               Seamlessly with our{' '}
               <span className="bg-[#DA1F10] bg-clip-text text-transparent">
                 PDF Techno
@@ -237,10 +237,10 @@ const PDFTools = () => {
           </div>
           
           <div className="space-y-2">
-            <h3 className="text-4xl font-bold text-gray-800 underline decoration-red-500 decoration-4 underline-offset-8">
+            <h3 className="text-2xl font-bold text-gray-800 underline decoration-red-500 decoration-4 underline-offset-8">
               A Tool For Every PDF Need
             </h3>
-            <p className="text-4xl font-bold text-[#DA1F10]">100% Free</p>
+            <p className="text-2xl md:text-4xl font-bold text-[#DA1F10]">100% Free</p>
           </div>
         </div>
 
