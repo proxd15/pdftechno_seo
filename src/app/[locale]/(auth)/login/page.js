@@ -78,8 +78,8 @@ export default function LoginPage() {
     <div className="relative flex flex-col items-center justify-center py-16 px-4">
       {/* Overlay Loader for Google Authentication */}
       {isGoogleLoading && (
-        <div className="fixed inset-0 bg-opacity-50 backdrop-filter backdrop-blur-mdflex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-8 max-w-md mx-4 text-center shadow-2xl">
+        <div className="fixed inset-0 backdrop-filter backdrop-blur-md flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-auto text-center shadow-2xl">
             <div className="mb-6">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-[#DA1F10] bg-opacity-10 rounded-full mb-4">
                 <svg className="animate-spin w-8 h-8 text-[#DA1F10]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

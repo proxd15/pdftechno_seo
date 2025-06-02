@@ -221,15 +221,14 @@ const PDFTools = () => {
   return (
     
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
-      <div className='h-8'></div>
       <div className="container mx-auto px-4 py-12">
         {/* Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-8">
           <div className="mb-8">
-            <h1 className="text-5xl md:text-6xl font-bold bg-black bg-clip-text text-transparent mb-4">
+            <h1 className="text-5xl md:text-5xl font-bold bg-black bg-clip-text text-transparent mb-4">
               Transform Documents
             </h1>
-            <h2 className="text-4xl md:text-5xl font-semibold mb-6">
+            <h2 className="text-5xl md:text-5xl font-bold mb-2">
               Seamlessly with our{' '}
               <span className="bg-[#DA1F10] bg-clip-text text-transparent">
                 PDF Techno
@@ -246,7 +245,7 @@ const PDFTools = () => {
         </div>
 
         {/* Search Bar */}
-        <div className="max-w-2xl mx-auto mb-16">
+        <div className="max-w-2xl mx-auto mb-12">
           <div className="relative group">
             <input 
               type="text" 
