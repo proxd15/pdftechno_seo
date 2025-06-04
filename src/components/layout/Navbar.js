@@ -14,11 +14,15 @@ export default function Navbar() {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [menuPosition, setMenuPosition] = useState({ left: 0, right: 'auto' });
   const pathname = usePathname();
   const { t, locale, changeLocale, getLocalizedHref } = useI18n();
   const { isAuthenticated, user, logout } = useAuth();
   const profileDropdownRef = useRef(null);
   const logoutConfirmRef = useRef(null);
+  const toolsMenuRef = useRef(null);
+  const toolsButtonRef = useRef(null);
+  const toolsMenuTimeout = useRef(null);
 
   // Handle window resize for responsive behavior
   useEffect(() => {
@@ -36,6 +40,57 @@ export default function Navbar() {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Calculate menu position based on button position and viewport
+  const calculateMenuPosition = () => {
+    if (!toolsButtonRef.current) return;
+    
+    const buttonRect = toolsButtonRef.current.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const menuWidth = 1200; // Default menu width
+    const adjustedMenuWidth = Math.min(menuWidth, viewportWidth - 40); // 40px margin
+    
+    // Calculate ideal left position (center the menu under the button)
+    const idealLeft = buttonRect.left + (buttonRect.width / 2) - (adjustedMenuWidth / 2);
+    
+    // Ensure menu doesn't go outside viewport
+    const minLeft = 30; // 20px from left edge
+    const maxLeft = viewportWidth - adjustedMenuWidth - 20; // 20px from right edge
+    
+    const finalLeft = Math.max(minLeft, Math.min(idealLeft, maxLeft));
+    
+    setMenuPosition({
+      left: finalLeft,
+      right: 'auto'
+    });
+  };
+
+  // Handle tools menu hover with delay
+  const handleToolsMenuEnter = () => {
+    if (toolsMenuTimeout.current) {
+      clearTimeout(toolsMenuTimeout.current);
+    }
+    calculateMenuPosition();
+    setIsToolsMenuOpen(true);
+  };
+
+  const handleToolsMenuLeave = () => {
+    toolsMenuTimeout.current = setTimeout(() => {
+      setIsToolsMenuOpen(false);
+    }, 150); // 150ms delay before closing
+  };
+
+  const handleToolsMenuMouseEnter = () => {
+    if (toolsMenuTimeout.current) {
+      clearTimeout(toolsMenuTimeout.current);
+    }
+  };
+
+  const handleToolsMenuMouseLeave = () => {
+    toolsMenuTimeout.current = setTimeout(() => {
+      setIsToolsMenuOpen(false);
+    }, 150);
+  };
 
   // When mobile menu opens, prevent body scrolling
   useEffect(() => {
@@ -64,6 +119,15 @@ export default function Navbar() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (toolsMenuTimeout.current) {
+        clearTimeout(toolsMenuTimeout.current);
+      }
     };
   }, []);
 
@@ -129,6 +193,20 @@ export default function Navbar() {
           animation: slideInContent 0.4s ease-out 0.1s both;
         }
         
+        .tools-dropdown {
+          transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+        }
+        
+        .tools-dropdown-enter {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        
+        .tools-dropdown-enter-active {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        
         @keyframes slideInContent {
           from {
             opacity: 0;
@@ -169,9 +247,10 @@ export default function Navbar() {
                 </Link>
 
                 <div
+                  ref={toolsButtonRef}
                   className="relative"
-                  onMouseEnter={() => setIsToolsMenuOpen(true)}
-                  onMouseLeave={() => setIsToolsMenuOpen(false)}
+                  onMouseEnter={handleToolsMenuEnter}
+                  onMouseLeave={handleToolsMenuLeave}
                 >
                   <button
                     className="flex items-center cursor-pointer px-4 py-2 text-gray-800 hover:text-red-600"
@@ -179,9 +258,22 @@ export default function Navbar() {
                     {t('navbar.allTools')} <FaChevronDown className="ml-1 h-3 w-3" />
                   </button>
 
-                  {/* Tools dropdown menu - existing code remains the same */}
+                  {/* Tools dropdown menu */}
                   {isToolsMenuOpen && (
-                    <div className="absolute left-[-200px] mt-1 bg-white px-4 py-4 border border-gray-200 shadow-lg rounded z-50 w-[1300px]">
+                    <div 
+                      ref={toolsMenuRef}
+                      className={`tools-dropdown fixed mt-1 bg-white px-4 py-4 border border-gray-200 shadow-lg rounded z-50 ${
+                        isToolsMenuOpen ? 'tools-dropdown-enter-active' : 'tools-dropdown-enter'
+                      }`}
+                      style={{
+                        left: `${menuPosition.left}px`,
+                        right: menuPosition.right,
+                        width: `${Math.min(1300, window.innerWidth - 40)}px`,
+                        maxWidth: '95vw'
+                      }}
+                      onMouseEnter={handleToolsMenuMouseEnter}
+                      onMouseLeave={handleToolsMenuMouseLeave}
+                    >
                       <div className="grid grid-cols-6 gap-0">
                         {/* Tool Categories */}
                         <div className="col-span-6 grid grid-cols-6">

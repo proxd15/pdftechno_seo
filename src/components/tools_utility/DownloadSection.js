@@ -95,6 +95,16 @@ const DownloadSection = ({
     }
   };
 
+  // Check if a file is a ZIP file
+  const isZipFile = (fileName) => {
+    return fileName && fileName.toLowerCase().endsWith(FILE_EXTENSIONS.ZIP);
+  };
+
+  // Check if a file is a PDF file
+  const isPdfFile = (fileName) => {
+    return fileName && fileName.toLowerCase().endsWith(FILE_EXTENSIONS.PDF);
+  };
+
   // Color class mapping
   const colorClasses = {
     red: "bg-red-600 hover:bg-red-700",
@@ -103,13 +113,16 @@ const DownloadSection = ({
   
   // Handle rename action
   const handleRename = (index, newName) => {
-    // Extract file extension
+    // Extract file extension from current filename
     const fileName = fileNames[index] || '';
-    const hasExtension = fileName.toLowerCase().endsWith(FILE_EXTENSIONS.PDF);
+    const isCurrentlyZip = isZipFile(fileName);
+    const isCurrentlyPdf = isPdfFile(fileName);
     
-    // If the file had a .pdf extension, make sure the new name keeps it
+    // Preserve the correct extension based on file type
     let updatedName = newName;
-    if (hasExtension && !updatedName.toLowerCase().endsWith(FILE_EXTENSIONS.PDF)) {
+    if (isCurrentlyZip && !updatedName.toLowerCase().endsWith(FILE_EXTENSIONS.ZIP)) {
+      updatedName += FILE_EXTENSIONS.ZIP;
+    } else if (isCurrentlyPdf && !updatedName.toLowerCase().endsWith(FILE_EXTENSIONS.PDF)) {
       updatedName += FILE_EXTENSIONS.PDF;
     }
     
@@ -143,12 +156,24 @@ const DownloadSection = ({
       fileName = mergedName;
     } else {
       // For regular files, use the fileNames state
-      fileName = fileNames[index] || "document.pdf";
+      fileName = fileNames[index] || "document";
     }
     
-    // Add .pdf extension if missing for PDF files
-    if (!fileName.toLowerCase().endsWith(FILE_EXTENSIONS.PDF)) {
-      fileName = `${fileName}${FILE_EXTENSIONS.PDF}`;
+    // Determine if this is a ZIP or PDF file
+    const originalFileName = files[index]?.name || files[index]?.original_filename || '';
+    const isCurrentlyZip = isZipFile(originalFileName);
+    
+    // Add the correct extension based on file type
+    if (isCurrentlyZip) {
+      // This is a ZIP file
+      if (!fileName.toLowerCase().endsWith(FILE_EXTENSIONS.ZIP)) {
+        fileName = `${fileName}${FILE_EXTENSIONS.ZIP}`;
+      }
+    } else {
+      // This is a PDF file
+      if (!fileName.toLowerCase().endsWith(FILE_EXTENSIONS.PDF)) {
+        fileName = `${fileName}${FILE_EXTENSIONS.PDF}`;
+      }
     }
     
     // Call the parent handler with the fileId and custom filename
@@ -187,7 +212,10 @@ const DownloadSection = ({
   };
 
   // Determine if this is a single merged PDF case
-  const isSingleMergedPdf = files.length === 1 && title.toLowerCase().includes('merged');
+  // Fixed logic: check if it's a single PDF file (not ZIP) and title suggests it's merged
+  const isSingleMergedPdf = files.length === 1 && 
+    title.toLowerCase().includes('merged') && 
+    !isZipFile(files[0]?.name || files[0]?.original_filename || '');
 
   return (
     <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-xl border border-gray-200 mb-8 shadow-lg max-w-7xl mx-auto">
@@ -315,7 +343,7 @@ const DownloadSection = ({
               )}
             </div>
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
-              {/* Preview Button */}
+              {/* Preview Button - Only for PDF files */}
               {previewHandler && (
                 <button
                   onClick={() => previewHandler(files[0].id || 0, `${mergedName}${FILE_EXTENSIONS.PDF}`)}
@@ -357,6 +385,13 @@ const DownloadSection = ({
             }
             
             const fullFileName = fileNames[index] || file.name || file.original_filename;
+            const isCurrentlyZip = isZipFile(fullFileName);
+            
+            // If we're showing a ZIP download button at the top AND this is a ZIP file, skip it
+            // This prevents duplicate ZIP download options
+            if (isCurrentlyZip && (zipDownloadHandler && (files.length > 1 || forceShowZipDownload))) {
+              return null;
+            }
             
             return (
               <div key={index} className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-200">
@@ -365,7 +400,11 @@ const DownloadSection = ({
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                       <input
                         type="text"
-                        value={fileNames[index] ? fileNames[index].replace(FILE_EXTENSIONS.PDF, '') : ''}
+                        value={fileNames[index] ? (
+                          isCurrentlyZip 
+                            ? fileNames[index].replace(FILE_EXTENSIONS.ZIP, '') 
+                            : fileNames[index].replace(FILE_EXTENSIONS.PDF, '')
+                        ) : ''}
                         onChange={(e) => setFileNames({...fileNames, [index]: e.target.value})}
                         className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm sm:text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         autoFocus
@@ -388,6 +427,16 @@ const DownloadSection = ({
                     </div>
                   ) : (
                     <div className="flex items-center gap-2 sm:gap-3">
+                      {/* Show different icon for ZIP vs PDF files */}
+                      {isCurrentlyZip ? (
+                        <svg className="w-5 h-5 text-amber-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                          <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd"></path>
+                        </svg>
+                      ) : (
+                        <svg className="w-5 h-5 text-red-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                          <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd"></path>
+                        </svg>
+                      )}
                       <p className="font-medium text-sm sm:text-base flex-grow truncate min-w-0" title={fullFileName}>
                         {truncateFilename(fullFileName, 25)}
                       </p>
@@ -409,8 +458,8 @@ const DownloadSection = ({
                   )}
                 </div>
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2 flex-shrink-0">
-                  {/* Preview Button */}
-                  {previewHandler && (
+                  {/* Preview Button - Only show for PDF files, not ZIP files */}
+                  {previewHandler && !isCurrentlyZip && (
                     <button
                       onClick={() => previewHandler(file.id || index, fileNames[index] || file.name || file.original_filename)}
                       className="bg-gray-700 hover:bg-gray-800 text-white text-xs sm:text-sm font-medium px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg transition-colors duration-200 flex items-center justify-center min-w-[70px] sm:min-w-[80px]"
