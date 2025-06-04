@@ -710,130 +710,151 @@ const handleApplyWatermark = async () => {
   };
   
   // Generate a preview of what the text watermark will look like
-  const renderTextWatermarkPreview = () => {
-    const positions = {
-      'top-left': { top: 20, left: 20 },
-      'top-center': { top: 20, left: '50%', transform: 'translateX(-50%)' },
-      'top-right': { top: 20, right: 20 },
-      'mid-left': { top: '50%', left: 20, transform: 'translateY(-50%)' },
-      'mid-center': { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' },
-      'mid-right': { top: '50%', right: 20, transform: 'translateY(-50%)' },
-      'bottom-left': { bottom: 20, left: 20 },
-      'bottom-center': { bottom: 20, left: '50%', transform: 'translateX(-50%)' },
-      'bottom-right': { bottom: 20, right: 20 }
-    };
-    
-    const posStyles = positions[position];
-    
-    // Apply rotation
-    let transform = posStyles.transform || '';
-    if (rotation !== 0) {
-      transform = transform ? `${transform} rotate(${rotation}deg)` : `rotate(${rotation}deg)`;
-    }
-    
-    // Determine font weight and style based on user selections
-    let fontWeight = isBold ? 'bold' : 'normal';
-    let fontStyleValue = isItalic ? 'italic' : 'normal';
-    
-    return (
-      <div 
-        style={{
-          position: 'absolute',
-          ...posStyles,
-          transform,
-          fontSize: `${fontSize}px`,
-          color: fontColor,
-          fontFamily: fontStyle === 'Times-Roman' ? 'Times New Roman, serif' : 
-                     fontStyle === 'Courier' ? 'Courier, monospace' : 
-                     'Helvetica, Arial, sans-serif',
-          fontWeight,
-          fontStyle: fontStyleValue,
-          textDecoration: isUnderline ? 'underline' : 'none',
-          opacity: opacity,
-          textAlign: 'center',
-          maxWidth: '80%',
-          wordBreak: 'break-word',
-          pointerEvents: 'none'
-        }}
-      >
-        {watermarkText}
-      </div>
-    );
+const renderTextWatermarkPreview = () => {
+  // Get the preview container dimensions (you may need to adjust these)
+  const previewWidth = 400; // Adjust based on your preview container
+  const previewHeight = 350; // Adjust based on your preview container
+  
+  // Define CENTER coordinates in pixels where rotation will occur
+  const absoluteCenterPositions = {
+    'top-left': { x: 80, y: 80 },
+    'top-center': { x: previewWidth / 2, y: 80 },
+    'top-right': { x: previewWidth - 80, y: 80 },
+    'mid-left': { x: 80, y: previewHeight / 2 },
+    'mid-center': { x: previewWidth / 2, y: previewHeight / 2 },
+    'mid-right': { x: previewWidth - 80, y: previewHeight / 2 },
+    'bottom-left': { x: 80, y: previewHeight - 80 },
+    'bottom-center': { x: previewWidth / 2, y: previewHeight - 80 },
+    'bottom-right': { x: previewWidth - 80, y: previewHeight - 80 }
   };
   
+  const centerPos = absoluteCenterPositions[position];
+  
+  console.log(`Text preview: Absolute center at (${centerPos.x}, ${centerPos.y}), rotation: ${rotation}°`);
+  
+  // Determine font styling
+  let fontWeight = isBold ? 'bold' : 'normal';
+  let fontStyleValue = isItalic ? 'italic' : 'normal';
+  
+  return (
+    <div 
+      style={{
+        position: 'absolute',
+        // Position the element's CENTER at the target coordinates
+        left: `${centerPos.x}px`,
+        top: `${centerPos.y}px`,
+        // Transform: first center the element, then rotate it
+        transform: `translate(-50%, -50%) rotate(${rotation}deg)`,
+        transformOrigin: 'center center',
+        fontSize: `${fontSize}px`,
+        color: fontColor,
+        fontFamily: fontStyle === 'Times-Roman' ? 'Times New Roman, serif' : 
+                   fontStyle === 'Courier' ? 'Courier, monospace' : 
+                   'Helvetica, Arial, sans-serif',
+        fontWeight,
+        fontStyle: fontStyleValue,
+        textDecoration: isUnderline ? `underline ${fontColor}` : 'none',
+        textDecorationThickness: `${Math.max(1, fontSize * 0.05)}px`,
+        textUnderlineOffset: `${fontSize * 0.1}px`,
+        opacity: opacity,
+        pointerEvents: 'none',
+        whiteSpace: 'nowrap',
+        display: 'inline-block',
+        // Debug border (remove in production)
+        // border: '2px solid red',
+        // backgroundColor: 'rgba(255, 255, 0, 0.2)',
+        zIndex: 10
+      }}
+    >
+      {watermarkText}
+    </div>
+  );
+};
+  
   // Generate a preview of what the image watermark will look like
-  const renderImageWatermarkPreview = () => {
-    if (!watermarkImagePreview) return null;
-    
-    const positions = {
-      'top-left': { top: 20, left: 20 },
-      'top-center': { top: 20, left: '50%', transform: 'translateX(-50%)' },
-      'top-right': { top: 20, right: 20 },
-      'mid-left': { top: '50%', left: 20, transform: 'translateY(-50%)' },
-      'mid-center': { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' },
-      'mid-right': { top: '50%', right: 20, transform: 'translateY(-50%)' },
-      'bottom-left': { bottom: 20, left: 20 },
-      'bottom-center': { bottom: 20, left: '50%', transform: 'translateX(-50%)' },
-      'bottom-right': { bottom: 20, right: 20 }
-    };
-    
-    const posStyles = positions[position];
-    
-    // Apply rotation
-    let transform = posStyles.transform || '';
-    if (rotation !== 0) {
-      transform = transform ? `${transform} rotate(${rotation}deg)` : `rotate(${rotation}deg)`;
-    }
-    
-    // For mosaic pattern, create an array of positions
-    if (isMosaic) {
-      return (
-        <>
-          {Object.keys(positions).map((pos, index) => {
-            const style = positions[pos];
-            let posTransform = style.transform || '';
-            if (rotation !== 0) {
-              posTransform = posTransform ? `${posTransform} rotate(${rotation}deg)` : `rotate(${rotation}deg)`;
-            }
-            
-            return (
-              <img
-                key={index}
-                src={watermarkImagePreview}
-                alt="Watermark"
-                style={{
-                  position: 'absolute',
-                  ...style,
-                  transform: posTransform,
-                  maxWidth: `${imageSize}%`,
-                  maxHeight: `${imageSize}%`,
-                  opacity: opacity,
-                  pointerEvents: 'none'
-                }}
-              />
-            );
-          })}
-        </>
-      );
-    }
-    
-    // Single watermark
-    return (
-      <img
-        src={watermarkImagePreview}
-        alt="Watermark"
-        style={{
-          position: 'absolute',
-          ...posStyles,
-          transform,
-          maxWidth: `${imageSize}%`,
-          maxHeight: `${imageSize}%`,
-          opacity: opacity,
-          pointerEvents: 'none'
-        }}
-      />
-    );
+const renderImageWatermarkPreview = () => {
+  if (!watermarkImagePreview) return null;
+  
+  // Get the preview container dimensions
+  const previewWidth = 400;
+  const previewHeight = 350;
+  
+  // Define CENTER coordinates in pixels where rotation will occur
+  const absoluteCenterPositions = {
+    'top-left': { x: 80, y: 80 },
+    'top-center': { x: previewWidth / 2, y: 80 },
+    'top-right': { x: previewWidth - 80, y: 80 },
+    'mid-left': { x: 80, y: previewHeight / 2 },
+    'mid-center': { x: previewWidth / 2, y: previewHeight / 2 },
+    'mid-right': { x: previewWidth - 80, y: previewHeight / 2 },
+    'bottom-left': { x: 80, y: previewHeight - 80 },
+    'bottom-center': { x: previewWidth / 2, y: previewHeight - 80 },
+    'bottom-right': { x: previewWidth - 80, y: previewHeight - 80 }
   };
+  
+  const centerPos = absoluteCenterPositions[position];
+  
+  console.log(`Image preview: Absolute center at (${centerPos.x}, ${centerPos.y}), rotation: ${rotation}°`);
+  
+  // For mosaic pattern
+  if (isMosaic) {
+    return (
+      <>
+        {Object.entries(absoluteCenterPositions).map(([posKey, pos], index) => (
+          <img
+            key={index}
+            src={watermarkImagePreview}
+            alt={`Watermark ${posKey}`}
+            style={{
+              position: 'absolute',
+              // Position the image's CENTER at the target coordinates
+              left: `${pos.x}px`,
+              top: `${pos.y}px`,
+              // Transform: first center the image, then rotate it
+              transform: `translate(-50%, -50%) rotate(${rotation}deg)`,
+              transformOrigin: 'center center',
+              maxWidth: `${imageSize}%`,
+              maxHeight: `${imageSize}%`,
+              opacity: opacity,
+              pointerEvents: 'none',
+              display: 'block',
+              // Debug border (remove in production)
+              // border: '2px solid blue',
+              // backgroundColor: 'rgba(0, 255, 255, 0.2)',
+              zIndex: 10
+            }}
+          />
+        ))}
+      </>
+    );
+  }
+  
+  // Single watermark
+  return (
+    <img
+      src={watermarkImagePreview}
+      alt="Watermark"
+      style={{
+        position: 'absolute',
+        // Position the image's CENTER at the target coordinates
+        left: `${centerPos.x}px`,
+        top: `${centerPos.y}px`,
+        // Transform: first center the image, then rotate it
+        transform: `translate(-50%, -50%) rotate(${rotation}deg)`,
+        transformOrigin: 'center center',
+        maxWidth: `${imageSize}%`,
+        maxHeight: `${imageSize}%`,
+        opacity: opacity,
+        pointerEvents: 'none',
+        display: 'block',
+        // Debug border (remove in production)
+        // border: '2px solid blue',
+        // backgroundColor: 'rgba(0, 255, 255, 0.2)',
+        zIndex: 10
+      }}
+    />
+  );
+};
   
   // Display page range information
   const renderPageRangeInfo = () => {

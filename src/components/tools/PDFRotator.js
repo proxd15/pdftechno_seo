@@ -54,6 +54,95 @@ const PDFRotator = () => {
   // Using 400 KB/s as estimation base for average connection
   const estimatedUploadTime = Math.ceil(totalSize / (400 * 1024));
 
+  // Function to check if file already exists
+  const isFileAlreadyAdded = (newFile) => {
+    return files.some(existingFile => 
+      existingFile.name === newFile.name && 
+      existingFile.size === newFile.size &&
+      existingFile.lastModified === newFile.lastModified
+    );
+  };
+
+  // Function to generate unique identifier for files
+  const generateFileId = (file) => {
+    return `${file.name}_${file.size}_${file.lastModified}`;
+  };
+
+  // Validate files before adding them with duplicate checking
+  const addFilesWithValidation = (newFiles) => {
+    console.log('Adding files with validation:', newFiles.map(f => f.name));
+    
+    // Reset error
+    setError(null);
+
+    // Filter for PDF files
+    const pdfFiles = newFiles.filter(file => {
+      if (file.type !== 'application/pdf') {
+        setError(`"${file.name}" is not a PDF file. Only PDF files are supported.`);
+        return false;
+      }
+      return true;
+    });
+
+    if (pdfFiles.length === 0) {
+      console.log('No valid PDF files to add');
+      return;
+    }
+
+    // Check for duplicates
+    const uniqueFiles = pdfFiles.filter(file => {
+      if (isFileAlreadyAdded(file)) {
+        console.log(`File "${file.name}" already exists, skipping`);
+        setError(`"${file.name}" is already added. Duplicate files are not allowed.`);
+        return false;
+      }
+      return true;
+    });
+
+    if (uniqueFiles.length === 0) {
+      console.log('All files were duplicates');
+      return;
+    }
+
+    // Check individual file size
+    const validSizeFiles = uniqueFiles.filter(file => {
+      if (file.size > MAX_SINGLE_FILE_SIZE) {
+        setError(`"${file.name}" exceeds the 100 MB file size limit.`);
+        return false;
+      }
+      return true;
+    });
+
+    if (validSizeFiles.length === 0) return;
+
+    // Check total file size
+    const newTotalSize = totalSize + validSizeFiles.reduce((sum, file) => sum + file.size, 0);
+    if (newTotalSize > MAX_TOTAL_FILES_SIZE) {
+      setError(`Total file size exceeds the 200 MB limit. Please remove some files.`);
+      return;
+    }
+
+    console.log(`Adding ${validSizeFiles.length} new files`);
+
+    // Add valid files
+    setFiles(prevFiles => {
+      const updatedFiles = [...prevFiles, ...validSizeFiles];
+      console.log('Updated files list:', updatedFiles.map(f => f.name));
+      return updatedFiles;
+    });
+
+    // Clear error if files were added successfully
+    if (validSizeFiles.length > 0) {
+      setError(null);
+    }
+  };
+
+  // Handle selected files from SelectFiles component
+  const handleFilesSelected = (selectedFiles) => {
+    console.log('Files selected from SelectFiles component:', selectedFiles.map(f => f.name));
+    addFilesWithValidation(selectedFiles);
+  };
+
   // Handle file preview
   const handlePreview = async (fileId, fileName) => {
     try {
@@ -95,12 +184,6 @@ const PDFRotator = () => {
     }
   };
 
-  // Handle selected files
-  const handleFilesSelected = (selectedFiles) => {
-    // Add to existing files
-    setFiles(prevFiles => [...prevFiles, ...selectedFiles]);
-  };
-
   // Close the PDF preview modal
   const handleClosePreview = () => {
     setPreviewModal({
@@ -126,7 +209,10 @@ const PDFRotator = () => {
       const newPageRotations = { ...pageRotations };
 
       for (const file of files) {
-        if (!previews[file.name]) {
+        const fileId = generateFileId(file);
+        
+        // Use file ID instead of name to handle files with same names
+        if (!previews[fileId]) {
           try {
             const arrayBuffer = await file.arrayBuffer();
 
@@ -137,20 +223,20 @@ const PDFRotator = () => {
 
               // Store page count
               const numPages = pdf.numPages;
-              newPageInfo[file.name] = numPages;
+              newPageInfo[fileId] = numPages;
 
               // Initialize selected pages and page rotations for this file
-              if (!selectedPagesByFile[file.name]) {
+              if (!selectedPagesByFile[fileId]) {
                 setSelectedPagesByFile(prev => ({
                   ...prev,
-                  [file.name]: []
+                  [fileId]: []
                 }));
               }
 
-              if (!pageRotations[file.name]) {
-                newPageRotations[file.name] = {};
+              if (!pageRotations[fileId]) {
+                newPageRotations[fileId] = {};
                 for (let i = 1; i <= numPages; i++) {
-                  newPageRotations[file.name][i] = 0; // Initialize with 0 degrees rotation
+                  newPageRotations[fileId][i] = 0; // Initialize with 0 degrees rotation
                 }
               }
 
@@ -181,10 +267,10 @@ const PDFRotator = () => {
                 viewport: scaledViewport
               }).promise;
 
-              newPreviews[file.name] = canvas.toDataURL();
+              newPreviews[fileId] = canvas.toDataURL();
 
               // Generate previews for individual pages
-              newPagePreviews[file.name] = {};
+              newPagePreviews[fileId] = {};
 
               // Limit initial loading to first 5 pages for performance
               // Other pages will be loaded when file is expanded
@@ -205,7 +291,7 @@ const PDFRotator = () => {
                   viewport: pageViewport
                 }).promise;
 
-                newPagePreviews[file.name][i] = pageCanvas.toDataURL();
+                newPagePreviews[fileId][i] = pageCanvas.toDataURL();
               }
 
             } catch (error) {
@@ -213,20 +299,20 @@ const PDFRotator = () => {
 
               // Check for password-protected/encrypted PDF
               if (error.name === 'PasswordException' || error.message.includes('password')) {
-                newPreviews[file.name] = 'encrypted';
+                newPreviews[fileId] = 'encrypted';
                 setError(`"${file.name}" is password protected or encrypted. Please decrypt this file.`);
                 setEncryptedFiles(prev => ({
                   ...prev,
-                  [file.name]: true
+                  [fileId]: true
                 }));
               } else {
                 // Assume other errors are due to corruption
-                newPreviews[file.name] = 'corrupted';
+                newPreviews[fileId] = 'corrupted';
               }
             }
           } catch (error) {
             console.error('General error processing file:', file.name, error);
-            newPreviews[file.name] = 'invalid';
+            newPreviews[fileId] = 'invalid';
             setError(`"${file.name}" is not a valid PDF file. Please remove this file.`);
           }
         }
@@ -244,16 +330,15 @@ const PDFRotator = () => {
   }, [files]);
 
   // Load additional page previews when a file is expanded
-  // Modify the page loading mechanism
   useEffect(() => {
     const loadAllPagePreviews = async (fileName, file) => {
       try {
-        console.log(`Starting to load all pages for: ${fileName}`);
+        const fileId = generateFileId(file);
+        console.log(`Starting to load all pages for: ${fileName} (ID: ${fileId})`);
 
         // If we have already loaded all pages for this file, skip
-        if (pagePreviews[fileName] &&
-          Object.keys(pagePreviews[fileName]).length >= pageInfo[fileName]) {
-          console.log(`All ${pageInfo[fileName]} pages already loaded for ${fileName}`);
+        if (pagePreviews[fileId] && Object.keys(pagePreviews[fileId]).length >= pageInfo[fileId]) {
+          console.log(`All ${pageInfo[fileId]} pages already loaded for ${fileName}`);
           return;
         }
 
@@ -261,19 +346,19 @@ const PDFRotator = () => {
 
         // Handle password if needed
         const loadingParams = { data: arrayBuffer };
-        if (decryptedFiles[fileName]?.password) {
-          loadingParams.password = decryptedFiles[fileName].password;
+        if (decryptedFiles[fileId]?.password) {
+          loadingParams.password = decryptedFiles[fileId].password;
         }
 
         const pdf = await window.pdfjsLib.getDocument(loadingParams).promise;
         const numPages = pdf.numPages;
 
-        console.log(`PDF has ${numPages} pages. Currently loaded: ${Object.keys(pagePreviews[fileName] || {}).length}`);
+        console.log(`PDF has ${numPages} pages. Currently loaded: ${Object.keys(pagePreviews[fileId] || {}).length}`);
 
         // Create temp variable to store all new previews to avoid too many state updates
         const newPreviews = { ...pagePreviews };
-        if (!newPreviews[fileName]) {
-          newPreviews[fileName] = {};
+        if (!newPreviews[fileId]) {
+          newPreviews[fileId] = {};
         }
 
         // Process pages in batches to avoid memory issues
@@ -288,7 +373,7 @@ const PDFRotator = () => {
 
           for (let pageNum = startPage; pageNum <= endPage; pageNum++) {
             // Skip if we already have this page
-            if (newPreviews[fileName][pageNum]) {
+            if (newPreviews[fileId][pageNum]) {
               continue;
             }
 
@@ -307,8 +392,8 @@ const PDFRotator = () => {
                 viewport: viewport
               }).promise;
 
-              newPreviews[fileName][pageNum] = canvas.toDataURL();
-              console.log(`Loaded page ${pageNum}`);
+              newPreviews[fileId][pageNum] = canvas.toDataURL();
+              console.log(`Loaded page ${pageNum} for ${fileName}`);
             } catch (err) {
               console.error(`Error rendering page ${pageNum}:`, err);
             }
@@ -331,13 +416,12 @@ const PDFRotator = () => {
     // Important: Load pages for all files when in individual pages mode
     if (!rotateAllPages) {
       files.forEach(file => {
-        if (pageInfo[file.name]) {
+        const fileId = generateFileId(file);
+        if (pageInfo[fileId]) {
           loadAllPagePreviews(file.name, file);
         }
       });
     }
-
-    // Don't include pagePreviews in dependencies to avoid circular effects
   }, [rotateAllPages, files, pageInfo, decryptedFiles]);
 
   // Handle decryption for encrypted files
@@ -365,6 +449,7 @@ const PDFRotator = () => {
     }
 
     const file = files[fileIndex];
+    const fileId = generateFileId(file);
 
     try {
       setIsProcessing(true); // Show loading during password verification
@@ -383,13 +468,13 @@ const PDFRotator = () => {
       // Update the encrypted files tracking
       setEncryptedFiles(prev => ({
         ...prev,
-        [file.name]: true
+        [fileId]: true
       }));
 
       // Store the password for this file
       setDecryptedFiles(prev => ({
         ...prev,
-        [file.name]: {
+        [fileId]: {
           file,
           password
         }
@@ -399,7 +484,7 @@ const PDFRotator = () => {
       const numPages = pdf.numPages;
       setPageInfo(prev => ({
         ...prev,
-        [file.name]: numPages
+        [fileId]: numPages
       }));
 
       // Create preview
@@ -425,22 +510,22 @@ const PDFRotator = () => {
       // Store the preview
       setPreviews(prev => ({
         ...prev,
-        [file.name]: canvas.toDataURL()
+        [fileId]: canvas.toDataURL()
       }));
 
       // Initialize page rotations
       setPageRotations(prev => {
         const newRotations = { ...prev };
-        newRotations[file.name] = {};
+        newRotations[fileId] = {};
         for (let i = 1; i <= numPages; i++) {
-          newRotations[file.name][i] = 0;
+          newRotations[fileId][i] = 0;
         }
         return newRotations;
       });
 
       // Load page previews
       const newPagePreviews = { ...pagePreviews };
-      newPagePreviews[file.name] = {};
+      newPagePreviews[fileId] = {};
 
       // Load first 5 pages initially
       const pagesToLoad = Math.min(5, numPages);
@@ -459,7 +544,7 @@ const PDFRotator = () => {
           viewport: pageViewport
         }).promise;
 
-        newPagePreviews[file.name][i] = pageCanvas.toDataURL();
+        newPagePreviews[fileId][i] = pageCanvas.toDataURL();
       }
 
       setPagePreviews(newPagePreviews);
@@ -490,7 +575,7 @@ const PDFRotator = () => {
     }
   };
 
-  // Set up document-wide drag and drop
+  // Set up document-wide drag and drop with duplicate prevention
   useEffect(() => {
     // Get the drag overlay element
     const dragOverlay = document.getElementById('drag-overlay');
@@ -522,7 +607,7 @@ const PDFRotator = () => {
       }
     };
 
-    // Add drop event listener to the entire document
+    // Add drop event listener to the entire document with duplicate checking
     const handleDocumentDrop = (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -537,6 +622,7 @@ const PDFRotator = () => {
       const isInsideDropZone = e.target.closest('.drop-zone');
       if (!isInsideDropZone) {
         const droppedFiles = Array.from(e.dataTransfer.files);
+        console.log('Files dropped on document:', droppedFiles.map(f => f.name));
         addFilesWithValidation(droppedFiles);
       }
     };
@@ -552,47 +638,9 @@ const PDFRotator = () => {
       document.removeEventListener('dragleave', handleDocumentDragLeave);
       document.removeEventListener('drop', handleDocumentDrop);
     };
-  }, []);
+  }, [files]); // Add files as dependency to get latest state
 
-  // Validate files before adding them
-  const addFilesWithValidation = (newFiles) => {
-    // Reset error
-    setError(null);
-
-    // Filter for PDF files
-    const pdfFiles = newFiles.filter(file => {
-      if (file.type !== 'application/pdf') {
-        setError(`"${file.name}" is not a PDF file. Only PDF files are supported.`);
-        return false;
-      }
-      return true;
-    });
-
-    if (pdfFiles.length === 0) return;
-
-    // Check individual file size
-    const validSizeFiles = pdfFiles.filter(file => {
-      if (file.size > MAX_SINGLE_FILE_SIZE) {
-        setError(`"${file.name}" exceeds the 100 MB file size limit.`);
-        return false;
-      }
-      return true;
-    });
-
-    if (validSizeFiles.length === 0) return;
-
-    // Check total file size
-    const newTotalSize = totalSize + validSizeFiles.reduce((sum, file) => sum + file.size, 0);
-    if (newTotalSize > MAX_TOTAL_FILES_SIZE) {
-      setError(`Total file size exceeds the 200 MB limit. Please remove some files.`);
-      return;
-    }
-
-    // Add valid files
-    setFiles(prevFiles => [...prevFiles, ...validSizeFiles]);
-  };
-
-  // Local drag event handlers for visual feedback
+  // Local drag event handlers for visual feedback with duplicate checking
   const handleDragEnter = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -619,12 +667,15 @@ const PDFRotator = () => {
     setIsDragging(false);
 
     const droppedFiles = Array.from(e.dataTransfer.files);
+    console.log('Files dropped on drop zone:', droppedFiles.map(f => f.name));
     addFilesWithValidation(droppedFiles);
   };
 
+  // Handle file input change with duplicate checking
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files.length > 0) {
       const selectedFiles = Array.from(e.target.files);
+      console.log('Files selected from input:', selectedFiles.map(f => f.name));
       addFilesWithValidation(selectedFiles);
     }
     // Reset the input value to allow selecting the same file again
@@ -645,53 +696,75 @@ const PDFRotator = () => {
     }
   };
 
+  // Remove file function with proper cleanup using file ID
   const removeFile = (index) => {
     const updatedFiles = [...files];
     const removedFile = updatedFiles[index];
+    const fileId = generateFileId(removedFile);
+    
     updatedFiles.splice(index, 1);
     setFiles(updatedFiles);
 
+    console.log(`Removing file: ${removedFile.name} (ID: ${fileId})`);
+
     // Clean up preview
-    if (previews[removedFile.name]) {
+    if (previews[fileId]) {
       setPreviews(prev => {
         const updated = { ...prev };
-        delete updated[removedFile.name];
+        delete updated[fileId];
         return updated;
       });
     }
 
     // Clean up page info
-    if (pageInfo[removedFile.name]) {
+    if (pageInfo[fileId]) {
       setPageInfo(prev => {
         const updated = { ...prev };
-        delete updated[removedFile.name];
+        delete updated[fileId];
         return updated;
       });
     }
 
     // Clean up page previews
-    if (pagePreviews[removedFile.name]) {
+    if (pagePreviews[fileId]) {
       setPagePreviews(prev => {
         const updated = { ...prev };
-        delete updated[removedFile.name];
+        delete updated[fileId];
         return updated;
       });
     }
 
     // Clean up page rotations
-    if (pageRotations[removedFile.name]) {
+    if (pageRotations[fileId]) {
       setPageRotations(prev => {
         const updated = { ...prev };
-        delete updated[removedFile.name];
+        delete updated[fileId];
         return updated;
       });
     }
 
     // Clean up selected pages
-    if (selectedPagesByFile[removedFile.name]) {
+    if (selectedPagesByFile[fileId]) {
       setSelectedPagesByFile(prev => {
         const updated = { ...prev };
-        delete updated[removedFile.name];
+        delete updated[fileId];
+        return updated;
+      });
+    }
+
+    // Clean up encrypted/decrypted files tracking
+    if (encryptedFiles[fileId]) {
+      setEncryptedFiles(prev => {
+        const updated = { ...prev };
+        delete updated[fileId];
+        return updated;
+      });
+    }
+
+    if (decryptedFiles[fileId]) {
+      setDecryptedFiles(prev => {
+        const updated = { ...prev };
+        delete updated[fileId];
         return updated;
       });
     }
@@ -703,24 +776,30 @@ const PDFRotator = () => {
   };
 
   const removeAllFiles = () => {
+    console.log('Removing all files');
     setFiles([]);
     setPreviews({});
     setPageInfo({});
     setPagePreviews({});
     setPageRotations({});
     setSelectedPagesByFile({});
+    setEncryptedFiles({});
+    setDecryptedFiles({});
     setRotationResult(null);
     setError(null);
   };
 
   // Reset to initial state
   const handleReset = () => {
+    console.log('Resetting component state');
     setFiles([]);
     setPreviews({});
     setPageInfo({});
     setPagePreviews({});
     setPageRotations({});
     setSelectedPagesByFile({});
+    setEncryptedFiles({});
+    setDecryptedFiles({});
     setIsProcessing(false);
     setProgress(0);
     setError(null);
@@ -740,35 +819,36 @@ const PDFRotator = () => {
     }
   };
 
-
-
-  // Deselect all pages for a file
-
   // Rotate a whole document preview
   const rotateDocument = (fileName, degrees) => {
     console.log(`ROTATE: Rotating all pages of ${fileName} by ${degrees} degrees`);
 
-    // Update the rotation for all pages
-    const numPages = pageInfo[fileName] || 0;
+    // Find the file and generate its ID
+    const file = files.find(f => f.name === fileName);
+    if (!file) return;
+    
+    const fileId = generateFileId(file);
+    const numPages = pageInfo[fileId] || 0;
 
     setPageRotations(prev => {
       // Create deep copy to avoid state mutation issues
       const newRotations = JSON.parse(JSON.stringify(prev));
 
-      if (!newRotations[fileName]) {
-        newRotations[fileName] = {};
+      if (!newRotations[fileId]) {
+        newRotations[fileId] = {};
       }
 
       // Apply the same rotation to all pages
       for (let i = 1; i <= numPages; i++) {
-        const currentRotation = newRotations[fileName][i] || 0;
+        const currentRotation = newRotations[fileId][i] || 0;
         const newRotation = (currentRotation + degrees) % 360;
-        newRotations[fileName][i] = newRotation;
+        newRotations[fileId][i] = newRotation;
       }
 
       return newRotations;
     });
   };
+
   const resetAllRotations = () => {
     console.log("Resetting all rotations to 0°");
 
@@ -777,14 +857,15 @@ const PDFRotator = () => {
 
     // Loop through all files
     files.forEach(file => {
-      const numPages = pageInfo[file.name] || 0;
+      const fileId = generateFileId(file);
+      const numPages = pageInfo[fileId] || 0;
 
       if (numPages > 0) {
-        resetRotations[file.name] = {};
+        resetRotations[fileId] = {};
 
         // Set rotation for each page to 0
         for (let i = 1; i <= numPages; i++) {
-          resetRotations[file.name][i] = 0;
+          resetRotations[fileId][i] = 0;
         }
       }
     });
@@ -794,21 +875,26 @@ const PDFRotator = () => {
   };
 
   // Rotate a specific page
-  // In your rotatePage function (around line 616), add this:
   const rotatePage = (fileName, pageNumber, degrees) => {
     console.log(`ROTATE: Attempting to rotate page ${pageNumber} of ${fileName} by ${degrees} degrees`);
+
+    // Find the file and generate its ID
+    const file = files.find(f => f.name === fileName);
+    if (!file) return;
+    
+    const fileId = generateFileId(file);
 
     setPageRotations(prev => {
       // Create a deep copy to avoid state mutation issues
       const newRotations = JSON.parse(JSON.stringify(prev));
 
       // Make sure we have an object for this file
-      if (!newRotations[fileName]) {
-        newRotations[fileName] = {};
+      if (!newRotations[fileId]) {
+        newRotations[fileId] = {};
       }
 
       // Get current rotation, defaulting to 0 if not set
-      const currentRotation = newRotations[fileName][pageNumber] || 0;
+      const currentRotation = newRotations[fileId][pageNumber] || 0;
 
       // Calculate new rotation by adding the requested degrees
       // Use modulo to keep it between 0 and 359
@@ -817,11 +903,12 @@ const PDFRotator = () => {
       console.log(`ROTATE: Page ${pageNumber} of ${fileName}: ${currentRotation}° -> ${newRotation}°`);
 
       // Set the new rotation value
-      newRotations[fileName][pageNumber] = newRotation;
+      newRotations[fileId][pageNumber] = newRotation;
 
       return newRotations;
     });
   };
+
   // Format file size in a readable format
   const formatFileSize = (bytes) => {
     if (bytes < 1024) return `${bytes} B`;
@@ -829,17 +916,19 @@ const PDFRotator = () => {
     return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
   };
 
-  // Check if any files are problematic (corrupted, encrypted, etc.)
-  const hasProblematicFiles = Object.values(previews).some(
-    preview => preview === 'corrupted' || preview === 'encrypted' || preview === 'invalid'
-  );
+  // Check if any files are problematic using file IDs
+  const hasProblematicFiles = files.some(file => {
+    const fileId = generateFileId(file);
+    const preview = previews[fileId];
+    return preview === 'corrupted' || preview === 'encrypted' || preview === 'invalid';
+  });
 
-  // Check if any encrypted files haven't been decrypted
-  const hasUnhandledEncryptedFiles = files.some(
-    file => previews[file.name] === 'encrypted' && !decryptedFiles[file.name]
-  );
+  // Check if any encrypted files haven't been decrypted using file IDs
+  const hasUnhandledEncryptedFiles = files.some(file => {
+    const fileId = generateFileId(file);
+    return previews[fileId] === 'encrypted' && !decryptedFiles[fileId];
+  });
 
-  // Handle PDF rotation
   // Handle PDF rotation
   const handleRotatePDF = async () => {
     if (files.length === 0) return;
@@ -847,9 +936,10 @@ const PDFRotator = () => {
     // Check for problematic files before processing
     if (hasUnhandledEncryptedFiles) {
       // Find the first file that needs decryption
-      const fileIndex = files.findIndex(
-        file => previews[file.name] === 'encrypted' && !decryptedFiles[file.name]
-      );
+      const fileIndex = files.findIndex(file => {
+        const fileId = generateFileId(file);
+        return previews[fileId] === 'encrypted' && !decryptedFiles[fileId];
+      });
 
       if (fileIndex !== -1) {
         handleDecryptFile(fileIndex);
@@ -860,7 +950,8 @@ const PDFRotator = () => {
 
     // Check for other problematic files
     const hasOtherProblematicFiles = files.some(file => {
-      const previewState = previews[file.name];
+      const fileId = generateFileId(file);
+      const previewState = previews[fileId];
       return previewState === 'corrupted' || previewState === 'invalid';
     });
 
@@ -879,20 +970,19 @@ const PDFRotator = () => {
       const formData = new FormData();
 
       // Loop through each file and its page rotations
-      for (const fileName in pageRotations) {
-        const file = files.find(f => f.name === fileName);
-        if (!file) continue;
-
+      for (const file of files) {
+        const fileId = generateFileId(file);
+        
         // Add all files
         formData.append('pdf_files', file);
 
         // Add password if needed
-        if (decryptedFiles[fileName]?.password) {
-          formData.append(`password_${fileName}`, decryptedFiles[fileName].password);
+        if (decryptedFiles[fileId]?.password) {
+          formData.append(`password_${file.name}`, decryptedFiles[fileId].password);
         }
 
         // Add rotation angles for each page
-        formData.append(`rotations_${fileName}`, JSON.stringify(pageRotations[fileName]));
+        formData.append(`rotations_${file.name}`, JSON.stringify(pageRotations[fileId] || {}));
       }
 
       // Call the API to rotate PDFs
@@ -982,7 +1072,7 @@ const PDFRotator = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-white bg-[#DB1E10] rounded-lg hover:bg-[#DB1E10] transition-colors cursor-pointer"
+                  className="px-4 py-2 text-white bg-[#DB1E10] rounded-lg hover:bg-[#C10007] transition-colors cursor-pointer"
                 >
                   Unlock PDF
                 </button>
@@ -1044,186 +1134,18 @@ const PDFRotator = () => {
           )}
 
           {/* File List with Previews */}
-
-
-{/* File List with Previews */}
-{files.length > 0 && (
-  <div className="w-full">
-    {/* Add More Files Button - Only show when files are already uploaded */}
-    <div className="mb-6 flex justify-between items-center">
-      <h2 className="text-lg font-medium">Selected Files ({files.length})</h2>
-      <div className="flex items-center space-x-4">
-        <button
-          onClick={removeAllFiles}
-          className="text-red-600 cursor-pointer hover:text-red-800 font-medium flex items-center text-sm"
-        >
-          <svg
-            className="w-4 h-4 mr-1"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-            />
-          </svg>
-          Remove All
-        </button>
-        <button
-          onClick={handleSelectFiles}
-          className="text-blue-600 cursor-pointer hover:text-blue-800 font-medium flex items-center text-sm"
-        >
-          <svg
-            className="w-4 h-4 mr-1"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-            />
-          </svg>
-          Add More Files
-        </button>
-      </div>
-    </div>
-
-    {/* Drop Zone - Always active when files are shown */}
-    <div
-      className={`w-full border-2 border-dashed rounded-lg mb-6 p-4 text-center drop-zone ${
-        isDragging ? 'border-blue-400 bg-blue-50' : 'border-gray-200 bg-gray-50'
-      } transition-all duration-200 hover:border-blue-300`}
-      onDragEnter={handleDragEnter}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
-    >
-      <p className="text-gray-500 text-sm">
-        Drag and drop more PDFs here
-      </p>
-    </div>
-
-    {/* If in Rotate All Pages mode, show a flat grid of all PDFs */}
-    {rotateAllPages ? (
-      <div className="border rounded-xl overflow-hidden bg-white shadow-sm mb-6">
-        <div className="px-4 py-3 bg-gray-50 border-b">
-          <h3 className="font-medium">All PDF Files</h3>
-        </div>
-        <div className="p-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-            {files.filter(f => {
-              const fPreview = previews[f.name];
-              return fPreview !== 'corrupted' && fPreview !== 'encrypted' && fPreview !== 'invalid';
-            }).map((gridFile, gridIndex) => {
-              const gridPreviewState = previews[gridFile.name];
-              const gridFileRotations = pageRotations[gridFile.name] || {};
-              
-              return (
-                <div key={gridIndex} className="relative border rounded-md overflow-hidden bg-white shadow-sm">
-                  {/* Rotate Button */}
+          {files.length > 0 && (
+            <div className="w-full">
+              {/* Add More Files Button - Only show when files are already uploaded */}
+              <div className="mb-6 flex justify-between items-center">
+                <h2 className="text-lg font-medium">Selected Files ({files.length})</h2>
+                <div className="flex items-center space-x-4">
                   <button
-                    onClick={() => rotateDocument(gridFile.name, 90)}
-                    className="absolute top-2 right-2 z-10 p-1 bg-blue-100 text-[#DB1E10] rounded-full hover:bg-[#DB1E10] hover:text-white transition-colors shadow-sm"
-                    title="Rotate clockwise"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                    </svg>
-                  </button>
-                  
-                  {/* Document Preview */}
-                  <div className="flex items-center justify-center p-4 h-40">
-                    {gridPreviewState && typeof gridPreviewState === 'string' ? (
-                      <img
-                        src={gridPreviewState}
-                        alt={`Preview of ${gridFile.name}`}
-                        style={{ transform: `rotate(${gridFileRotations[1] || 0}deg)` }}
-                        className="max-h-full max-w-full object-contain transition-transform duration-300"
-                      />
-                    ) : (
-                      <div className="text-gray-400 flex flex-col items-center">
-                        <svg
-                          className="w-8 h-8 mb-1"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                          />
-                        </svg>
-                        <span className="text-xs">Loading...</span>
-                      </div>
-                    )}
-                  </div>
-                  
-                  {/* File Name & Rotation */}
-                  <div className="p-2 bg-gray-50 border-t text-center">
-                    <p className="text-xs font-medium text-gray-700 truncate" title={gridFile.name}>
-                      {gridFile.name.length > 15 ? `${gridFile.name.substring(0, 12)}...` : gridFile.name}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      Rotation: {gridFileRotations[1] || 0}°
-                    </p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    ) : (
-      /* If in Individual Pages mode, show each file in its own container with pages */
-      <div className="space-y-6 mb-8">
-        {files.map((file, index) => {
-          const previewState = previews[file.name];
-          const isCorrupted = previewState === 'corrupted';
-          const isEncrypted = previewState === 'encrypted';
-          const isInvalid = previewState === 'invalid';
-          const hasError = isCorrupted || isEncrypted || isInvalid;
-          const numPages = pageInfo[file.name] || 0;
-          const isExpanded = expandedFile === file.name;
-          const selectedPages = selectedPagesByFile[file.name] || [];
-          const fileRotations = pageRotations[file.name] || {};
-
-          return (
-            <div
-              key={index}
-              className={`border rounded-xl overflow-hidden ${
-                hasError ? 'border-red-300 bg-red-50' : 'bg-white'
-              } shadow-sm transition-shadow duration-200`}
-            >
-              <div className="flex flex-col">
-                {/* File Info Header */}
-                <div className="px-4 py-3 bg-gray-50 flex justify-between items-center border-b">
-                  <div>
-                    <p className={`font-medium ${hasError ? 'text-red-600' : ''}`} title={file.name}>
-                      {file.name}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      {formatFileSize(file.size)} • {numPages} {numPages === 1 ? 'page' : 'pages'}
-                    </p>
-                  </div>
-                  
-                  <button
-                    onClick={() => removeFile(index)}
-                    className="text-red-500 cursor-pointer hover:text-red-700 p-1"
-                    title="Remove file"
+                    onClick={removeAllFiles}
+                    className="text-red-600 cursor-pointer hover:text-red-800 font-medium flex items-center text-sm"
                   >
                     <svg
-                      className="w-5 h-5"
+                      className="w-4 h-4 mr-1"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -1236,67 +1158,69 @@ const PDFRotator = () => {
                         d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                       />
                     </svg>
+                    Remove All
+                  </button>
+                  <button
+                    onClick={handleSelectFiles}
+                    className="text-blue-600 cursor-pointer hover:text-blue-800 font-medium flex items-center text-sm"
+                  >
+                    <svg
+                      className="w-4 h-4 mr-1"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                      />
+                    </svg>
+                    Add More Files
                   </button>
                 </div>
+              </div>
 
-                {/* PDF Preview with Rotation Controls */}
-                {hasError ? (
-                  <div className="p-10 flex justify-center">
-                    <div className="text-red-500 flex flex-col items-center text-center">
-                      <svg
-                        className="w-12 h-12 mb-2"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
+              {/* Drop Zone - Always active when files are shown */}
+              <div
+                className={`w-full border-2 border-dashed rounded-lg mb-6 p-4 text-center drop-zone ${
+                  isDragging ? 'border-blue-400 bg-blue-50' : 'border-gray-200 bg-gray-50'
+                } transition-all duration-200 hover:border-blue-300`}
+                onDragEnter={handleDragEnter}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+              >
+                <p className="text-gray-500 text-sm">
+                  Drag and drop more PDFs here (duplicates will be ignored)
+                </p>
+              </div>
 
-                      {isEncrypted ? (
-                        <div className='flex flex-col'>
-                          <span className="font-medium">Password Protected PDF</span>
-                          <button
-                            onClick={() => handleDecryptFile(index)}
-                            className="mt-2 block mx-auto px-4 py-2 bg-[#DB1E10] text-white rounded-lg hover:bg-[#DB1E10] transition-colors cursor-pointer"
-                          >
-                            {decryptedFiles[file.name] ? "Change Password" : "Enter Password"}
-                          </button>
-                        </div>
-                      ) : (
-                        <div>
-                          <span className="font-medium">
-                            {isCorrupted && "Corrupted PDF"}
-                            {isInvalid && "Invalid PDF"}
-                          </span>
-                          <span className="text-sm mt-1 block">Please remove this file</span>
-                        </div>
-                      )}
-                    </div>
+              {/* If in Rotate All Pages mode, show a flat grid of all PDFs */}
+              {rotateAllPages ? (
+                <div className="border rounded-xl overflow-hidden bg-white shadow-sm mb-6">
+                  <div className="px-4 py-3 bg-gray-50 border-b">
+                    <h3 className="font-medium">All PDF Files</h3>
                   </div>
-                ) : (
-                  /* Individual Pages Preview for "Rotate Specific Pages" Mode */
-                  <div>
-                    {/* Pages Grid */}
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 p-4 max-h-96 overflow-y-auto">
-                      {Array.from({ length: numPages }, (_, i) => i + 1).map(pageNum => {
-                        const pageRotation = fileRotations[pageNum] || 0;
-                        const pagePreview = pagePreviews[file.name]?.[pageNum];
+                  <div className="p-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                      {files.filter(f => {
+                        const fileId = generateFileId(f);
+                        const fPreview = previews[fileId];
+                        return fPreview !== 'corrupted' && fPreview !== 'encrypted' && fPreview !== 'invalid';
+                      }).map((gridFile, gridIndex) => {
+                        const fileId = generateFileId(gridFile);
+                        const gridPreviewState = previews[fileId];
+                        const gridFileRotations = pageRotations[fileId] || {};
                         
                         return (
-                          <div 
-                            key={pageNum}
-                            className="relative border rounded-md border-gray-200 hover:border-blue-300 transition-colors"
-                          >
+                          <div key={`${fileId}-${gridIndex}`} className="relative border rounded-md overflow-hidden bg-white shadow-sm">
                             {/* Rotate Button */}
                             <button
-                              onClick={() => rotatePage(file.name, pageNum, 90)}
-                              className="absolute top-1 right-1 z-10 p-1 bg-blue-100 text-[#DB1E10] rounded-full hover:bg-[#DB1E10] hover:text-white transition-colors shadow-sm"
+                              onClick={() => rotateDocument(gridFile.name, 90)}
+                              className="absolute top-2 right-2 z-10 p-1 bg-blue-100 text-[#DB1E10] rounded-full hover:bg-[#DB1E10] hover:text-white transition-colors shadow-sm"
                               title="Rotate clockwise"
                             >
                               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -1304,69 +1228,235 @@ const PDFRotator = () => {
                               </svg>
                             </button>
                             
-                            {/* Page Thumbnail */}
-                            <div className="flex items-center justify-center h-32 bg-white overflow-hidden">
-                              {pagePreview ? (
-                                <div className="flex items-center justify-center w-full h-full">
-                                  <img 
-                                    src={pagePreview} 
-                                    alt={`Page ${pageNum}`}
-                                    style={{ transform: `rotate(${pageRotation}deg)`, transition: 'transform 0.3s ease' }}
-                                    className="max-h-full max-w-full object-contain"
-                                  />
-                                </div>
+                            {/* Document Preview */}
+                            <div className="flex items-center justify-center p-4 h-40">
+                              {gridPreviewState && typeof gridPreviewState === 'string' ? (
+                                <img
+                                  src={gridPreviewState}
+                                  alt={`Preview of ${gridFile.name}`}
+                                  style={{ transform: `rotate(${gridFileRotations[1] || 0}deg)` }}
+                                  className="max-h-full max-w-full object-contain transition-transform duration-300"
+                                />
                               ) : (
-                                <div className="flex items-center justify-center w-full h-full text-gray-400">
-                                  <svg className="w-6 h-6 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                    <path className="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                <div className="text-gray-400 flex flex-col items-center">
+                                  <svg
+                                    className="w-8 h-8 mb-1"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth="2"
+                                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                    />
                                   </svg>
+                                  <span className="text-xs">Loading...</span>
                                 </div>
                               )}
                             </div>
                             
-                            {/* Page Number and Rotation */}
-                            <div className="absolute top-1 left-1 bg-gray-800 bg-opacity-70 text-white px-1.5 py-0.5 rounded text-xs">
-                              {pageNum} • {pageRotation}°
+                            {/* File Name & Rotation */}
+                            <div className="p-2 bg-gray-50 border-t text-center">
+                              <p className="text-xs font-medium text-gray-700 truncate" title={gridFile.name}>
+                                {gridFile.name.length > 15 ? `${gridFile.name.substring(0, 12)}...` : gridFile.name}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                Rotation: {gridFileRotations[1] || 0}°
+                              </p>
                             </div>
                           </div>
                         );
                       })}
                     </div>
-
-                    {/* Loading Message if Pages are Still Loading */}
-                    {Object.keys(pagePreviews[file.name] || {}).length < numPages && numPages > 0 && (
-                      <div className="text-center text-sm text-gray-500 py-2">
-                        Loading all pages... ({Object.keys(pagePreviews[file.name] || {}).length} of {numPages})
-                      </div>
-                    )}
                   </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    )}
+                </div>
+              ) : (
+                /* If in Individual Pages mode, show each file in its own container with pages */
+                <div className="space-y-6 mb-8">
+                  {files.map((file, index) => {
+                    const fileId = generateFileId(file);
+                    const previewState = previews[fileId];
+                    const isCorrupted = previewState === 'corrupted';
+                    const isEncrypted = previewState === 'encrypted';
+                    const isInvalid = previewState === 'invalid';
+                    const hasError = isCorrupted || isEncrypted || isInvalid;
+                    const numPages = pageInfo[fileId] || 0;
+                    const isExpanded = expandedFile === file.name;
+                    const selectedPages = selectedPagesByFile[fileId] || [];
+                    const fileRotations = pageRotations[fileId] || {};
 
-    {/* Results Section */}
-    {rotationResult && !isProcessing && (
-      <div ref={resultSectionRef}>
-        <DownloadSection
-          files={rotationResult.files}
-          downloadHandler={handleDownload}
-          previewHandler={handlePreview}
-          zipDownloadHandler={
-            rotationResult.file_count > 1 ? handleDownloadZip : null
-          }
-          title="Download Rotated PDFs"
-          color="red"
-          startOverHandler={handleReset}
-        />
-      </div>
-    )}
-  </div>
-)}
+                    return (
+                      <div
+                        key={fileId}
+                        className={`border rounded-xl overflow-hidden ${
+                          hasError ? 'border-red-300 bg-red-50' : 'bg-white'
+                        } shadow-sm transition-shadow duration-200`}
+                      >
+                        <div className="flex flex-col">
+                          {/* File Info Header */}
+                          <div className="px-4 py-3 bg-gray-50 flex justify-between items-center border-b">
+                            <div>
+                              <p className={`font-medium ${hasError ? 'text-red-600' : ''}`} title={file.name}>
+                                {file.name}
+                              </p>
+                              <p className="text-sm text-gray-500">
+                                {formatFileSize(file.size)} • {numPages} {numPages === 1 ? 'page' : 'pages'}
+                              </p>
+                            </div>
+                            
+                            <button
+                              onClick={() => removeFile(index)}
+                              className="text-red-500 cursor-pointer hover:text-red-700 p-1"
+                              title="Remove file"
+                            >
+                              <svg
+                                className="w-5 h-5"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                />
+                              </svg>
+                            </button>
+                          </div>
+
+                          {/* PDF Preview with Rotation Controls */}
+                          {hasError ? (
+                            <div className="p-10 flex justify-center">
+                              <div className="text-red-500 flex flex-col items-center text-center">
+                                <svg
+                                  className="w-12 h-12 mb-2"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                  />
+                                </svg>
+
+                                {isEncrypted ? (
+                                  <div className='flex flex-col'>
+                                    <span className="font-medium">Password Protected PDF</span>
+                                    <button
+                                      onClick={() => handleDecryptFile(index)}
+                                      className="mt-2 block mx-auto px-4 py-2 bg-[#DB1E10] text-white rounded-lg hover:bg-[#C10007] transition-colors cursor-pointer"
+                                    >
+                                      {decryptedFiles[fileId] ? "Change Password" : "Enter Password"}
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <div>
+                                    <span className="font-medium">
+                                      {isCorrupted && "Corrupted PDF"}
+                                      {isInvalid && "Invalid PDF"}
+                                    </span>
+                                    <span className="text-sm mt-1 block">Please remove this file</span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          ) : (
+                            /* Individual Pages Preview for "Rotate Specific Pages" Mode */
+                            <div>
+                              {/* Pages Grid */}
+                              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 p-4 max-h-96 overflow-y-auto">
+                                {Array.from({ length: numPages }, (_, i) => i + 1).map(pageNum => {
+                                  const pageRotation = fileRotations[pageNum] || 0;
+                                  const pagePreview = pagePreviews[fileId]?.[pageNum];
+                                  
+                                  return (
+                                    <div 
+                                      key={`${fileId}-page-${pageNum}`}
+                                      className="relative border rounded-md border-gray-200 hover:border-blue-300 transition-colors"
+                                    >
+                                      {/* Rotate Button */}
+                                      <button
+                                        onClick={() => rotatePage(file.name, pageNum, 90)}
+                                        className="absolute top-1 right-1 z-10 p-1 bg-blue-100 text-[#DB1E10] rounded-full hover:bg-[#DB1E10] hover:text-white transition-colors shadow-sm"
+                                        title="Rotate clockwise"
+                                      >
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                        </svg>
+                                      </button>
+                                      
+                                      {/* Page Thumbnail */}
+                                      <div className="flex items-center justify-center h-32 bg-white overflow-hidden">
+                                        {pagePreview ? (
+                                          <div className="flex items-center justify-center w-full h-full">
+                                            <img 
+                                              src={pagePreview} 
+                                              alt={`Page ${pageNum}`}
+                                              style={{ transform: `rotate(${pageRotation}deg)`, transition: 'transform 0.3s ease' }}
+                                              className="max-h-full max-w-full object-contain"
+                                            />
+                                          </div>
+                                        ) : (
+                                          <div className="flex items-center justify-center w-full h-full text-gray-400">
+                                            <svg className="w-6 h-6 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                              <path className="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                          </div>
+                                        )}
+                                      </div>
+                                      
+                                      {/* Page Number and Rotation */}
+                                      <div className="absolute top-1 left-1 bg-gray-800 bg-opacity-70 text-white px-1.5 py-0.5 rounded text-xs">
+                                        {pageNum} • {pageRotation}°
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+
+                              {/* Loading Message if Pages are Still Loading */}
+                              {Object.keys(pagePreviews[fileId] || {}).length < numPages && numPages > 0 && (
+                                <div className="text-center text-sm text-gray-500 py-2">
+                                  Loading all pages... ({Object.keys(pagePreviews[fileId] || {}).length} of {numPages})
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Results Section */}
+              {rotationResult && !isProcessing && (
+                <div ref={resultSectionRef}>
+                  <DownloadSection
+                    files={rotationResult.files}
+                    downloadHandler={handleDownload}
+                    previewHandler={handlePreview}
+                    zipDownloadHandler={
+                      rotationResult.file_count > 1 ? handleDownloadZip : null
+                    }
+                    title="Download Rotated PDFs"
+                    color="red"
+                    startOverHandler={handleReset}
+                  />
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Sidebar */}
@@ -1421,7 +1511,7 @@ const PDFRotator = () => {
                 onClick={handleRotatePDF}
                 className={`w-full ${hasProblematicFiles
                     ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-[#DB1E10] hover:bg-[#DB1E10]'
+                    : 'bg-[#DB1E10] hover:bg-[#C10007]'
                   } text-white font-medium cursor-pointer py-4 rounded-xl transition-colors duration-200 shadow-md`}
                 disabled={files.length === 0 || hasProblematicFiles}
               >
@@ -1465,9 +1555,62 @@ const PDFRotator = () => {
                   </li>
                 </ul>
               </div>
+
+              {/* Tips Section */}
+              <div className="mt-6 border-t border-gray-200 pt-4">
+                <h4 className="text-sm font-medium text-gray-700 mb-2">Tips</h4>
+                <ul className="text-sm text-gray-600 space-y-2">
+                  <li className="flex">
+                    <svg className="w-4 h-4 text-[#DB1E10] mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>Use <strong>"Rotate all pages"</strong> for documents that need the same rotation</span>
+                  </li>
+                  <li className="flex">
+                    <svg className="w-4 h-4 text-[#DB1E10] mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>Use <strong>"Rotate specific pages"</strong> for mixed orientations</span>
+                  </li>
+                  <li className="flex">
+                    <svg className="w-4 h-4 text-[#DB1E10] mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>Click the <strong>rotate button</strong> multiple times for 180° or 270° rotation</span>
+                  </li>
+                  <li className="flex">
+                    <svg className="w-4 h-4 text-[#DB1E10] mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>You can process <strong>multiple PDFs</strong> at once</span>
+                  </li>
+                  <li className="flex">
+                    <svg className="w-4 h-4 text-[#DB1E10] mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>Preview shows the <strong>rotation effect</strong> before processing</span>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         )}
+      </div>
+
+      {/* Global Drag Overlay - Optional visual feedback */}
+      <div
+        id="drag-overlay"
+        className="fixed inset-0 bg-blue-500 bg-opacity-20 z-40 pointer-events-none opacity-0 transition-opacity duration-200 flex items-center justify-center"
+      >
+        <div className="bg-white p-8 rounded-xl shadow-2xl border-2 border-blue-400 border-dashed">
+          <div className="text-center">
+            <svg className="w-16 h-16 text-blue-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+            </svg>
+            <p className="text-xl font-semibold text-gray-700 mb-2">Drop PDF files here</p>
+            <p className="text-gray-500">Files will be added to your rotation queue</p>
+          </div>
+        </div>
       </div>
     </div>
   );

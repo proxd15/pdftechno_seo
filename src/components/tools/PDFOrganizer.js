@@ -1725,7 +1725,7 @@ const handleDragEnd = (event) => {
     {/* Global drag overlay for file drops */}
     <div
       id="drag-overlay"
-      className="fixed inset-0 bg-blue-600 bg-opacity-20 z-40 flex items-center justify-center transition-opacity duration-200 pointer-events-none"
+      className="fixed inset-0 backdrop-filter backdrop-blur-md z-40 flex items-center justify-center transition-opacity duration-200 pointer-events-none"
       style={{ opacity: 0 }}
     >
       <div className="bg-white rounded-xl p-8 shadow-2xl border-2 border-blue-400 border-dashed">

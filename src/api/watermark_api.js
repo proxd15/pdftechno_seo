@@ -274,6 +274,11 @@ export const addImageWatermark = async (pdfFile, imageFile, options, onProgress)
  * @param {Object} options - Watermark options
  * @returns {ArrayBuffer} - Processed PDF with watermark
  */
+/**
+ * Fixed version of applyTextWatermarkInBrowser with proper rotation handling
+ * Fixes: 1) Rotation around central axis 2) Underline rotation 3) Position calculations
+ */
+
 export const applyTextWatermarkInBrowser = async (pdfBytes, options) => {
   try {
     // Load the PDF
@@ -296,8 +301,8 @@ export const applyTextWatermarkInBrowser = async (pdfBytes, options) => {
       isMosaic = false
     } = options;
     
-    console.log("Font style received:", fontStyle);
-    console.log("Text styling options:", { isBold, isItalic, isUnderline });
+    console.log("Using MANUAL ROTATION approach");
+    console.log("Rotation angle:", rotation);
     
     // Adjust font size for better consistency
     const adjustedFontSize = fontSize * 0.75;
@@ -308,7 +313,6 @@ export const applyTextWatermarkInBrowser = async (pdfBytes, options) => {
     
     // Map font style to PDF-lib's StandardFonts
     let fontName;
-    
     if (fontStyle === 'Helvetica') {
       if (isBold && isItalic) fontName = StandardFonts.HelveticaBoldOblique;
       else if (isBold) fontName = StandardFonts.HelveticaBold;
@@ -328,11 +332,8 @@ export const applyTextWatermarkInBrowser = async (pdfBytes, options) => {
       else fontName = StandardFonts.Courier;
     }
     else {
-      // Default to Helvetica if unsupported
       fontName = StandardFonts.Helvetica;
     }
-    
-    console.log("Using font:", fontName);
     
     // Load the selected font
     const font = await pdfDoc.embedFont(fontName);
@@ -350,54 +351,121 @@ export const applyTextWatermarkInBrowser = async (pdfBytes, options) => {
     // Process each page in the range
     for (let i = startPageIndex; i <= endPageIndex; i++) {
       const page = pdfDoc.getPage(i);
-      
-      // Get page dimensions
       const { width, height } = page.getSize();
       
-      // Calculate text dimensions with adjusted size
+      // Calculate text dimensions
       const textWidth = font.widthOfTextAtSize(text, adjustedFontSize);
       const textHeight = font.heightAtSize(adjustedFontSize);
       
-      // Position mapping
-      const positions = {
-        'top-left': { x: 20, y: height - 40 },
-        'top-center': { x: width / 2 - textWidth / 2, y: height - 40 },
-        'top-right': { x: width - 20 - textWidth, y: height - 40 },
-        'mid-left': { x: 20, y: height / 2 },
-        'mid-center': { x: width / 2 - textWidth / 2, y: height / 2 },
-        'mid-right': { x: width - 20 - textWidth, y: height / 2 },
-        'bottom-left': { x: 20, y: 40 },
-        'bottom-center': { x: width / 2 - textWidth / 2, y: 40 },
-        'bottom-right': { x: width - 20 - textWidth, y: 40 }
+      console.log(`Page ${i + 1}: ${width}x${height}, Text: ${textWidth}x${textHeight}`);
+      
+      // Define the CENTER POINTS where we want the text to be positioned
+      const centerPositions = {
+        'top-left': { x: 100, y: height - 100 },
+        'top-center': { x: width / 2, y: height - 100 },
+        'top-right': { x: width - 100, y: height - 100 },
+        'mid-left': { x: 100, y: height / 2 },
+        'mid-center': { x: width / 2, y: height / 2 },
+        'mid-right': { x: width - 100, y: height / 2 },
+        'bottom-left': { x: 100, y: 100 },
+        'bottom-center': { x: width / 2, y: 100 },
+        'bottom-right': { x: width - 100, y: 100 }
       };
       
-      // PDF-Lib uses clockwise rotation
-      const adjustedRotation = rotation * -1;
-      
-      // Function to draw watermark at given position
-      const drawWatermark = (x, y) => {
-        // Draw the main text
-        page.drawText(text, {
-          x,
-          y,
-          size: adjustedFontSize,
-          font,
-          color: rgb(r, g, b),
-          opacity,
-          rotate: degrees(adjustedRotation)
-        });
+      // Function to rotate a point around another point
+      const rotatePoint = (pointX, pointY, centerX, centerY, angleDegrees) => {
+        const angleRad = (angleDegrees * Math.PI) / 180;
+        const cos = Math.cos(angleRad);
+        const sin = Math.sin(angleRad);
         
-        // For underline effect (if needed)
-        if (isUnderline) {
-          // Simplified underline without using descentAtSize
-          // Calculate a position slightly below the text (about 10% of font size)
-          const underlineY = y - (adjustedFontSize * 0.1);
+        // Translate point to origin
+        const translatedX = pointX - centerX;
+        const translatedY = pointY - centerY;
+        
+        // Rotate
+        const rotatedX = translatedX * cos - translatedY * sin;
+        const rotatedY = translatedX * sin + translatedY * cos;
+        
+        // Translate back
+        return {
+          x: rotatedX + centerX,
+          y: rotatedY + centerY
+        };
+      };
+      
+      // Function to draw watermark using MANUAL rotation
+      const drawWatermark = (centerX, centerY) => {
+        console.log(`Target center: (${centerX}, ${centerY}), rotation: ${rotation}°`);
+        
+        // METHOD 1: Draw each character individually with manual positioning
+        if (rotation !== 0) {
+          // Split text into characters for individual positioning
+          const chars = text.split('');
+          let currentX = centerX - textWidth / 2; // Start from left edge
           
-          // Draw a line for underline effect
+          chars.forEach((char, index) => {
+            const charWidth = font.widthOfTextAtSize(char, adjustedFontSize);
+            
+            // Calculate this character's center position (unrotated)
+            const charCenterX = currentX + charWidth / 2;
+            const charCenterY = centerY;
+            
+            // Rotate this character's position around the text center
+            const rotatedPos = rotatePoint(charCenterX, charCenterY, centerX, centerY, rotation);
+            
+            // Draw the character at its rotated position WITH individual rotation
+            page.drawText(char, {
+              x: rotatedPos.x - charWidth / 2,
+              y: rotatedPos.y - textHeight / 2,
+              size: adjustedFontSize,
+              font,
+              color: rgb(r, g, b),
+              opacity,
+              rotate: degrees(rotation) // Each character also rotated
+            });
+            
+            console.log(`Char '${char}' at rotated pos: (${rotatedPos.x}, ${rotatedPos.y})`);
+            
+            currentX += charWidth;
+          });
+        } else {
+          // No rotation - simple center positioning
+          page.drawText(text, {
+            x: centerX - textWidth / 2,
+            y: centerY - textHeight / 2,
+            size: adjustedFontSize,
+            font,
+            color: rgb(r, g, b),
+            opacity
+          });
+        }
+        
+        // Draw underline if needed
+        if (isUnderline && rotation !== 0) {
+          const underlineY = centerY - textHeight / 2 - (adjustedFontSize * 0.15);
+          const underlineStartX = centerX - textWidth / 2;
+          const underlineEndX = centerX + textWidth / 2;
+          
+          // Rotate underline endpoints around center
+          const startRotated = rotatePoint(underlineStartX, underlineY, centerX, centerY, rotation);
+          const endRotated = rotatePoint(underlineEndX, underlineY, centerX, centerY, rotation);
+          
           page.drawLine({
-            start: { x: x, y: underlineY },
-            end: { x: x + textWidth, y: underlineY },
-            thickness: adjustedFontSize * 0.05,
+            start: { x: startRotated.x, y: startRotated.y },
+            end: { x: endRotated.x, y: endRotated.y },
+            thickness: Math.max(1, adjustedFontSize * 0.05),
+            color: rgb(r, g, b),
+            opacity: opacity
+          });
+          
+          console.log(`Underline: (${startRotated.x}, ${startRotated.y}) to (${endRotated.x}, ${endRotated.y})`);
+        } else if (isUnderline) {
+          // Simple underline for non-rotated text
+          const underlineY = centerY - textHeight / 2 - (adjustedFontSize * 0.15);
+          page.drawLine({
+            start: { x: centerX - textWidth / 2, y: underlineY },
+            end: { x: centerX + textWidth / 2, y: underlineY },
+            thickness: Math.max(1, adjustedFontSize * 0.05),
             color: rgb(r, g, b),
             opacity: opacity
           });
@@ -406,18 +474,15 @@ export const applyTextWatermarkInBrowser = async (pdfBytes, options) => {
       
       // Apply watermark based on position or mosaic pattern
       if (isMosaic) {
-        // Apply watermark in a grid pattern
-        Object.values(positions).forEach(pos => {
+        Object.values(centerPositions).forEach(pos => {
           drawWatermark(pos.x, pos.y);
         });
       } else {
-        // Apply watermark at specified position
-        const pos = positions[position];
+        const pos = centerPositions[position];
         drawWatermark(pos.x, pos.y);
       }
     }
     
-    // Save the modified PDF
     const modifiedPdfBytes = await pdfDoc.save();
     return modifiedPdfBytes;
   } catch (error) {
@@ -426,29 +491,80 @@ export const applyTextWatermarkInBrowser = async (pdfBytes, options) => {
   }
 };
 /**
- * Apply image watermark to PDF in browser (client-side processing)
- * @param {ArrayBuffer} pdfBytes - Original PDF file data
- * @param {Blob} imageBlob - Image file to use as watermark
- * @param {Object} options - Watermark options
- * @returns {ArrayBuffer} - Processed PDF with watermark
+ * Fixed version for the preview component's text watermark rendering
+ * This should be used in PDFPreviewWithWatermark.jsx
+ */
+const renderTextWatermarkPreview = () => {
+  const positions = {
+    'top-left': { top: 20, left: 20 },
+    'top-center': { top: 20, left: '50%', transform: 'translateX(-50%)' },
+    'top-right': { top: 20, right: 20 },
+    'mid-left': { top: '50%', left: 20, transform: 'translateY(-50%)' },
+    'mid-center': { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' },
+    'mid-right': { top: '50%', right: 20, transform: 'translateY(-50%)' },
+    'bottom-left': { bottom: 20, left: 20 },
+    'bottom-center': { bottom: 20, left: '50%', transform: 'translateX(-50%)' },
+    'bottom-right': { bottom: 20, right: 20 }
+  };
+  
+  const posStyles = positions[position];
+  
+  // Apply rotation with proper transform origin
+  let transform = posStyles.transform || '';
+  if (rotation !== 0) {
+    // Add rotation to existing transform, with transform-origin at center
+    transform = transform ? `${transform} rotate(${rotation}deg)` : `rotate(${rotation}deg)`;
+  }
+  
+  // Determine font weight and style based on user selections
+  let fontWeight = isBold ? 'bold' : 'normal';
+  let fontStyleValue = isItalic ? 'italic' : 'normal';
+  
+  return (
+    <div 
+      style={{
+        position: 'absolute',
+        ...posStyles,
+        transform,
+        transformOrigin: 'center', // This ensures rotation happens around center
+        fontSize: `${fontSize}px`,
+        color: fontColor,
+        fontFamily: fontStyle === 'Times-Roman' ? 'Times New Roman, serif' : 
+                   fontStyle === 'Courier' ? 'Courier, monospace' : 
+                   'Helvetica, Arial, sans-serif',
+        fontWeight,
+        fontStyle: fontStyleValue,
+        textDecoration: isUnderline ? 'underline' : 'none',
+        textDecorationColor: fontColor, // Ensure underline has same color
+        opacity: opacity,
+        textAlign: 'center',
+        maxWidth: '80%',
+        wordBreak: 'break-word',
+        pointerEvents: 'none',
+        whiteSpace: 'nowrap' // Prevent text wrapping during rotation
+      }}
+    >
+      {watermarkText}
+    </div>
+  );
+};
+
+/**
+ * Additional fixes for image watermark rotation
  */
 export const applyImageWatermarkInBrowser = async (pdfBytes, imageBlob, options) => {
   try {
-    // Load the PDF
     const pdfDoc = await PDFDocument.load(pdfBytes);
     
-    // Convert image blob to array buffer
+    // Embed image
     const imageBytes = await imageBlob.arrayBuffer();
-    
-    // Determine image type and embed it
     let image;
     if (imageBlob.type === 'image/png') {
       image = await pdfDoc.embedPng(imageBytes);
     } else if (imageBlob.type === 'image/jpeg' || imageBlob.type === 'image/jpg') {
       image = await pdfDoc.embedJpg(imageBytes);
     } else {
-      // For other formats, we need to convert to PNG first using canvas
-      // This is a limitation of pdf-lib
+      // Convert to PNG
       const canvas = document.createElement('canvas');
       const img = new Image();
       await new Promise((resolve) => {
@@ -465,11 +581,9 @@ export const applyImageWatermarkInBrowser = async (pdfBytes, imageBlob, options)
       const pngBytes = Uint8Array.from(atob(pngData), c => c.charCodeAt(0));
       image = await pdfDoc.embedPng(pngBytes);
       
-      // Clean up
       URL.revokeObjectURL(img.src);
     }
     
-    // Set up watermark parameters
     const {
       imageSize = 30,
       opacity = 0.5,
@@ -480,67 +594,98 @@ export const applyImageWatermarkInBrowser = async (pdfBytes, imageBlob, options)
       isMosaic = false
     } = options;
     
-    // Convert pages to 1-based to 0-based indexing
     const startPageIndex = Math.max(0, fromPage - 1);
     const endPageIndex = Math.min(pdfDoc.getPageCount() - 1, toPage - 1);
     
-    // Process each page in the range
     for (let i = startPageIndex; i <= endPageIndex; i++) {
       const page = pdfDoc.getPage(i);
-      
-      // Get page dimensions
       const { width, height } = page.getSize();
       
-      // Calculate image dimensions based on imageSize as percentage of page width
       const imgWidth = (width * imageSize) / 100;
       const imgHeight = (imgWidth / image.width) * image.height;
       
-      // Position mapping
-      const positions = {
-        'top-left': { x: 20, y: height - 20 - imgHeight },
-        'top-center': { x: width / 2 - imgWidth / 2, y: height - 20 - imgHeight },
-        'top-right': { x: width - 20 - imgWidth, y: height - 20 - imgHeight },
-        'mid-left': { x: 20, y: height / 2 - imgHeight / 2 },
-        'mid-center': { x: width / 2 - imgWidth / 2, y: height / 2 - imgHeight / 2 },
-        'mid-right': { x: width - 20 - imgWidth, y: height / 2 - imgHeight / 2 },
-        'bottom-left': { x: 20, y: 20 },
-        'bottom-center': { x: width / 2 - imgWidth / 2, y: 20 },
-        'bottom-right': { x: width - 20 - imgWidth, y: 20 }
+      // Center positions
+      const centerPositions = {
+        'top-left': { x: 100, y: height - 100 },
+        'top-center': { x: width / 2, y: height - 100 },
+        'top-right': { x: width - 100, y: height - 100 },
+        'mid-left': { x: 100, y: height / 2 },
+        'mid-center': { x: width / 2, y: height / 2 },
+        'mid-right': { x: width - 100, y: height / 2 },
+        'bottom-left': { x: 100, y: 100 },
+        'bottom-center': { x: width / 2, y: 100 },
+        'bottom-right': { x: width - 100, y: 100 }
       };
       
-      // Function to draw watermark at given position
-      const drawImageWatermark = (x, y) => {
-        page.drawImage(image, {
-          x,
-          y,
-          width: imgWidth,
-          height: imgHeight,
-          opacity,
-          rotate: degrees(rotation)
-        });
+      const drawImageWatermark = (centerX, centerY) => {
+        console.log(`Drawing image at center: (${centerX}, ${centerY}), rotation: ${rotation}°`);
+        
+        // Calculate bottom-left position
+        const imgX = centerX - imgWidth / 2;
+        const imgY = centerY - imgHeight / 2;
+        
+        if (rotation !== 0) {
+          // Use transformation matrix approach for images too
+          const angleRad = (rotation * Math.PI) / 180;
+          const cos = Math.cos(angleRad);
+          const sin = Math.sin(angleRad);
+          
+          const a = cos;
+          const b = sin;
+          const c = -sin;
+          const d = cos;
+          const e = centerX - centerX * cos + centerY * sin;
+          const f = centerY - centerX * sin - centerY * cos;
+          
+          page.pushOperators(
+            `q`,
+            `${a} ${b} ${c} ${d} ${e} ${f} cm`
+          );
+          
+          page.drawImage(image, {
+            x: imgX,
+            y: imgY,
+            width: imgWidth,
+            height: imgHeight,
+            opacity
+          });
+          
+          page.pushOperators(`Q`);
+        } else {
+          page.drawImage(image, {
+            x: imgX,
+            y: imgY,
+            width: imgWidth,
+            height: imgHeight,
+            opacity
+          });
+        }
       };
       
-      // Apply watermark based on position or mosaic pattern
       if (isMosaic) {
-        // Apply watermark in a grid pattern
-        Object.values(positions).forEach(pos => {
+        Object.values(centerPositions).forEach(pos => {
           drawImageWatermark(pos.x, pos.y);
         });
       } else {
-        // Apply watermark at specified position
-        const pos = positions[position];
+        const pos = centerPositions[position];
         drawImageWatermark(pos.x, pos.y);
       }
     }
     
-    // Save the modified PDF
     const modifiedPdfBytes = await pdfDoc.save();
     return modifiedPdfBytes;
   } catch (error) {
-    console.error('Error applying image watermark in browser:', error);
+    console.error('Error applying image watermark:', error);
     throw error;
   }
 };
+/**
+ * Apply image watermark to PDF in browser (client-side processing)
+ * @param {ArrayBuffer} pdfBytes - Original PDF file data
+ * @param {Blob} imageBlob - Image file to use as watermark
+ * @param {Object} options - Watermark options
+ * @returns {ArrayBuffer} - Processed PDF with watermark
+ */
 
 /**
  * Send pre-watermarked PDF to backend for storage/tracking
