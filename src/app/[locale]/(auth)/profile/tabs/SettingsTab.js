@@ -312,59 +312,7 @@ const SettingsTab = ({ profile, onProfileUpdate }) => {
           <h4 className="text-lg font-medium text-gray-900">Privacy</h4>
         </div>
 
-        <div className="space-y-4">
-          {/* Profile Visibility */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Profile Visibility
-            </label>
-            <div className="space-y-2">
-              <div
-                className={`relative rounded-lg border-2 cursor-pointer transition-colors ${
-                  preferences.profile_visibility === 'private'
-                    ? 'border-red-500 bg-red-50'
-                    : 'border-gray-200 bg-white hover:border-gray-300'
-                }`}
-                onClick={() => handlePreferenceChange('profile_visibility', 'private')}
-              >
-                <div className="p-4 flex items-center justify-between">
-                  <div className="flex items-center">
-                    <EyeOff className="w-5 h-5 text-gray-400 mr-3" />
-                    <div>
-                      <h5 className="text-sm font-medium text-gray-900">Private</h5>
-                      <p className="text-xs text-gray-500">Your profile is only visible to you</p>
-                    </div>
-                  </div>
-                  {preferences.profile_visibility === 'private' && (
-                    <CheckCircle className="w-5 h-5 text-red-600" />
-                  )}
-                </div>
-              </div>
-
-              <div
-                className={`relative rounded-lg border-2 cursor-pointer transition-colors ${
-                  preferences.profile_visibility === 'public'
-                    ? 'border-red-500 bg-red-50'
-                    : 'border-gray-200 bg-white hover:border-gray-300'
-                }`}
-                onClick={() => handlePreferenceChange('profile_visibility', 'public')}
-              >
-                <div className="p-4 flex items-center justify-between">
-                  <div className="flex items-center">
-                    <Eye className="w-5 h-5 text-gray-400 mr-3" />
-                    <div>
-                      <h5 className="text-sm font-medium text-gray-900">Public</h5>
-                      <p className="text-xs text-gray-500">Your profile can be seen by others</p>
-                    </div>
-                  </div>
-                  {preferences.profile_visibility === 'public' && (
-                    <CheckCircle className="w-5 h-5 text-red-600" />
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+     
       </div>
 
       {/* Save Button */}
@@ -393,101 +341,9 @@ const SettingsTab = ({ profile, onProfileUpdate }) => {
       </div>
 
       {/* Danger Zone */}
-      <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-        <div className="flex items-center mb-4">
-          <AlertTriangle className="w-5 h-5 text-red-600 mr-2" />
-          <h4 className="text-lg font-medium text-red-900">Danger Zone</h4>
-        </div>
-        
-        <div className="space-y-4">
-          <div>
-            <h5 className="text-sm font-medium text-red-900">Delete Account</h5>
-            <p className="text-sm text-red-700 mt-1">
-              Permanently delete your account and all associated data. This action cannot be undone.
-            </p>
-            <button
-              onClick={() => setDeleteModal({ ...deleteModal, isOpen: true })}
-              className="mt-3 inline-flex items-center px-4 py-2 border border-red-300 rounded-md shadow-sm text-sm font-medium text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-            >
-              <Trash2 className="w-4 h-4 mr-2" />
-              Delete Account
-            </button>
-          </div>
-        </div>
-      </div>
-
+   
       {/* Delete Account Modal */}
-      {deleteModal.isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl p-6 max-w-md w-full shadow-2xl">
-            <div className="flex items-center mb-4">
-              <AlertTriangle className="w-6 h-6 text-red-600 mr-2" />
-              <h3 className="text-xl font-semibold text-red-900">Delete Account</h3>
-            </div>
-            
-            <p className="text-gray-600 mb-4">
-              This action will permanently delete your account and all associated data. 
-              This cannot be undone.
-            </p>
-
-            {deleteModal.error && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
-                {deleteModal.error}
-              </div>
-            )}
-
-            <form onSubmit={handleDeleteAccount} className="space-y-4">
-              {profile?.has_password && (
-                <div>
-                  <label htmlFor="delete-password" className="block text-sm font-medium text-gray-700 mb-1">
-                    Enter your password to confirm
-                  </label>
-                  <input
-                    type="password"
-                    id="delete-password"
-                    value={deleteModal.password}
-                    onChange={(e) => setDeleteModal(prev => ({ ...prev, password: e.target.value, error: '' }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
-                    placeholder="Enter your password"
-                    required
-                  />
-                </div>
-              )}
-
-              <div>
-                <label htmlFor="delete-confirmation" className="block text-sm font-medium text-gray-700 mb-1">
-                  Type <strong>DELETE</strong> to confirm
-                </label>
-                <input
-                  type="text"
-                  id="delete-confirmation"
-                  value={deleteModal.confirmation}
-                  onChange={(e) => setDeleteModal(prev => ({ ...prev, confirmation: e.target.value, error: '' }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
-                  placeholder="Type DELETE"
-                  required
-                />
-              </div>
-
-              <div className="flex justify-end space-x-3 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setDeleteModal({ isOpen: false, password: '', confirmation: '', error: '' })}
-                  className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
-                >
-                  Delete Account
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+   
     </div>
   );
 };

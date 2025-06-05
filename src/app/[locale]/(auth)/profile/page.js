@@ -7,7 +7,7 @@ import ProfileSidebar from './tabs/ProfileSidebar';
 import AccountTab from './tabs/AccountTab';
 import SecurityTab from './tabs/SecurityTab';
 import StatsTab from './tabs/StatsTab';
-import SettingsTab from './tabs/SettingsTab';
+// import SettingsTab from './tabs/SettingsTab';
 import ActivityTab from './tabs/ActivityTab';
 
 import { User, Shield, BarChart3, Settings, Activity, FileText } from 'lucide-react';
@@ -38,12 +38,6 @@ const ProfilePage = () => {
       label: 'Statistics',
       icon: BarChart3,
       component: StatsTab
-    },
-    {
-      id: 'settings',
-      label: 'Settings',
-      icon: Settings,
-      component: SettingsTab
     },
     {
       id: 'activity',
