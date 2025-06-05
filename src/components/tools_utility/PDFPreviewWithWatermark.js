@@ -23,6 +23,8 @@ const PDFPreviewWithWatermark = ({
   const [previewPdfDocument, setPreviewPdfDocument] = useState(null);
   const [originalPdfArrayBuffer, setOriginalPdfArrayBuffer] = useState(null);
   const [lastRenderTimestamp, setLastRenderTimestamp] = useState(0);
+  const [useFallbackPreview, setUseFallbackPreview] = useState(false);
+
   
   // Track whether we need a full regeneration or not
   const needsFullRegeneration = useRef(false);
@@ -176,51 +178,59 @@ useEffect(() => {
   }, [generatePdfPreview]);
   
   // Render the preview PDF - implement more optimizations here
-  const renderPreviewPage = useCallback(async () => {
-    if (!previewPdfDocument || !canvasRef.current) return;
+ const renderPreviewPage = useCallback(async () => {
+  if (!previewPdfDocument || !canvasRef.current) return;
+  
+  const now = Date.now();
+  if (now - lastRenderTimestamp < 100) return;
+  
+  setLastRenderTimestamp(now);
+  
+  try {
+    const page = await previewPdfDocument.getPage(1);
+    const canvas = canvasRef.current;
+    const context = canvas.getContext('2d');
     
-    // Throttle rendering to prevent excessive redraws
-    const now = Date.now();
-    if (now - lastRenderTimestamp < 100) return; // Don't render more than once every 100ms
+    // Clear canvas first
+    context.clearRect(0, 0, canvas.width, canvas.height);
     
-    setLastRenderTimestamp(now);
+    const containerWidth = canvas.parentNode.clientWidth || 400;
+    const containerHeight = 350;
     
-    try {
-      // Get the first page
-      const page = await previewPdfDocument.getPage(1);
-      
-      // Set up canvas
-      const canvas = canvasRef.current;
-      const context = canvas.getContext('2d');
-      
-      // Calculate viewport to fit canvas container
-      const containerWidth = canvas.parentNode.clientWidth || 400;
-      const containerHeight = 350; // Fixed height to avoid layout shifts
-      
-      const originalViewport = page.getViewport({ scale: 1 });
-      const scaleX = containerWidth / originalViewport.width;
-      const scaleY = containerHeight / originalViewport.height;
-      const scale = Math.min(scaleX, scaleY, 2.0); // Limit max scale to 2.0 for performance
-      
-      setPreviewScale(scale);
-      
-      const viewport = page.getViewport({ scale });
-      
-      // Update canvas size
-      canvas.height = viewport.height;
-      canvas.width = viewport.width;
-      
-      // Render the page
-      await page.render({
-        canvasContext: context,
-        viewport
-      }).promise;
-      
-    } catch (error) {
-      console.error('Error rendering preview:', error);
-      setPreviewError('Failed to render preview');
+    const originalViewport = page.getViewport({ scale: 1 });
+    const scaleX = containerWidth / originalViewport.width;
+    const scaleY = containerHeight / originalViewport.height;
+    const scale = Math.min(scaleX, scaleY, 2.0);
+    
+    setPreviewScale(scale);
+    
+    const viewport = page.getViewport({ scale });
+    
+    canvas.height = viewport.height;
+    canvas.width = viewport.width;
+    
+    await page.render({
+      canvasContext: context,
+      viewport
+    }).promise;
+    
+    // Clear any previous errors on successful render
+    setPreviewError(null);
+    setUseFallbackPreview(false);
+    
+  } catch (error) {
+    console.error('Error rendering preview:', error);
+    
+    // Try fallback to original document
+    if (!useFallbackPreview && pdfDocument) {
+      console.log("Attempting fallback to original document");
+      setUseFallbackPreview(true);
+      setPreviewPdfDocument(pdfDocument);
+    } else {
+      setPreviewError('Preview temporarily unavailable');
     }
-  }, [previewPdfDocument, lastRenderTimestamp]);
+  }
+}, [previewPdfDocument, lastRenderTimestamp, useFallbackPreview, pdfDocument]);
   
   // Render the PDF when the document changes
   useEffect(() => {

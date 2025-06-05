@@ -56,11 +56,20 @@ const PDFRotator = () => {
 
   // Function to check if file already exists
   const isFileAlreadyAdded = (newFile) => {
-    return files.some(existingFile => 
-      existingFile.name === newFile.name && 
-      existingFile.size === newFile.size &&
-      existingFile.lastModified === newFile.lastModified
-    );
+    return files.some(existingFile => {
+      // Basic checks first
+      if (existingFile.name !== newFile.name || existingFile.size !== newFile.size) {
+        return false;
+      }
+
+      // More reliable check using file content if available
+      if (existingFile.lastModified && newFile.lastModified) {
+        return existingFile.lastModified === newFile.lastModified;
+      }
+
+      // Fallback check
+      return existingFile.name === newFile.name && existingFile.size === newFile.size;
+    });
   };
 
   // Function to generate unique identifier for files
@@ -71,7 +80,7 @@ const PDFRotator = () => {
   // Validate files before adding them with duplicate checking
   const addFilesWithValidation = (newFiles) => {
     console.log('Adding files with validation:', newFiles.map(f => f.name));
-    
+
     // Reset error
     setError(null);
 
@@ -89,15 +98,23 @@ const PDFRotator = () => {
       return;
     }
 
-    // Check for duplicates
+    // Check for duplicates and collect names
+    const duplicateNames = [];
     const uniqueFiles = pdfFiles.filter(file => {
       if (isFileAlreadyAdded(file)) {
-        console.log(`File "${file.name}" already exists, skipping`);
-        setError(`"${file.name}" is already added. Duplicate files are not allowed.`);
+        duplicateNames.push(file.name);
         return false;
       }
       return true;
     });
+
+    if (duplicateNames.length > 0) {
+      setError(
+        duplicateNames.length === 1
+          ? `"${duplicateNames[0]}" is already added. Duplicate files are not allowed.`
+          : `These files are already added: ${duplicateNames.join(', ')}`
+      );
+    }
 
     if (uniqueFiles.length === 0) {
       console.log('All files were duplicates');
@@ -210,7 +227,7 @@ const PDFRotator = () => {
 
       for (const file of files) {
         const fileId = generateFileId(file);
-        
+
         // Use file ID instead of name to handle files with same names
         if (!previews[fileId]) {
           try {
@@ -576,6 +593,9 @@ const PDFRotator = () => {
   };
 
   // Set up document-wide drag and drop with duplicate prevention
+  // Replace your entire useEffect for document drag and drop with this:
+  // Replace your entire useEffect for document drag and drop with this simplified version:
+  // Replace your entire useEffect for document drag and drop with this simplified version:
   useEffect(() => {
     // Get the drag overlay element
     const dragOverlay = document.getElementById('drag-overlay');
@@ -607,11 +627,12 @@ const PDFRotator = () => {
       }
     };
 
-    // Add drop event listener to the entire document with duplicate checking
+    // Add drop event listener to the entire document
     const handleDocumentDrop = (e) => {
       e.preventDefault();
       e.stopPropagation();
       setIsDragging(false);
+      console.log("Document drop triggered!");
 
       // Hide the drag overlay
       if (dragOverlay) {
@@ -638,7 +659,16 @@ const PDFRotator = () => {
       document.removeEventListener('dragleave', handleDocumentDragLeave);
       document.removeEventListener('drop', handleDocumentDrop);
     };
-  }, [files]); // Add files as dependency to get latest state
+  }, []); // Remove files dependency - keep it simple like PDFSplitter
+  // Also update your drag overlay CSS class to always start with pointer-events-none:
+  // Change this line in your JSX:
+  // FROM: className="fixed inset-0 backdrop-filter backdrop-blur-md z-40 pointer-events-none opacity-0 transition-opacity duration-200 flex items-center justify-center"
+  // TO: className="fixed inset-0 backdrop-filter backdrop-blur-md z-40 opacity-0 transition-opacity duration-200 flex items-center justify-center" style={{pointerEvents: 'none'}}
+
+  // Also update your drag overlay CSS class to always start with pointer-events-none:
+  // Change this line in your JSX:
+  // FROM: className="fixed inset-0 backdrop-filter backdrop-blur-md z-40 pointer-events-none opacity-0 transition-opacity duration-200 flex items-center justify-center"
+  // TO: className="fixed inset-0 backdrop-filter backdrop-blur-md z-40 opacity-0 transition-opacity duration-200 flex items-center justify-center" style={{pointerEvents: 'none'}}
 
   // Local drag event handlers for visual feedback with duplicate checking
   const handleDragEnter = (e) => {
@@ -650,8 +680,17 @@ const PDFRotator = () => {
   const handleDragLeave = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!e.currentTarget.contains(e.relatedTarget)) {
+    // Only set isDragging to false if we're leaving the document or the drag overlay
+    if (!e.relatedTarget ||
+      e.relatedTarget === document.documentElement ||
+      e.relatedTarget.id === 'drag-overlay') {
       setIsDragging(false);
+
+      // Hide the drag overlay
+      const dragOverlay = document.getElementById('drag-overlay');
+      if (dragOverlay) {
+        dragOverlay.style.opacity = '0';
+      }
     }
   };
 
@@ -701,7 +740,7 @@ const PDFRotator = () => {
     const updatedFiles = [...files];
     const removedFile = updatedFiles[index];
     const fileId = generateFileId(removedFile);
-    
+
     updatedFiles.splice(index, 1);
     setFiles(updatedFiles);
 
@@ -826,7 +865,7 @@ const PDFRotator = () => {
     // Find the file and generate its ID
     const file = files.find(f => f.name === fileName);
     if (!file) return;
-    
+
     const fileId = generateFileId(file);
     const numPages = pageInfo[fileId] || 0;
 
@@ -881,7 +920,7 @@ const PDFRotator = () => {
     // Find the file and generate its ID
     const file = files.find(f => f.name === fileName);
     if (!file) return;
-    
+
     const fileId = generateFileId(file);
 
     setPageRotations(prev => {
@@ -972,7 +1011,7 @@ const PDFRotator = () => {
       // Loop through each file and its page rotations
       for (const file of files) {
         const fileId = generateFileId(file);
-        
+
         // Add all files
         formData.append('pdf_files', file);
 
@@ -1185,9 +1224,8 @@ const PDFRotator = () => {
 
               {/* Drop Zone - Always active when files are shown */}
               <div
-                className={`w-full border-2 border-dashed rounded-lg mb-6 p-4 text-center drop-zone ${
-                  isDragging ? 'border-blue-400 bg-blue-50' : 'border-gray-200 bg-gray-50'
-                } transition-all duration-200 hover:border-blue-300`}
+                className={`w-full border-2 border-dashed rounded-lg mb-6 p-4 text-center drop-zone ${isDragging ? 'border-blue-400 bg-blue-50' : 'border-gray-200 bg-gray-50'
+                  } transition-all duration-200 hover:border-blue-300`}
                 onDragEnter={handleDragEnter}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
@@ -1214,7 +1252,7 @@ const PDFRotator = () => {
                         const fileId = generateFileId(gridFile);
                         const gridPreviewState = previews[fileId];
                         const gridFileRotations = pageRotations[fileId] || {};
-                        
+
                         return (
                           <div key={`${fileId}-${gridIndex}`} className="relative border rounded-md overflow-hidden bg-white shadow-sm">
                             {/* Rotate Button */}
@@ -1227,37 +1265,44 @@ const PDFRotator = () => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                               </svg>
                             </button>
-                            
+
                             {/* Document Preview */}
-                            <div className="flex items-center justify-center p-4 h-40">
-                              {gridPreviewState && typeof gridPreviewState === 'string' ? (
-                                <img
-                                  src={gridPreviewState}
-                                  alt={`Preview of ${gridFile.name}`}
-                                  style={{ transform: `rotate(${gridFileRotations[1] || 0}deg)` }}
-                                  className="max-h-full max-w-full object-contain transition-transform duration-300"
-                                />
-                              ) : (
-                                <div className="text-gray-400 flex flex-col items-center">
-                                  <svg
-                                    className="w-8 h-8 mb-1"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth="2"
-                                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                                    />
-                                  </svg>
-                                  <span className="text-xs">Loading...</span>
-                                </div>
-                              )}
-                            </div>
-                            
+                            <div className="flex items-center justify-center p-4 h-40 overflow-hidden">
+  {gridPreviewState && typeof gridPreviewState === 'string' ? (
+    <div className="flex items-center justify-center w-full h-full">
+      <img
+        src={gridPreviewState}
+        alt={`Preview of ${gridFile.name}`}
+        style={{ 
+          transform: `rotate(${gridFileRotations[1] || 0}deg)`,
+          maxWidth: '100%',
+          maxHeight: '100%',
+          objectFit: 'contain'
+        }}
+        className="transition-transform duration-300"
+      />
+    </div>
+  ) : (
+    <div className="text-gray-400 flex flex-col items-center">
+      <svg
+        className="w-8 h-8 mb-1"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+        />
+      </svg>
+      <span className="text-xs">Loading...</span>
+    </div>
+  )}
+</div>
+
                             {/* File Name & Rotation */}
                             <div className="p-2 bg-gray-50 border-t text-center">
                               <p className="text-xs font-medium text-gray-700 truncate" title={gridFile.name}>
@@ -1291,9 +1336,8 @@ const PDFRotator = () => {
                     return (
                       <div
                         key={fileId}
-                        className={`border rounded-xl overflow-hidden ${
-                          hasError ? 'border-red-300 bg-red-50' : 'bg-white'
-                        } shadow-sm transition-shadow duration-200`}
+                        className={`border rounded-xl overflow-hidden ${hasError ? 'border-red-300 bg-red-50' : 'bg-white'
+                          } shadow-sm transition-shadow duration-200`}
                       >
                         <div className="flex flex-col">
                           {/* File Info Header */}
@@ -1306,7 +1350,7 @@ const PDFRotator = () => {
                                 {formatFileSize(file.size)} • {numPages} {numPages === 1 ? 'page' : 'pages'}
                               </p>
                             </div>
-                            
+
                             <button
                               onClick={() => removeFile(index)}
                               className="text-red-500 cursor-pointer hover:text-red-700 p-1"
@@ -1377,9 +1421,9 @@ const PDFRotator = () => {
                                 {Array.from({ length: numPages }, (_, i) => i + 1).map(pageNum => {
                                   const pageRotation = fileRotations[pageNum] || 0;
                                   const pagePreview = pagePreviews[fileId]?.[pageNum];
-                                  
+
                                   return (
-                                    <div 
+                                    <div
                                       key={`${fileId}-page-${pageNum}`}
                                       className="relative border rounded-md border-gray-200 hover:border-blue-300 transition-colors"
                                     >
@@ -1393,28 +1437,34 @@ const PDFRotator = () => {
                                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                                         </svg>
                                       </button>
-                                      
+
                                       {/* Page Thumbnail */}
-                                      <div className="flex items-center justify-center h-32 bg-white overflow-hidden">
-                                        {pagePreview ? (
-                                          <div className="flex items-center justify-center w-full h-full">
-                                            <img 
-                                              src={pagePreview} 
-                                              alt={`Page ${pageNum}`}
-                                              style={{ transform: `rotate(${pageRotation}deg)`, transition: 'transform 0.3s ease' }}
-                                              className="max-h-full max-w-full object-contain"
-                                            />
-                                          </div>
-                                        ) : (
-                                          <div className="flex items-center justify-center w-full h-full text-gray-400">
-                                            <svg className="w-6 h-6 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                              <path className="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                            </svg>
-                                          </div>
-                                        )}
-                                      </div>
-                                      
+                                     <div className="flex items-center justify-center h-32 bg-white overflow-hidden">
+  {pagePreview ? (
+    <div className="flex items-center  justify-center w-full h-full">
+      <img 
+        src={pagePreview} 
+        alt={`Page ${pageNum}`}
+        style={{ 
+          transform: `rotate(${pageRotation}deg)`, 
+          transition: 'transform 0.3s ease',
+          maxWidth: '100%',
+          maxHeight: '100%',
+          objectFit: 'contain'
+        }}
+        className="block"
+      />
+    </div>
+  ) : (
+    <div className="flex items-center justify-center w-full h-full text-gray-400">
+      <svg className="w-6 h-6 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+        <path className="opacity-75" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+    </div>
+  )}
+</div>
+
                                       {/* Page Number and Rotation */}
                                       <div className="absolute top-1 left-1 bg-gray-800 bg-opacity-70 text-white px-1.5 py-0.5 rounded text-xs">
                                         {pageNum} • {pageRotation}°
@@ -1510,8 +1560,8 @@ const PDFRotator = () => {
               <button
                 onClick={handleRotatePDF}
                 className={`w-full ${hasProblematicFiles
-                    ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-[#DB1E10] hover:bg-[#C10007]'
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-[#DB1E10] hover:bg-[#C10007]'
                   } text-white font-medium cursor-pointer py-4 rounded-xl transition-colors duration-200 shadow-md`}
                 disabled={files.length === 0 || hasProblematicFiles}
               >
@@ -1599,19 +1649,19 @@ const PDFRotator = () => {
 
       {/* Global Drag Overlay - Optional visual feedback */}
       <div
-        id="drag-overlay"
-        className="fixed inset-0 bg-blue-500 bg-opacity-20 z-40 pointer-events-none opacity-0 transition-opacity duration-200 flex items-center justify-center"
-      >
-        <div className="bg-white p-8 rounded-xl shadow-2xl border-2 border-blue-400 border-dashed">
-          <div className="text-center">
-            <svg className="w-16 h-16 text-blue-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-            </svg>
-            <p className="text-xl font-semibold text-gray-700 mb-2">Drop PDF files here</p>
-            <p className="text-gray-500">Files will be added to your rotation queue</p>
-          </div>
-        </div>
-      </div>
+  id="drag-overlay"
+  className="fixed inset-0 backdrop-filter backdrop-blur-md z-40 pointer-events-none opacity-0 transition-opacity duration-200 flex items-center justify-center"
+>
+  <div className="bg-white p-8 rounded-xl shadow-2xl border-2 border-blue-400 border-dashed">
+    <div className="text-center">
+      <svg className="w-16 h-16 text-blue-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+      </svg>
+      <p className="text-xl font-semibold text-gray-700 mb-2">Drop PDF files here</p>
+      <p className="text-gray-500">Files will be added to your rotation queue</p>
+    </div>
+  </div>
+</div>
     </div>
   );
 };

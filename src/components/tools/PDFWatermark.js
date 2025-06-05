@@ -1398,24 +1398,32 @@ const renderImageWatermarkPreview = () => {
                             </span>
                           </div>
                         </div>
-                        <div className="w-1/2">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Rotation
-                          </label>
-                          <div className="flex items-center">
-                            <input
-                              type="range"
-                              min="0"
-                              max="359"
-                              value={rotation}
-                              onChange={(e) => setRotation(parseInt(e.target.value, 10))}
-                              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                            />
-                            <span className="ml-3 w-12 text-center text-sm font-medium text-gray-700">
-                              {rotation}°
-                            </span>
-                          </div>
-                        </div>
+                      <div className="w-1/2">
+  <label className="block text-sm font-medium text-gray-700 mb-2">
+    Rotation
+  </label>
+  <div className="grid grid-cols-4 gap-2">
+    {[0, 45, 90, 135, 180, 225, 270, 315].map((angle) => (
+      <button
+        key={angle}
+        type="button"
+        onClick={() => setRotation(angle)}
+        className={`
+          px-3 py-2 text-sm font-medium rounded-md border transition-colors
+          ${rotation === angle 
+            ? 'bg-[#DA1F10] text-white border-[#DA1F10]' 
+            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+          }
+        `}
+      >
+        {angle}°
+      </button>
+    ))}
+  </div>
+  <div className="mt-2 text-center">
+    <span className="text-sm text-gray-600">Current: {rotation}°</span>
+  </div>
+</div>
                       </div>
                       
                       {/* Page Range */}
