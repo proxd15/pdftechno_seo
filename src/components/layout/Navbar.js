@@ -245,6 +245,19 @@ export default function Navbar() {
                 >
                   {t('navbar.home')}
                 </Link>
+                <Link
+                  href={getLocalizedHref('/merge-pdf')}
+                  className="px-4 py-2 text-gray-800 hover:text-red-600"
+                >
+                  {t('navbar.merge')}
+                </Link>
+
+                <Link
+                  href={getLocalizedHref('/compress-pdf')}
+                  className="px-4 py-2 text-gray-800 hover:text-red-600"
+                >
+                  {t('navbar.compress')}
+                </Link>
 
                 <div
                   ref={toolsButtonRef}
@@ -622,6 +635,7 @@ export default function Navbar() {
                     </div>
                   )}
                 </div>
+                
               </div>
             </div>
             </div>

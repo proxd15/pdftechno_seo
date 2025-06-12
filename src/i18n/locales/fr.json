@@ -1,6 +1,8 @@
 {
     "navbar": {
       "home": "Accueil",
+          "merge": "Merge PDF",
+    "compress": "Compress PDF",
       "allTools": "Tous les Outils",
       "login": "Connexion",
       "signUp": "S'inscrire",
