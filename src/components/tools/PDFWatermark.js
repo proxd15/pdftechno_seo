@@ -86,6 +86,8 @@ const PDFWatermark = () => {
     error: '',
     password: ''
   });
+
+  
   
   // State for preview modal
   const [previewModal, setPreviewModal] = useState({
@@ -108,6 +110,7 @@ const PDFWatermark = () => {
     }
   }, [result]);
   
+
   // Validate inputs when they change
   useEffect(() => {
     // Validate start page
@@ -335,15 +338,40 @@ const PDFWatermark = () => {
     }
   };
   
-  const handleFilesSelected = (selectedFiles) => {
-    if (selectedFiles && selectedFiles.length > 0) {
-      // Take only the first file
-      const newFile = selectedFiles[0];
-      if (validateFile(newFile)) {
-        setFile(newFile);
+ const handleFilesSelected = (selectedFiles) => {
+  console.log('handleFilesSelected called with:', selectedFiles);
+  
+  if (selectedFiles && selectedFiles.length > 0) {
+    // Take only the first file
+    const newFile = selectedFiles[0];
+    console.log('Processing file:', newFile.name, newFile.size);
+    
+    if (validateFile(newFile)) {
+      // Clear all existing state before setting new file
+      setError(null);
+      setResult(null);
+      setPageImages([]);
+      setIsLoadingPages(false);
+      setPageCount(0);
+      setIsEncrypted(false);
+      setIsDecrypted(false);
+      setPdfDocument(null);
+      
+      // Clear watermark cache
+      if (window.clearWatermarkPreviewCache) {
+        window.clearWatermarkPreviewCache();
       }
+      
+      // Set the new file
+      setFile(newFile);
+      console.log('File validation passed, file set');
+    } else {
+      console.log('File validation failed');
     }
-  };
+  } else {
+    console.log('No files provided to handleFilesSelected');
+  }
+};
   
   const handleImageSelected = (e) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -357,40 +385,52 @@ const PDFWatermark = () => {
   };
   
   // Reset to initial state
-  const handleReset = () => {
-    setFile(null);
-    setWatermarkImage(null);
-    setWatermarkImagePreview(null);
-    setPdfDocument(null);
-    setPageImages([]);
-    setIsLoadingPages(false);
-    setPageCount(0);
-    setIsEncrypted(false);
-    setIsDecrypted(false);
-    setIsProcessing(false);
-    setProgress(0);
-    setError(null);
-    setResult(null);
-    
-    // Reset to default values
-    setWatermarkType('text');
-    setPosition('mid-center');
-    setOpacity(0.5);
-    setRotation(0);
-    setFromPage(1);
-    setToPage('');
-    setIsMosaic(false);
-    
-    setWatermarkText('PDF Techno');
-    setFontSize(40);
-    setFontStyle('Helvetica');
-    setFontColor('#FF0000');
-    setIsBold(false);
-    setIsItalic(false);
-    setIsUnderline(false);
-    
-    setImageSize(30);
-  };
+ const handleReset = () => {
+  // Clear watermark cache first
+  if (window.clearWatermarkPreviewCache) {
+    window.clearWatermarkPreviewCache();
+  }
+  
+  setFile(null);
+  setWatermarkImage(null);
+  setWatermarkImagePreview(null);
+  setPdfDocument(null);
+  setPageImages([]);
+  setIsLoadingPages(false);
+  setPageCount(0);
+  setIsEncrypted(false);
+  setIsDecrypted(false);
+  setIsProcessing(false);
+  setProgress(0);
+  setError(null);
+  setResult(null);
+  
+  // Reset to default values
+  setWatermarkType('text');
+  setPosition('mid-center');
+  setOpacity(0.5);
+  setRotation(0);
+  setFromPage(1);
+  setToPage('');
+  setIsMosaic(false);
+  
+  setWatermarkText('PDF Techno');
+  setFontSize(40);
+  setFontStyle('Helvetica');
+  setFontColor('#FF0000');
+  setIsBold(false);
+  setIsItalic(false);
+  setIsUnderline(false);
+  
+  setImageSize(30);
+  
+  // Clear password modal
+  setPasswordModal({
+    isOpen: false,
+    error: '',
+    password: ''
+  });
+};
   
   // Validate files before adding them
   const validateFile = (newFile) => {
@@ -462,16 +502,24 @@ const PDFWatermark = () => {
     }
   };
   
-  const handleFileChange = (e) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const selectedFile = e.target.files[0];
-      if (validateFile(selectedFile)) {
-        setFile(selectedFile);
-      }
+const handleFileChange = (e) => {
+  console.log('File input changed:', e.target.files); // Debug log
+  
+  if (e.target.files && e.target.files.length > 0) {
+    const selectedFile = e.target.files[0];
+    console.log('Selected file:', selectedFile.name, selectedFile.size); // Debug log
+    
+    if (validateFile(selectedFile)) {
+      setFile(selectedFile);
+      console.log('File set successfully'); // Debug log
     }
-    // Reset the input value to allow selecting the same file again
-    e.target.value = null;
-  };
+  }
+  
+  // Reset the input value to allow selecting the same file again
+  if (e.target) {
+    e.target.value = '';
+  }
+};
   
   // Replace the existing handleApplyWatermark function in PDFWatermark.jsx with this implementation
 
@@ -693,6 +741,40 @@ const handleApplyWatermark = async () => {
     }
   };
   
+  const handleFileInputClick = () => {
+  // Reset any existing error
+  setError(null);
+  
+  // Try multiple approaches to trigger file input
+  if (fileInputRef.current) {
+    // Method 1: Direct click
+    fileInputRef.current.click();
+  } else {
+    // Method 2: Fallback - find and click the input
+    const fileInput = document.querySelector('input[type="file"][accept="application/pdf"]');
+    if (fileInput) {
+      fileInput.click();
+    } else {
+      // Method 3: Create a new file input if needed
+      const newInput = document.createElement('input');
+      newInput.type = 'file';
+      newInput.accept = 'application/pdf';
+      newInput.style.display = 'none';
+      newInput.onchange = (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+          const selectedFile = e.target.files[0];
+          if (validateFile(selectedFile)) {
+            setFile(selectedFile);
+          }
+        }
+        // Remove the temporary input
+        document.body.removeChild(newInput);
+      };
+      document.body.appendChild(newInput);
+      newInput.click();
+    }
+  }
+};
   // Function to close the PDF preview modal
   const handleClosePreview = () => {
     setPreviewModal({
@@ -892,6 +974,7 @@ const renderImageWatermarkPreview = () => {
         className="hidden"
         accept="application/pdf"
         onChange={handleFileChange}
+        key={`file-input-${Date.now()}`} // Force re-render with unique key
       />
       <input
         type="file"
@@ -899,6 +982,7 @@ const renderImageWatermarkPreview = () => {
         className="hidden"
         accept="image/*"
         onChange={handleImageSelected}
+        key={`image-input-${Date.now()}`} // Force re-render with unique key
       />
       
       {/* Modal Loader */}
@@ -1055,7 +1139,12 @@ const renderImageWatermarkPreview = () => {
                     Remove File
                   </button>
                   <button
-                    onClick={() => fileInputRef.current?.click()}
+                    onClick={() => {
+        console.log('Change file button clicked'); // Debug log
+        // Try the primary method first
+        handleFileInputClick();
+      
+      }}
                     className="text-blue-700 cursor-pointer hover:text-blue-800 font-medium flex items-center text-sm"
                   >
                     <svg
@@ -1098,28 +1187,28 @@ const renderImageWatermarkPreview = () => {
 {/* PDF Preview with Watermark - Sticky when scrolling */}
 <div className="mb-8 w-1/3 sticky top-6" style={{ height: 'fit-content', maxHeight: '90vh', overflowY: 'auto' }}>
 <PDFPreviewWithWatermark
-    file={file}
-    
-    watermarkType={watermarkType}
-    watermarkOptions={{
-      text: watermarkText,
-      fontSize: fontSize,
-      fontColor: fontColor,
-      fontStyle: fontStyle,
-      opacity: opacity,
-      rotation: rotation,
-      position: position,
-      isBold: isBold,
-      isItalic: isItalic,
-      isUnderline: isUnderline,
-      isMosaic: isMosaic,
-      imageSize: imageSize
-    }}
-    watermarkImage={watermarkImage}
-    pdfDocument={pdfDocument}
-    isPasswordProtected={isEncrypted}
-    isDecrypted={isDecrypted}
-  />
+  file={file}
+  key={file ? `${file.name}-${file.size}-${file.lastModified}` : 'no-file'} // Add this key prop
+  watermarkType={watermarkType}
+  watermarkOptions={{
+    text: watermarkText,
+    fontSize: fontSize,
+    fontColor: fontColor,
+    fontStyle: fontStyle,
+    opacity: opacity,
+    rotation: rotation,
+    position: position,
+    isBold: isBold,
+    isItalic: isItalic,
+    isUnderline: isUnderline,
+    isMosaic: isMosaic,
+    imageSize: imageSize
+  }}
+  watermarkImage={watermarkImage}
+  pdfDocument={pdfDocument}
+  isPasswordProtected={isEncrypted}
+  isDecrypted={isDecrypted}
+/>
   
   {/* Page Range Information */}
 

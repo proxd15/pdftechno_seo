@@ -36,7 +36,7 @@ const PDFCompressor = () => {
   });
 
   // File size limits (in bytes)
-  const MAX_SINGLE_FILE_SIZE = 100 * 1024 * 1024; // 100 MB
+  const MAX_SINGLE_FILE_SIZE = 200 * 1024 * 1024; // 100 MB
   const MAX_TOTAL_FILES_SIZE = 200 * 1024 * 1024; // 200 MB
 
   // Calculate total size of all files

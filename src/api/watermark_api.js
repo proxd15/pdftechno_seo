@@ -25,8 +25,14 @@ export const generateWatermarkPreview = (() => {
   const previewCache = new Map();
   const MAX_CACHE_SIZE = 5;
   
-  const generateCacheKey = (options, hasImageChanged) => {
-    // Create a more stable cache key
+  // Expose cache clearing function globally for the component to use
+  window.clearWatermarkPreviewCache = () => {
+    console.log("Clearing watermark preview cache");
+    previewCache.clear();
+  };
+  
+  const generateCacheKey = (options, imageKey = '') => {
+    // Create a more stable cache key that includes file information
     const stableOptions = {
       watermarkType: options.watermarkType,
       text: options.text || '',
@@ -40,11 +46,12 @@ export const generateWatermarkPreview = (() => {
       isItalic: !!options.isItalic,
       isUnderline: !!options.isUnderline,
       isMosaic: !!options.isMosaic,
-      imageSize: options.imageSize || 30
+      imageSize: options.imageSize || 30,
+      fileKey: options.fileKey || '' // Include file key in cache
     };
     
     const optionsKey = JSON.stringify(stableOptions);
-    return `${optionsKey}-${hasImageChanged ? Date.now() : 'cached'}`;
+    return `${optionsKey}-${imageKey}`;
   };
   
   return async (pdfBytes, options, watermarkImage = null) => {
@@ -58,31 +65,35 @@ export const generateWatermarkPreview = (() => {
       
       // Check if image is required but missing
       if (options.watermarkType === 'image' && !watermarkImage) {
-        console.warn('Image watermark requested but no image provided, skipping preview');
+        console.warn('Image watermark requested but no image provided, returning original PDF');
         return pdfBytes; // Return original PDF if no image
       }
       
-      // Determine if we need to clear cache
-      const hasImageChanged = options.watermarkType === 'image' && 
-        watermarkImage && 
-        (!previewCache.has('lastImageName') || 
-         previewCache.get('lastImageName') !== watermarkImage.name);
-      
-      if (hasImageChanged && watermarkImage) {
-        previewCache.set('lastImageName', watermarkImage.name);
-        console.log("Image changed, clearing relevant cache entries");
+      // Generate image key for cache
+      let imageKey = '';
+      if (options.watermarkType === 'image' && watermarkImage) {
+        imageKey = `${watermarkImage.name}-${watermarkImage.size}-${watermarkImage.lastModified || Date.now()}`;
       }
       
       // Generate cache key
-      const cacheKey = generateCacheKey(options, hasImageChanged);
+      const cacheKey = generateCacheKey(options, imageKey);
       
-      // Check cache first (but skip for debugging rotation issues)
-      if (previewCache.has(cacheKey) && options.rotation !== undefined) {
-        console.log("Using cached preview");
+      // If we have a fileKey in options and it's different from last time, clear cache
+      if (options.fileKey && !previewCache.has('lastFileKey')) {
+        previewCache.set('lastFileKey', options.fileKey);
+      } else if (options.fileKey && previewCache.get('lastFileKey') !== options.fileKey) {
+        console.log("File changed, clearing cache");
+        previewCache.clear();
+        previewCache.set('lastFileKey', options.fileKey);
+      }
+      
+      // Check cache first - but be more selective about when to use cache
+      if (previewCache.has(cacheKey)) {
+        console.log("Using cached preview for key:", cacheKey);
         return previewCache.get(cacheKey);
       }
       
-      console.log("Generating new preview...");
+      console.log("Generating new preview for key:", cacheKey);
       
       let result;
       
@@ -131,12 +142,13 @@ export const generateWatermarkPreview = (() => {
       if (result && result.byteLength > 0) {
         previewCache.set(cacheKey, result);
         
-        // Limit cache size
-        if (previewCache.size > MAX_CACHE_SIZE) {
-          const oldestKey = Array.from(previewCache.keys())
-            .filter(key => key !== 'lastImageName')
-            .shift();
-          if (oldestKey) previewCache.delete(oldestKey);
+        // Limit cache size - remove oldest entries (except tracking keys)
+        if (previewCache.size > MAX_CACHE_SIZE + 2) { // +2 for tracking keys
+          const keysToDelete = Array.from(previewCache.keys())
+            .filter(key => !key.startsWith('last'))
+            .slice(0, previewCache.size - MAX_CACHE_SIZE);
+          
+          keysToDelete.forEach(key => previewCache.delete(key));
         }
       }
       

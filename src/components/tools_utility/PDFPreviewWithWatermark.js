@@ -1,10 +1,7 @@
+// Fix for PDFPreviewWithWatermark.jsx - Replace the existing component with this version
+
 import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import { generateWatermarkPreview } from '../../api/watermark_api';
-
-/**
- * PDFPreviewWithWatermark - Optimized version with better performance
- */
-
 
 const PDFPreviewWithWatermark = ({ 
   file, 
@@ -24,7 +21,10 @@ const PDFPreviewWithWatermark = ({
   const [originalPdfArrayBuffer, setOriginalPdfArrayBuffer] = useState(null);
   const [lastRenderTimestamp, setLastRenderTimestamp] = useState(0);
   const [useFallbackPreview, setUseFallbackPreview] = useState(false);
-
+  
+  // Add file tracking for cache invalidation
+  const [currentFileKey, setCurrentFileKey] = useState(null);
+  const previousFileRef = useRef(null);
   
   // Track whether we need a full regeneration or not
   const needsFullRegeneration = useRef(false);
@@ -35,9 +35,42 @@ const PDFPreviewWithWatermark = ({
   // Store the original PDF data when the file changes
   useEffect(() => {
     const loadOriginalPdf = async () => {
-      if (!file) return;
+      if (!file) {
+        // Clear everything when no file
+        setOriginalPdfArrayBuffer(null);
+        setPreviewPdfBytes(null);
+        setPreviewPdfDocument(null);
+        setCurrentFileKey(null);
+        previousFileRef.current = null;
+        return;
+      }
+      
+      // Create a unique key for this file
+      const fileKey = `${file.name}-${file.size}-${file.lastModified}`;
+      
+      // Check if this is a different file
+      if (previousFileRef.current && previousFileRef.current !== fileKey) {
+        console.log("New file detected, clearing cache and forcing regeneration");
+        
+        // Clear all cached data
+        setPreviewPdfBytes(null);
+        setPreviewPdfDocument(null);
+        setPreviewError(null);
+        
+        // Clear the preview cache in the API
+        if (window.clearWatermarkPreviewCache) {
+          window.clearWatermarkPreviewCache();
+        }
+        
+        needsFullRegeneration.current = true;
+      }
+      
+      // Update file tracking
+      setCurrentFileKey(fileKey);
+      previousFileRef.current = fileKey;
       
       try {
+        console.log("Loading new PDF file:", file.name);
         const arrayBuffer = await file.arrayBuffer();
         setOriginalPdfArrayBuffer(arrayBuffer);
         needsFullRegeneration.current = true;
@@ -51,23 +84,28 @@ const PDFPreviewWithWatermark = ({
   }, [file]);
   
   // Memoize the options object to avoid unnecessary regenerations
-  const memoizedOptions = useMemo(() => ({
-    watermarkType,
-    text: watermarkOptions.text,
-    fontSize: watermarkOptions.fontSize,
-    color: watermarkOptions.fontColor || watermarkOptions.color,
-    opacity: watermarkOptions.opacity,
-    rotation: watermarkOptions.rotation,
-    position: watermarkOptions.position,
-    // Make sure to pass these styling options correctly
-    isBold: !!watermarkOptions.isBold,  // Force boolean value
-    isItalic: !!watermarkOptions.isItalic,  // Force boolean value
-    isUnderline: !!watermarkOptions.isUnderline,  // Force boolean value
-    fontStyle: watermarkOptions.fontStyle, // Add font style explicitly
-    isMosaic: watermarkOptions.isMosaic,
-    imageSize: watermarkOptions.imageSize,
-   
-  }), [
+  const memoizedOptions = useMemo(() => {
+    const options = {
+      watermarkType,
+      text: watermarkOptions.text,
+      fontSize: watermarkOptions.fontSize,
+      color: watermarkOptions.fontColor || watermarkOptions.color,
+      opacity: watermarkOptions.opacity,
+      rotation: watermarkOptions.rotation,
+      position: watermarkOptions.position,
+      isBold: !!watermarkOptions.isBold,
+      isItalic: !!watermarkOptions.isItalic,
+      isUnderline: !!watermarkOptions.isUnderline,
+      fontStyle: watermarkOptions.fontStyle,
+      isMosaic: watermarkOptions.isMosaic,
+      imageSize: watermarkOptions.imageSize,
+      // Add file key to options to ensure cache invalidation
+      fileKey: currentFileKey
+    };
+    
+    console.log("Memoized options updated:", options);
+    return options;
+  }, [
     watermarkType,
     watermarkOptions.text,
     watermarkOptions.fontSize,
@@ -79,10 +117,10 @@ const PDFPreviewWithWatermark = ({
     watermarkOptions.isBold,
     watermarkOptions.isItalic,
     watermarkOptions.isUnderline,
-    watermarkOptions.fontStyle, // Add to dependency array
+    watermarkOptions.fontStyle,
     watermarkOptions.isMosaic,
     watermarkOptions.imageSize,
-    console.log("fontStyle received in PDFPreviewWithWatermark:", watermarkOptions.fontStyle)
+    currentFileKey // Add this to dependencies
   ]);
   
   // Optimization: Check if we need to regenerate the preview
@@ -91,36 +129,41 @@ const PDFPreviewWithWatermark = ({
   // Track the watermark image - important for clearing it
   const previousWatermarkImage = useRef(watermarkImage);
   
- useEffect(() => {
-  hasOptionsChanged.current = true;
-  
-  // Check if image has been cleared or type has changed
-  if (watermarkType === 'image' && previousWatermarkImage.current && !watermarkImage) {
-    console.log("Image was cleared, forcing full regeneration");
-    needsFullRegeneration.current = true;
-    // Also clear any cached preview
-    if (typeof previewCache !== 'undefined' && previewCache.clear) {
-      previewCache.clear();
+  useEffect(() => {
+    hasOptionsChanged.current = true;
+    
+    // Check if image has been cleared or type has changed
+    if (watermarkType === 'image' && previousWatermarkImage.current && !watermarkImage) {
+      console.log("Image was cleared, forcing full regeneration");
+      needsFullRegeneration.current = true;
     }
-  }
-  
-  // Update previous image reference
-  previousWatermarkImage.current = watermarkImage;
-  
-}, [memoizedOptions, watermarkImage, watermarkType]);
+    
+    // Update previous image reference
+    previousWatermarkImage.current = watermarkImage;
+    
+  }, [memoizedOptions, watermarkImage, watermarkType]);
 
-// And make sure this is in the code:
-useEffect(() => {
-  console.log("Watermark type changed, forcing regeneration");
-  needsFullRegeneration.current = true;
-}, [watermarkType]);
+  // Force regeneration when watermark type changes
+  useEffect(() => {
+    console.log("Watermark type changed, forcing regeneration");
+    needsFullRegeneration.current = true;
+    hasOptionsChanged.current = true;
+  }, [watermarkType]);
   
   // Generate watermarked PDF preview based on changes
   const generatePdfPreview = useCallback(async () => {
-    if (!originalPdfArrayBuffer || !pdfDocument || (isPasswordProtected && !isDecrypted)) return;
+    if (!originalPdfArrayBuffer || !pdfDocument || (isPasswordProtected && !isDecrypted)) {
+      console.log("Skipping preview generation - missing requirements");
+      return;
+    }
     
     // Skip if we don't need to regenerate
-    if (!hasOptionsChanged.current && !needsFullRegeneration.current) return;
+    if (!hasOptionsChanged.current && !needsFullRegeneration.current) {
+      console.log("Skipping preview generation - no changes detected");
+      return;
+    }
+    
+    console.log("Generating PDF preview with full regeneration:", needsFullRegeneration.current);
     
     // Reset flags
     hasOptionsChanged.current = false;
@@ -149,6 +192,7 @@ useEffect(() => {
         
         const previewPdf = await loadingTask.promise;
         setPreviewPdfDocument(previewPdf);
+        console.log("Preview PDF document loaded successfully");
       }
     } catch (error) {
       console.error('Error generating PDF preview:', error);
@@ -168,7 +212,7 @@ useEffect(() => {
     // Set a new timer for debounced execution
     debounceTimerRef.current = setTimeout(() => {
       generatePdfPreview();
-    }, 400); // Reduced from 500ms to 300ms for better responsiveness
+    }, 300); // Reduced debounce time
     
     return () => {
       if (debounceTimerRef.current) {
@@ -178,59 +222,59 @@ useEffect(() => {
   }, [generatePdfPreview]);
   
   // Render the preview PDF - implement more optimizations here
- const renderPreviewPage = useCallback(async () => {
-  if (!previewPdfDocument || !canvasRef.current) return;
-  
-  const now = Date.now();
-  if (now - lastRenderTimestamp < 100) return;
-  
-  setLastRenderTimestamp(now);
-  
-  try {
-    const page = await previewPdfDocument.getPage(1);
-    const canvas = canvasRef.current;
-    const context = canvas.getContext('2d');
+  const renderPreviewPage = useCallback(async () => {
+    if (!previewPdfDocument || !canvasRef.current) return;
     
-    // Clear canvas first
-    context.clearRect(0, 0, canvas.width, canvas.height);
+    const now = Date.now();
+    if (now - lastRenderTimestamp < 100) return;
     
-    const containerWidth = canvas.parentNode.clientWidth || 400;
-    const containerHeight = 350;
+    setLastRenderTimestamp(now);
     
-    const originalViewport = page.getViewport({ scale: 1 });
-    const scaleX = containerWidth / originalViewport.width;
-    const scaleY = containerHeight / originalViewport.height;
-    const scale = Math.min(scaleX, scaleY, 2.0);
-    
-    setPreviewScale(scale);
-    
-    const viewport = page.getViewport({ scale });
-    
-    canvas.height = viewport.height;
-    canvas.width = viewport.width;
-    
-    await page.render({
-      canvasContext: context,
-      viewport
-    }).promise;
-    
-    // Clear any previous errors on successful render
-    setPreviewError(null);
-    setUseFallbackPreview(false);
-    
-  } catch (error) {
-    console.error('Error rendering preview:', error);
-    
-    // Try fallback to original document
-    if (!useFallbackPreview && pdfDocument) {
-      console.log("Attempting fallback to original document");
-      setUseFallbackPreview(true);
-      setPreviewPdfDocument(pdfDocument);
-    } else {
-      setPreviewError('Preview temporarily unavailable');
+    try {
+      const page = await previewPdfDocument.getPage(1);
+      const canvas = canvasRef.current;
+      const context = canvas.getContext('2d');
+      
+      // Clear canvas first
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      
+      const containerWidth = canvas.parentNode.clientWidth || 400;
+      const containerHeight = 350;
+      
+      const originalViewport = page.getViewport({ scale: 1 });
+      const scaleX = containerWidth / originalViewport.width;
+      const scaleY = containerHeight / originalViewport.height;
+      const scale = Math.min(scaleX, scaleY, 2.0);
+      
+      setPreviewScale(scale);
+      
+      const viewport = page.getViewport({ scale });
+      
+      canvas.height = viewport.height;
+      canvas.width = viewport.width;
+      
+      await page.render({
+        canvasContext: context,
+        viewport
+      }).promise;
+      
+      // Clear any previous errors on successful render
+      setPreviewError(null);
+      setUseFallbackPreview(false);
+      
+    } catch (error) {
+      console.error('Error rendering preview:', error);
+      
+      // Try fallback to original document
+      if (!useFallbackPreview && pdfDocument) {
+        console.log("Attempting fallback to original document");
+        setUseFallbackPreview(true);
+        setPreviewPdfDocument(pdfDocument);
+      } else {
+        setPreviewError('Preview temporarily unavailable');
+      }
     }
-  }
-}, [previewPdfDocument, lastRenderTimestamp, useFallbackPreview, pdfDocument]);
+  }, [previewPdfDocument, lastRenderTimestamp, useFallbackPreview, pdfDocument]);
   
   // Render the PDF when the document changes
   useEffect(() => {
@@ -252,11 +296,6 @@ useEffect(() => {
       window.removeEventListener('resize', handleResize);
     };
   }, [previewPdfDocument, renderPreviewPage]);
-  
-  // Force a regeneration when watermark type changes
-  useEffect(() => {
-    needsFullRegeneration.current = true;
-  }, [watermarkType]);
   
   return (
     <div className="h-full w-full relative flex flex-col">

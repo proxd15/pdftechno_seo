@@ -2,11 +2,12 @@
 import { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
 import { useI18n } from '@/i18n';
+import { get } from 'sortablejs';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
 
 const PDFTools = () => {
-  const { t } = useI18n();
+  const { t , getLocalizedHref } = useI18n();
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredTools, setFilteredTools] = useState([]);
   const [hoveredTool, setHoveredTool] = useState(null);
@@ -19,7 +20,7 @@ const PDFTools = () => {
       titleKey: 'pdfTools.tools.mergePdf.title',
       descriptionKey: 'pdfTools.tools.mergePdf.description',
       comingSoon: false,
-      href: '/tools/merge-pdf'
+      href: getLocalizedHref('/merge-pdf')
     },
     {
       id: 'compress-pdf',
@@ -27,7 +28,7 @@ const PDFTools = () => {
       titleKey: 'pdfTools.tools.compressPdf.title',
       descriptionKey: 'pdfTools.tools.compressPdf.description',
       comingSoon: false,
-      href: '/tools/compress-pdf'
+      href: getLocalizedHref('/compress-pdf')
     },
     {
       id: 'split-pdf',
@@ -35,7 +36,7 @@ const PDFTools = () => {
       titleKey: 'pdfTools.tools.splitPdf.title',
       descriptionKey: 'pdfTools.tools.splitPdf.description',
       comingSoon: false,
-      href: '/tools/split-pdf'
+      href: getLocalizedHref('/split-pdf')
     },
     {
       id: 'unlock-pdf',
@@ -43,7 +44,7 @@ const PDFTools = () => {
       titleKey: 'pdfTools.tools.unlockPdf.title',
       descriptionKey: 'pdfTools.tools.unlockPdf.description',
       comingSoon: false,
-      href: '/tools/unlock-pdf'
+      href: getLocalizedHref('/unlock-pdf')
     },
     {
       id: 'protect-pdf',
@@ -51,7 +52,7 @@ const PDFTools = () => {
       titleKey: 'pdfTools.tools.protectPdf.title',
       descriptionKey: 'pdfTools.tools.protectPdf.description',
       comingSoon: false,
-      href: '/tools/protect-pdf'
+      href: getLocalizedHref('/protect-pdf')
     },
     {
       id: 'repair-pdf',
@@ -59,7 +60,7 @@ const PDFTools = () => {
       titleKey: 'pdfTools.tools.repairPdf.title',
       descriptionKey: 'pdfTools.tools.repairPdf.description',
       comingSoon: false,
-      href: '/tools/repair-pdf'
+      href: getLocalizedHref('/repair-pdf')
     },
     {
       id: 'excel-to-pdf',
@@ -67,7 +68,7 @@ const PDFTools = () => {
       titleKey: 'pdfTools.tools.excelToPdf.title',
       descriptionKey: 'pdfTools.tools.excelToPdf.description',
       comingSoon: false,
-      href: '/tools/excel-to-pdf'
+      href: getLocalizedHref('/excel-to-pdf')
     },
     {
       id: 'word-to-pdf',
@@ -75,7 +76,7 @@ const PDFTools = () => {
       titleKey: 'pdfTools.tools.wordToPdf.title',
       descriptionKey: 'pdfTools.tools.wordToPdf.description',
       comingSoon: false,
-      href: '/tools/word-to-pdf'
+      href: getLocalizedHref('/word-to-pdf')
     },
     {
       id: 'powerpoint-to-pdf',
@@ -83,7 +84,7 @@ const PDFTools = () => {
       titleKey: 'pdfTools.tools.powerpointToPdf.title',
       descriptionKey: 'pdfTools.tools.powerpointToPdf.description',
       comingSoon: false,
-      href: '/tools/powerpoint-to-pdf'
+      href: getLocalizedHref('/powerpoint-to-pdf')
     },
     {
       id: 'image-to-pdf',
@@ -91,7 +92,7 @@ const PDFTools = () => {
       titleKey: 'pdfTools.tools.imageToPdf.title',
       descriptionKey: 'pdfTools.tools.imageToPdf.description',
       comingSoon: false,
-      href: '/tools/image-to-pdf'
+      href: getLocalizedHref('/image-to-pdf')
     },
     {
       id: 'pdf-to-image',
@@ -99,7 +100,7 @@ const PDFTools = () => {
       titleKey: 'pdfTools.tools.pdfToImage.title',
       descriptionKey: 'pdfTools.tools.pdfToImage.description',
       comingSoon: false,
-      href: '/tools/pdf-to-image'
+      href: getLocalizedHref('/pdf-to-image')
     },
     {
       id: 'rotate-pdf',
@@ -107,7 +108,7 @@ const PDFTools = () => {
       titleKey: 'pdfTools.tools.rotatePdf.title',
       descriptionKey: 'pdfTools.tools.rotatePdf.description',
       comingSoon: false,
-      href: '/tools/rotate-pdf'
+      href: getLocalizedHref('/rotate-pdf')
     },
     {
       id: 'organize-pdf',
@@ -115,7 +116,7 @@ const PDFTools = () => {
       titleKey: 'pdfTools.tools.organizePdf.title',
       descriptionKey: 'pdfTools.tools.organizePdf.description',
       comingSoon: false,
-      href: '/tools/organize-pdf'
+      href: getLocalizedHref('/organize-pdf')
     },
     {
       id: 'pdf-to-pdf-a',
@@ -123,7 +124,7 @@ const PDFTools = () => {
       titleKey: 'pdfTools.tools.pdfToPdfA.title',
       descriptionKey: 'pdfTools.tools.pdfToPdfA.description',
       comingSoon: false,
-      href: '/tools/pdf-to-pdfa'
+      href: getLocalizedHref('/pdf-to-pdfa')
     },
     {
       id: 'scan-pdf',
@@ -131,7 +132,7 @@ const PDFTools = () => {
       titleKey: 'pdfTools.tools.scanPdf.title',
       descriptionKey: 'pdfTools.tools.scanPdf.description',
       comingSoon: false,
-      href: '/tools/scan-pdf'
+      href: getLocalizedHref('/scan-pdf')
     },
     {
       id: 'sign-pdf',
@@ -139,7 +140,7 @@ const PDFTools = () => {
       titleKey: 'pdfTools.tools.signPdf.title',
       descriptionKey: 'pdfTools.tools.signPdf.description',
       comingSoon: true,
-      href: '/tools/sign-pdf'
+      href: getLocalizedHref('/sign-pdf')
     },
     {
       id: 'watermark',
@@ -147,7 +148,7 @@ const PDFTools = () => {
       titleKey: 'pdfTools.tools.watermark.title',
       descriptionKey: 'pdfTools.tools.watermark.description',
       comingSoon: false,
-      href: '/tools/watermark-pdf'
+      href: getLocalizedHref('/watermark-pdf')
     },
     {
       id: 'ocr-pdf',
@@ -155,7 +156,7 @@ const PDFTools = () => {
       titleKey: 'pdfTools.tools.ocrPdf.title',
       descriptionKey: 'pdfTools.tools.ocrPdf.description',
       comingSoon: false,
-      href: '/tools/ocr-pdf'
+      href: getLocalizedHref('/ocr-pdf')
     },
     {
       id: 'page-numbers',
@@ -163,7 +164,7 @@ const PDFTools = () => {
       titleKey: 'pdfTools.tools.pageNumbers.title',
       descriptionKey: 'pdfTools.tools.pageNumbers.description',
       comingSoon: false,
-      href: '/tools/add-page-numbers'
+      href: getLocalizedHref('/add-page-numbers')
     },
     {
       id: 'edit-pdf',
@@ -171,7 +172,7 @@ const PDFTools = () => {
       titleKey: 'pdfTools.tools.editPdf.title',
       descriptionKey: 'pdfTools.tools.editPdf.description',
       comingSoon: true,
-      href: '/tools/edit-pdf'
+      href: getLocalizedHref('/edit-pdf')
     },
     {
       id: 'pdf-to-word',
@@ -179,7 +180,7 @@ const PDFTools = () => {
       titleKey: 'pdfTools.tools.pdfToWord.title',
       descriptionKey: 'pdfTools.tools.pdfToWord.description',
       comingSoon: false,
-      href: '/tools/pdf-to-word'
+      href: getLocalizedHref('/pdf-to-word')
     },
     {
       id: 'pdf-to-powerpoint',
@@ -187,7 +188,7 @@ const PDFTools = () => {
       titleKey: 'pdfTools.tools.pdfToPowerpoint.title',
       descriptionKey: 'pdfTools.tools.pdfToPowerpoint.description',
       comingSoon: false,
-      href: '/tools/pdf-to-powerpoint'
+      href: getLocalizedHref('/pdf-to-powerpoint')
     },
     {
       id: 'pdf-to-excel',
@@ -195,7 +196,7 @@ const PDFTools = () => {
       titleKey: 'pdfTools.tools.pdfToExcel.title',
       descriptionKey: 'pdfTools.tools.pdfToExcel.description',
       comingSoon: false,
-      href: '/tools/pdf-to-excel'
+      href: getLocalizedHref('/pdf-to-excel')
     }
   ];
 
