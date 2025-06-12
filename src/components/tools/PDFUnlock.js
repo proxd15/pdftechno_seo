@@ -5,6 +5,7 @@ import { unlockPDF, createUnlockFormData, getDownloadUrl, downloadFile } from '.
 import ModalLoader from '../tools_utility/ModalLoader';
 import SelectFiles from '../tools_utility/SelectFiles';
 import DownloadSection from '../tools_utility/DownloadSection';
+import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 
 const PDFUnlock = () => {
@@ -18,6 +19,7 @@ const PDFUnlock = () => {
   const [conversionResult, setConversionResult] = useState(null);
   const fileInputRef = useRef(null);
   const resultSectionRef = useRef(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   // State for decryption settings
   const [password, setPassword] = useState('');
@@ -503,25 +505,39 @@ const PDFUnlock = () => {
 
                       {/* Password Input */}
                       <div className="mb-4">
-                        <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                          Password
-                        </label>
-                        <input
-                          type="password"
-                          id="password"
-                          value={password}
-                          onChange={(e) => {
-                            setPassword(e.target.value);
-                            // Clear error when user types
-                            if (passwordError) setPasswordError(null);
-                          }}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#DB1E10] focus:border-[#DB1E10]"
-                          placeholder="Enter PDF password"
-                        />
-                        <p className="text-xs text-gray-500 mt-2">
-                          Enter the password that was used to protect this PDF file.
-                        </p>
-                      </div>
+  <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+    Password
+  </label>
+  <div className="relative">
+    <input
+      type={showPassword ? "text" : "password"}
+      id="password"
+      value={password}
+      onChange={(e) => {
+        setPassword(e.target.value);
+        // Clear error when user types
+        if (passwordError) setPasswordError(null);
+      }}
+      className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#DB1E10] focus:border-[#DB1E10]"
+      placeholder="Enter PDF password"
+    />
+    <button
+      type="button"
+      onClick={() => setShowPassword(!showPassword)}
+      className="absolute inset-y-0 cursor-pointer right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 focus:outline-none"
+      aria-label={showPassword ? "Hide password" : "Show password"}
+    >
+      {showPassword ? (
+        <Eye className="h-4 w-4" />
+      ) : (
+        <EyeOff className="h-4 w-4" />
+      )}
+    </button>
+  </div>
+  <p className="text-xs text-gray-500 mt-2">
+    Enter the password that was used to protect this PDF file.
+  </p>
+</div>
 
                       <p className="text-sm text-gray-600 mb-4">
                         This tool will unlock your PDF file by removing the password protection. You'll receive a new PDF file that can be opened without a password.
@@ -708,7 +724,7 @@ const PDFUnlock = () => {
                 Upload New File
               </button>
               
-              <Link href="/tools/pdf-protect">
+              <Link href="/tools/protect-pdf">
                 <button className="px-4 py-2 bg-[#DB1E10] hover:bg-[#C10007] text-white rounded-lg transition-colors text-sm font-medium">
                   Protect This PDF
                 </button>
@@ -740,7 +756,7 @@ const PDFUnlock = () => {
           </Link>
         </li>
         <li>
-          <Link href="/tools/pdf-rotate" className="text-blue-600 hover:text-blue-800 flex items-center">
+          <Link href="/tools/rotate-pdf" className="text-blue-600 hover:text-blue-800 flex items-center">
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
             </svg>

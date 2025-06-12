@@ -1,10 +1,10 @@
-// pages/about.js or app/about/page.js (depending on your Next.js version)
-
-'use client'; // Add this if using app directory
+'use client';
 
 import { useState, useEffect } from 'react';
+import { useI18n } from '@/i18n';
 
 const AboutUs = () => {
+  const { t } = useI18n();
   const [activeValue, setActiveValue] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -16,122 +16,126 @@ const AboutUs = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Team members data with translation keys
   const teamMembers = [
     {
-      name: "Kshitiz Verma",
-      role: "CEO",
-      bio: "Visionary leader with a passion for innovation. Loves turning complex problems into simple solutions.",
+      nameKey: "about.team.members.kshitiz.name",
+      roleKey: "about.team.members.kshitiz.role",
+      bioKey: "about.team.members.kshitiz.bio",
       image: "/images/team/kshitiz.jpeg",
       linkedin: "#",
       skills: ["Strategy", "Leadership", "Product Vision"]
     },
     {
-      name: "Priyank Singh",
-      role: "Head of Operations",
-      bio: " Loves optimizing processes and enhancing user experience. A true believer in data-driven decisions.", 
+      nameKey: "about.team.members.priyank.name",
+      roleKey: "about.team.members.priyank.role",
+      bioKey: "about.team.members.priyank.bio",
       image: "/images/team/priyank.jpeg",
       linkedin: "",
       skills: ["React", "Python", "AI/ML"]
     },
     {
-      name: "Sagar Kumar",
-      role: "Lead Developer",
-      bio: "Backend wizard with a knack for building scalable systems. Loves solving complex problems.",
+      nameKey: "about.team.members.sagar.name",
+      roleKey: "about.team.members.sagar.role",
+      bioKey: "about.team.members.sagar.bio",
       image: "/images/team/sagar.jpeg",
       linkedin: "#",
       skills: ["Cloud", "PDF Processing", "DevOps"]
     },
     {
-      name: "Anuj Singh",
-      role: "Testing and R&D",
-      bio: "Dedicated to product quality and innovation. Loves breaking things to make them better.",
+      nameKey: "about.team.members.anuj.name",
+      roleKey: "about.team.members.anuj.role",
+      bioKey: "about.team.members.anuj.bio",
       image: "/images/team/anuj.jpeg",
       linkedin: "#",
       skills: ["UX Design", "Support", "Analytics"]
     }
   ];
 
+  // Core values with translation keys
   const coreValues = [
     {
       letter: "A",
-      title: "Accessibility",
-      description: "Our platform is available wherever you are, whenever you need it. No barriers, just seamless access.",
+      titleKey: "about.values.items.accessibility.title",
+      descriptionKey: "about.values.items.accessibility.description",
       icon: "🌐",
       color: "bg-blue-500"
     },
     {
       letter: "S",
-      title: "Simplicity",
-      description: "Designed for everyone. No technical expertise required - just intuitive, powerful tools.",
+      titleKey: "about.values.items.simplicity.title",
+      descriptionKey: "about.values.items.simplicity.description",
       icon: "⚡",
       color: "bg-green-500"
     },
     {
       letter: "I",
-      title: "Innovation",
-      description: "Cutting-edge technology meets practical solutions. We're always pushing boundaries.",
+      titleKey: "about.values.items.innovation.title",
+      descriptionKey: "about.values.items.innovation.description",
       icon: "🚀",
       color: "bg-purple-500"
     },
     {
       letter: "C",
-      title: "Customer Focus",
-      description: "Your success is our mission. We listen, adapt, and deliver exactly what you need.",
+      titleKey: "about.values.items.customerFocus.title",
+      descriptionKey: "about.values.items.customerFocus.description",
       icon: "❤️",
       color: "bg-pink-500"
     },
     {
       letter: "S",
-      title: "Security",
-      description: "Bank-level security for your documents. Your privacy and data protection are non-negotiable.",
+      titleKey: "about.values.items.security.title",
+      descriptionKey: "about.values.items.security.description",
       icon: "🔒",
       color: "bg-indigo-500"
     }
   ];
 
+  // Statistics with translation keys
   const stats = [
-    { number: "50K+", label: "Happy Users", icon: "👥" },
-    { number: "1M+", label: "Files Processed", icon: "📄" },
-    { number: "25+", label: "PDF Tools", icon: "🛠️" },
-    { number: "99.9%", label: "Uptime", icon: "⚡" }
+    { number: "50K+", labelKey: "about.stats.happyUsers", icon: "👥" },
+    { number: "1M+", labelKey: "about.stats.filesProcessed", icon: "📄" },
+    { number: "25+", labelKey: "about.stats.pdfTools", icon: "🛠️" },
+    { number: "99.9%", labelKey: "about.stats.uptime", icon: "⚡" }
   ];
 
+  // Features with translation keys
   const features = [
     {
-      title: "PDF Editing Made Simple",
-      description: "Add text, images, signatures. Reorganize pages with drag & drop. Professional results in seconds.",
+      titleKey: "about.features.items.pdfEditing.title",
+      descriptionKey: "about.features.items.pdfEditing.description",
       icon: "✏️",
-      highlight: "Most Popular"
+      highlightKey: "about.features.items.pdfEditing.highlight"
     },
     {
-      title: "Universal File Conversion", 
-      description: "Convert between PDF, Word, Excel, PowerPoint, images and more. Perfect formatting guaranteed.",
+      titleKey: "about.features.items.fileConversion.title",
+      descriptionKey: "about.features.items.fileConversion.description",
       icon: "🔄",
-      highlight: "New"
+      highlightKey: "about.features.items.fileConversion.highlight"
     },
     {
-      title: "Smart Compression",
-      description: "Reduce file sizes by up to 90% without quality loss. AI-powered optimization for any use case.",
+      titleKey: "about.features.items.smartCompression.title",
+      descriptionKey: "about.features.items.smartCompression.description",
       icon: "📦",
-      highlight: ""
+      highlightKey: ""
     },
     {
-      title: "Advanced Security",
-      description: "Password protection, digital signatures, and encryption. Enterprise-grade security for everyone.",
+      titleKey: "about.features.items.advancedSecurity.title",
+      descriptionKey: "about.features.items.advancedSecurity.description",
       icon: "🛡️",
-      highlight: "Enterprise"
+      highlightKey: "about.features.items.advancedSecurity.highlight"
     },
     {
-      title: "Form Builder Pro",
-      description: "Create interactive forms, collect signatures, and automate workflows. No coding required.",
+      titleKey: "about.features.items.formBuilder.title",
+      descriptionKey: "about.features.items.formBuilder.description",
       icon: "📝",
-      highlight: ""
+      highlightKey: ""
     },
     {
-      title: "Cloud Integration",
-      description: "Works with Google Drive, Dropbox, OneDrive. Access your files from anywhere, anytime.",
+      titleKey: "about.features.items.cloudIntegration.title",
+      descriptionKey: "about.features.items.cloudIntegration.description",
       icon: "☁️",
-      highlight: "Popular"
+      highlightKey: "about.features.items.cloudIntegration.highlight"
     }
   ];
 
@@ -145,19 +149,18 @@ const AboutUs = () => {
           <div className="text-center">
             <div className="inline-flex items-center space-x-2 bg-[#DA1F10] px-4 py-2 rounded-full text-sm font-semibold mb-6">
               <span>🚀</span>
-              <span>Launched in 2025</span>
+              <span>{t('about.hero.launchBadge')}</span>
             </div>
             
             <h1 className="text-6xl md:text-7xl font-bold mb-6">
-              About{' '}
+              {t('about.hero.title')}{' '}
               <span className="text-[#DA1F10] inline-block transform hover:scale-105 transition-transform">
-                PDF Techno
+                {t('about.hero.brand')}
               </span>
             </h1>
             
             <p className="text-xl md:text-2xl text-gray-300 max-w-4xl mx-auto leading-relaxed mb-12">
-              We're not just another PDF tool. We're your digital document powerhouse, 
-              transforming how the world works with PDFs since 2025.
+              {t('about.hero.subtitle')}
             </p>
           </div>
         </div>
@@ -170,17 +173,15 @@ const AboutUs = () => {
             <div>
               <div className="inline-flex items-center space-x-2 bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-semibold mb-6">
                 <span>💡</span>
-                <span>Our Story</span>
+                <span>{t('about.story.badge')}</span>
               </div>
               
               <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-                Revolutionizing PDF Management
+                {t('about.story.title')}
               </h2>
               
               <p className="text-xl text-gray-600 leading-relaxed mb-6">
-                Born from frustration with clunky PDF tools, PDF Techno emerged as the solution 
-                the world was waiting for. Our team of developers, designers, and document experts 
-                came together with one mission: make PDF work seamless, secure, and lightning-fast.
+                {t('about.story.description')}
               </p>
               
               <div className="space-y-4">
@@ -190,7 +191,7 @@ const AboutUs = () => {
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                   </div>
-                  <span className="text-lg text-gray-700">No software downloads required</span>
+                  <span className="text-lg text-gray-700">{t('about.story.features.noDownload')}</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
@@ -198,7 +199,7 @@ const AboutUs = () => {
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                   </div>
-                  <span className="text-lg text-gray-700">Enterprise-grade security for everyone</span>
+                  <span className="text-lg text-gray-700">{t('about.story.features.security')}</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
@@ -206,7 +207,7 @@ const AboutUs = () => {
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                   </div>
-                  <span className="text-lg text-gray-700">Global accessibility from any device</span>
+                  <span className="text-lg text-gray-700">{t('about.story.features.accessibility')}</span>
                 </div>
               </div>
             </div>
@@ -215,10 +216,9 @@ const AboutUs = () => {
               <div className="bg-gray-900 rounded-3xl p-8 text-white transform hover:rotate-0 transition-transform duration-500">
                 <div className="text-center">
                   <div className="text-6xl mb-4">🎯</div>
-                  <h3 className="text-2xl font-bold mb-4">Our Mission</h3>
+                  <h3 className="text-2xl font-bold mb-4">{t('about.story.mission.title')}</h3>
                   <p className="text-gray-300 text-lg leading-relaxed">
-                    To democratize professional PDF tools and make document management 
-                    effortless for everyone, everywhere.
+                    {t('about.story.mission.description')}
                   </p>
                 </div>
               </div>
@@ -233,12 +233,12 @@ const AboutUs = () => {
           <div className="text-center mb-16">
             <div className="inline-flex items-center space-x-2 bg-purple-100 text-purple-800 px-4 py-2 rounded-full text-sm font-semibold mb-6">
               <span>⭐</span>
-              <span>Core Values</span>
+              <span>{t('about.values.badge')}</span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              What Drives Us: <span className="text-[#DA1F10]">ASICS</span>
+              {t('about.values.title')} <span className="text-[#DA1F10]">ASICS</span>
             </h2>
-            <p className="text-xl text-gray-600">The principles that shape every decision we make</p>
+            <p className="text-xl text-gray-600">{t('about.values.subtitle')}</p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -256,8 +256,8 @@ const AboutUs = () => {
                   </div>
                   <div className="text-4xl">{value.icon}</div>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">{value.title}</h3>
-                <p className="text-gray-600 leading-relaxed text-lg">{value.description}</p>
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">{t(value.titleKey)}</h3>
+                <p className="text-gray-600 leading-relaxed text-lg">{t(value.descriptionKey)}</p>
               </div>
             ))}
           </div>
@@ -270,25 +270,25 @@ const AboutUs = () => {
           <div className="text-center mb-16">
             <div className="inline-flex items-center space-x-2 bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-semibold mb-6">
               <span>🛠️</span>
-              <span>Our Tools</span>
+              <span>{t('about.features.badge')}</span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Powerful Features, Simple Experience
+              {t('about.features.title')}
             </h2>
-            <p className="text-xl text-gray-600">Everything you need to work with PDFs, and then some</p>
+            <p className="text-xl text-gray-600">{t('about.features.subtitle')}</p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
               <div key={index} className="relative bg-white border-2 border-gray-100 rounded-2xl p-8 hover:border-[#DA1F10] hover:shadow-lg transition-all duration-300 group">
-                {feature.highlight && (
+                {feature.highlightKey && t(feature.highlightKey) && (
                   <div className="absolute -top-3 left-6 bg-[#DA1F10] text-white px-3 py-1 rounded-full text-sm font-semibold">
-                    {feature.highlight}
+                    {t(feature.highlightKey)}
                   </div>
                 )}
                 <div className="text-5xl mb-6 group-hover:scale-110 transition-transform">{feature.icon}</div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4">{feature.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">{t(feature.titleKey)}</h3>
+                <p className="text-gray-600 leading-relaxed">{t(feature.descriptionKey)}</p>
               </div>
             ))}
           </div>
@@ -301,12 +301,12 @@ const AboutUs = () => {
           <div className="text-center mb-16">
             <div className="inline-flex items-center space-x-2 bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full text-sm font-semibold mb-6">
               <span>👥</span>
-              <span>Meet the Team</span>
+              <span>{t('about.team.badge')}</span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              The Minds Behind the Magic
+              {t('about.team.title')}
             </h2>
-            <p className="text-xl text-gray-600">Passionate innovators dedicated to your success</p>
+            <p className="text-xl text-gray-600">{t('about.team.subtitle')}</p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -316,17 +316,15 @@ const AboutUs = () => {
                   <div className="relative overflow-hidden">
                     <img 
                       src={member.image} 
-                      alt={member.name}
+                      alt={t(member.nameKey)}
                       className="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-500"
                     />
-                    
                   </div>
                   
                   <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-1">{member.name}</h3>
-                    <p className="text-[#DA1F10] font-semibold mb-3">{member.role}</p>
-                    <p className="text-gray-600 text-sm leading-relaxed mb-4">{member.bio}</p>
-
+                    <h3 className="text-xl font-bold text-gray-900 mb-1">{t(member.nameKey)}</h3>
+                    <p className="text-[#DA1F10] font-semibold mb-3">{t(member.roleKey)}</p>
+                    <p className="text-gray-600 text-sm leading-relaxed mb-4">{t(member.bioKey)}</p>
                   </div>
                 </div>
               </div>
@@ -334,6 +332,8 @@ const AboutUs = () => {
           </div>
         </div>
       </div>
+
+    
     </div>
   );
 };

@@ -220,82 +220,115 @@ const PDFRotator = () => {
   // Generate previews and get page counts whenever files change
   useEffect(() => {
     const generatePreviews = async () => {
-      const newPreviews = { ...previews };
-      const newPageInfo = { ...pageInfo };
-      const newPagePreviews = { ...pagePreviews };
-      const newPageRotations = { ...pageRotations };
+  const newPreviews = { ...previews };
+  const newPageInfo = { ...pageInfo };
+  const newPagePreviews = { ...pagePreviews };
+  const newPageRotations = { ...pageRotations };
 
-      for (const file of files) {
-        const fileId = generateFileId(file);
+  for (const file of files) {
+    const fileId = generateFileId(file);
 
-        // Use file ID instead of name to handle files with same names
-        if (!previews[fileId]) {
+    // Use file ID instead of name to handle files with same names
+    if (!previews[fileId]) {
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+
+        // Validate file is not empty
+        if (arrayBuffer.byteLength === 0) {
+          newPreviews[fileId] = 'corrupted';
+          setError(`"${file.name}" is empty or corrupted. Please upload a valid PDF file.`);
+          continue;
+        }
+
+        // Validate file starts with PDF header
+        const uint8Array = new Uint8Array(arrayBuffer);
+        const header = String.fromCharCode.apply(null, uint8Array.slice(0, 5));
+        if (header !== '%PDF-') {
+          newPreviews[fileId] = 'invalid';
+          setError(`"${file.name}" is not a valid PDF file. The file appears to be corrupted or is not a PDF.`);
+          continue;
+        }
+
+        try {
+          // Use window.pdfjsLib which is loaded from CDN
+          const pdf = await window.pdfjsLib.getDocument({ 
+            data: arrayBuffer,
+            // Add error recovery options
+            disableAutoFetch: false,
+            disableStream: false,
+            disableRange: false,
+            // Increase timeout for large files
+            maxImageSize: -1,
+            cMapPacked: true
+          }).promise;
+
+          // Store page count
+          const numPages = pdf.numPages;
+          
+          // Validate page count
+          if (numPages === 0) {
+            newPreviews[fileId] = 'corrupted';
+            setError(`"${file.name}" contains no pages. The PDF file may be corrupted.`);
+            continue;
+          }
+
+          newPageInfo[fileId] = numPages;
+
+          // Initialize selected pages and page rotations for this file
+          if (!selectedPagesByFile[fileId]) {
+            setSelectedPagesByFile(prev => ({
+              ...prev,
+              [fileId]: []
+            }));
+          }
+
+          if (!pageRotations[fileId]) {
+            newPageRotations[fileId] = {};
+            for (let i = 1; i <= numPages; i++) {
+              newPageRotations[fileId][i] = 0; // Initialize with 0 degrees rotation
+            }
+          }
+
+          // Try to generate preview from first page
           try {
-            const arrayBuffer = await file.arrayBuffer();
+            const page = await pdf.getPage(1);
 
-            // Check if PDF is valid, encrypted, or corrupted
-            try {
-              // Use window.pdfjsLib which is loaded from CDN
-              const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+            // Use fixed dimensions for preview
+            const maxWidth = 200;
+            const maxHeight = 250;
 
-              // Store page count
-              const numPages = pdf.numPages;
-              newPageInfo[fileId] = numPages;
+            const viewport = page.getViewport({ scale: 1.0 });
 
-              // Initialize selected pages and page rotations for this file
-              if (!selectedPagesByFile[fileId]) {
-                setSelectedPagesByFile(prev => ({
-                  ...prev,
-                  [fileId]: []
-                }));
-              }
+            // Calculate scale to fit within our constraints while maintaining aspect ratio
+            const scaleX = maxWidth / viewport.width;
+            const scaleY = maxHeight / viewport.height;
+            const scale = Math.min(scaleX, scaleY);
 
-              if (!pageRotations[fileId]) {
-                newPageRotations[fileId] = {};
-                for (let i = 1; i <= numPages; i++) {
-                  newPageRotations[fileId][i] = 0; // Initialize with 0 degrees rotation
-                }
-              }
+            const scaledViewport = page.getViewport({ scale });
 
-              // Generate preview from first page
-              const page = await pdf.getPage(1);
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
 
-              // Use fixed dimensions for preview
-              const maxWidth = 200;
-              const maxHeight = 250;
+            canvas.height = scaledViewport.height;
+            canvas.width = scaledViewport.width;
 
-              const viewport = page.getViewport({ scale: 1.0 });
+            await page.render({
+              canvasContext: context,
+              viewport: scaledViewport
+            }).promise;
 
-              // Calculate scale to fit within our constraints while maintaining aspect ratio
-              const scaleX = maxWidth / viewport.width;
-              const scaleY = maxHeight / viewport.height;
-              const scale = Math.min(scaleX, scaleY);
+            newPreviews[fileId] = canvas.toDataURL();
 
-              const scaledViewport = page.getViewport({ scale });
+            // Generate previews for individual pages
+            newPagePreviews[fileId] = {};
 
-              const canvas = document.createElement('canvas');
-              const context = canvas.getContext('2d');
+            // Limit initial loading to first 5 pages for performance
+            const pagesToPreload = Math.min(5, numPages);
 
-              canvas.height = scaledViewport.height;
-              canvas.width = scaledViewport.width;
-
-              await page.render({
-                canvasContext: context,
-                viewport: scaledViewport
-              }).promise;
-
-              newPreviews[fileId] = canvas.toDataURL();
-
-              // Generate previews for individual pages
-              newPagePreviews[fileId] = {};
-
-              // Limit initial loading to first 5 pages for performance
-              // Other pages will be loaded when file is expanded
-              const pagesToPreload = Math.min(5, numPages);
-
-              for (let i = 1; i <= pagesToPreload; i++) {
+            for (let i = 1; i <= pagesToPreload; i++) {
+              try {
                 const pageObj = await pdf.getPage(i);
-                const pageViewport = pageObj.getViewport({ scale: 0.3 }); // Smaller scale for thumbnails
+                const pageViewport = pageObj.getViewport({ scale: 0.3 });
 
                 const pageCanvas = document.createElement('canvas');
                 const pageContext = pageCanvas.getContext('2d');
@@ -309,37 +342,81 @@ const PDFRotator = () => {
                 }).promise;
 
                 newPagePreviews[fileId][i] = pageCanvas.toDataURL();
-              }
-
-            } catch (error) {
-              console.error('Error generating preview for:', file.name, error);
-
-              // Check for password-protected/encrypted PDF
-              if (error.name === 'PasswordException' || error.message.includes('password')) {
-                newPreviews[fileId] = 'encrypted';
-                setError(`"${file.name}" is password protected or encrypted. Please decrypt this file.`);
-                setEncryptedFiles(prev => ({
-                  ...prev,
-                  [fileId]: true
-                }));
-              } else {
-                // Assume other errors are due to corruption
+              } catch (pageError) {
+                console.error(`Error rendering page ${i} of ${file.name}:`, pageError);
+                // If we can't render a specific page, mark the whole file as corrupted
                 newPreviews[fileId] = 'corrupted';
+                setError(`"${file.name}" has corrupted pages and cannot be processed. Please try with a different PDF file.`);
+                break;
               }
             }
-          } catch (error) {
-            console.error('General error processing file:', file.name, error);
+
+          } catch (renderError) {
+            console.error('Error rendering first page for:', file.name, renderError);
+            newPreviews[fileId] = 'corrupted';
+            setError(`"${file.name}" cannot be rendered. The PDF file may be corrupted or use unsupported features.`);
+          }
+
+        } catch (error) {
+          console.error('Error loading PDF document:', file.name, error);
+
+          // Detailed error handling based on error type
+          if (error.name === 'PasswordException' || 
+              error.message.includes('password') || 
+              error.message.includes('encrypted')) {
+            newPreviews[fileId] = 'encrypted';
+            setError(`"${file.name}" is password protected. Please provide the password to continue.`);
+            setEncryptedFiles(prev => ({
+              ...prev,
+              [fileId]: true
+            }));
+          } else if (error.name === 'InvalidPDFException' || 
+                     error.message.includes('Invalid PDF') ||
+                     error.message.includes('PDF header')) {
             newPreviews[fileId] = 'invalid';
-            setError(`"${file.name}" is not a valid PDF file. Please remove this file.`);
+            setError(`"${file.name}" is not a valid PDF file or is severely corrupted. Please try with a different file.`);
+          } else if (error.name === 'MissingPDFException' ||
+                     error.message.includes('Missing PDF')) {
+            newPreviews[fileId] = 'corrupted';
+            setError(`"${file.name}" appears to be truncated or incomplete. The file may have been corrupted during transfer.`);
+          } else if (error.message.includes('stream') ||
+                     error.message.includes('compressed') ||
+                     error.message.includes('filter')) {
+            newPreviews[fileId] = 'corrupted';
+            setError(`"${file.name}" contains corrupted data streams. The PDF file structure is damaged.`);
+          } else if (error.message.includes('xref') ||
+                     error.message.includes('cross-reference')) {
+            newPreviews[fileId] = 'corrupted';
+            setError(`"${file.name}" has a corrupted internal structure (xref table). The file cannot be processed.`);
+          } else {
+            // Generic corruption error
+            newPreviews[fileId] = 'corrupted';
+            setError(`"${file.name}" is corrupted or damaged and cannot be processed. Please try with a different PDF file.`);
           }
         }
+      } catch (error) {
+        console.error('General error processing file:', file.name, error);
+        
+        // Handle file reading errors
+        if (error.name === 'NotReadableError') {
+          newPreviews[fileId] = 'corrupted';
+          setError(`"${file.name}" cannot be read. The file may be corrupted or locked by another application.`);
+        } else if (error.name === 'SecurityError') {
+          newPreviews[fileId] = 'invalid';
+          setError(`"${file.name}" cannot be accessed due to security restrictions.`);
+        } else {
+          newPreviews[fileId] = 'invalid';
+          setError(`"${file.name}" could not be processed. Please ensure it's a valid PDF file.`);
+        }
       }
+    }
+  }
 
-      setPreviews(newPreviews);
-      setPageInfo(newPageInfo);
-      setPagePreviews(newPagePreviews);
-      setPageRotations(newPageRotations);
-    };
+  setPreviews(newPreviews);
+  setPageInfo(newPageInfo);
+  setPagePreviews(newPagePreviews);
+  setPageRotations(newPageRotations);
+};
 
     if (window.pdfjsLib && files.length > 0) {
       generatePreviews();
@@ -1375,44 +1452,7 @@ const PDFRotator = () => {
 
                           {/* PDF Preview with Rotation Controls */}
                           {hasError ? (
-                            <div className="p-10 flex justify-center">
-                              <div className="text-red-500 flex flex-col items-center text-center">
-                                <svg
-                                  className="w-12 h-12 mb-2"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                  />
-                                </svg>
-
-                                {isEncrypted ? (
-                                  <div className='flex flex-col'>
-                                    <span className="font-medium">Password Protected PDF</span>
-                                    <button
-                                      onClick={() => handleDecryptFile(index)}
-                                      className="mt-2 block mx-auto px-4 py-2 bg-[#DB1E10] text-white rounded-lg hover:bg-[#C10007] transition-colors cursor-pointer"
-                                    >
-                                      {decryptedFiles[fileId] ? "Change Password" : "Enter Password"}
-                                    </button>
-                                  </div>
-                                ) : (
-                                  <div>
-                                    <span className="font-medium">
-                                      {isCorrupted && "Corrupted PDF"}
-                                      {isInvalid && "Invalid PDF"}
-                                    </span>
-                                    <span className="text-sm mt-1 block">Please remove this file</span>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
+                           renderErrorState(file, fileId, previewState)
                           ) : (
                             /* Individual Pages Preview for "Rotate Specific Pages" Mode */
                             <div>
@@ -1667,3 +1707,107 @@ const PDFRotator = () => {
 };
 
 export default PDFRotator;
+
+
+const renderErrorState = (file, fileId, previewState) => {
+  const getErrorInfo = () => {
+    switch (previewState) {
+      case 'encrypted':
+        return {
+          icon: (
+            <svg className="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+          ),
+          title: 'Password Protected PDF',
+          description: 'This PDF requires a password to access its contents.',
+          action: 'Enter Password',
+          color: 'text-yellow-600',
+          bgColor: 'bg-yellow-50'
+        };
+      case 'corrupted':
+        return {
+          icon: (
+            <svg className="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+          ),
+          title: 'Corrupted PDF File',
+          description: 'This PDF file is damaged and cannot be processed.',
+          action: 'Remove File',
+          color: 'text-red-600',
+          bgColor: 'bg-red-50'
+        };
+      case 'invalid':
+        return {
+          icon: (
+            <svg className="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
+                    d="M10 9l4 4m0-4l-4 4" />
+            </svg>
+          ),
+          title: 'Invalid PDF File',
+          description: 'This file is not a valid PDF or is severely damaged.',
+          action: 'Remove File',
+          color: 'text-red-600',
+          bgColor: 'bg-red-50'
+        };
+      default:
+        return {
+          icon: (
+            <svg className="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
+                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          ),
+          title: 'Error Processing File',
+          description: 'There was an error processing this PDF file.',
+          action: 'Remove File',
+          color: 'text-red-600',
+          bgColor: 'bg-red-50'
+        };
+    }
+  };
+
+  const errorInfo = getErrorInfo();
+
+  return (
+    <div className={`p-10 flex justify-center ${errorInfo.bgColor}`}>
+      <div className={`${errorInfo.color} flex flex-col items-center text-center`}>
+        {errorInfo.icon}
+        <span className="font-medium text-lg mb-2">{errorInfo.title}</span>
+        <span className="text-sm mb-4 max-w-xs">{errorInfo.description}</span>
+        
+        {previewState === 'encrypted' ? (
+          <div className="flex flex-col space-y-2">
+            <button
+              onClick={() => handleDecryptFile(files.findIndex(f => generateFileId(f) === fileId))}
+              className="px-4 py-2 bg-[#DB1E10] text-white rounded-lg hover:bg-[#C10007] transition-colors cursor-pointer"
+            >
+              {decryptedFiles[fileId] ? "Change Password" : "Enter Password"}
+            </button>
+            {decryptedFiles[fileId] && (
+              <span className="text-xs text-gray-600">Password provided but verification failed</span>
+            )}
+          </div>
+        ) : (
+          <div className="flex flex-col space-y-2">
+            <button
+              onClick={() => removeFile(files.findIndex(f => generateFileId(f) === fileId))}
+              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors cursor-pointer"
+            >
+              Remove This File
+            </button>
+            <span className="text-xs text-gray-600">
+              Try uploading a different PDF file
+            </span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};

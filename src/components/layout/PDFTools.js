@@ -1,197 +1,199 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
+import { useI18n } from '@/i18n';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
 
 const PDFTools = () => {
+  const { t } = useI18n();
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredTools, setFilteredTools] = useState([]);
   const [hoveredTool, setHoveredTool] = useState(null);
   
-  // Original tools array with image icons
+  // Tools array with translation keys
   const tools = [
     {
       id: 'merge-pdf',
       icon: '/images/icons/merge.png',
-      title: 'Merge PDF',
-      description: 'Merge multiple PDFs into one file.',
+      titleKey: 'pdfTools.tools.mergePdf.title',
+      descriptionKey: 'pdfTools.tools.mergePdf.description',
       comingSoon: false,
       href: '/tools/merge-pdf'
     },
     {
       id: 'compress-pdf',
       icon: '/images/icons/compress.png',
-      title: 'Compress PDF',
-      description: 'Reduce file size',
+      titleKey: 'pdfTools.tools.compressPdf.title',
+      descriptionKey: 'pdfTools.tools.compressPdf.description',
       comingSoon: false,
       href: '/tools/compress-pdf'
     },
     {
       id: 'split-pdf',
       icon: '/images/icons/split.png',
-      title: 'Split PDF',
-      description: 'Separate a PDF into individual pages.',
+      titleKey: 'pdfTools.tools.splitPdf.title',
+      descriptionKey: 'pdfTools.tools.splitPdf.description',
       comingSoon: false,
       href: '/tools/split-pdf'
     },
     {
       id: 'unlock-pdf',
       icon: '/images/icons/unllock.png',
-      title: 'Unlock PDF',
-      description: 'Easily unlock and remove password from pdf',
+      titleKey: 'pdfTools.tools.unlockPdf.title',
+      descriptionKey: 'pdfTools.tools.unlockPdf.description',
       comingSoon: false,
       href: '/tools/unlock-pdf'
     },
     {
       id: 'protect-pdf',
       icon: '/images/icons/protect.png',
-      title: 'Protect PDF',
-      description: 'Secure your PDF with a password',
+      titleKey: 'pdfTools.tools.protectPdf.title',
+      descriptionKey: 'pdfTools.tools.protectPdf.description',
       comingSoon: false,
       href: '/tools/protect-pdf'
     },
     {
       id: 'repair-pdf',
       icon: '/images/icons/repair.png',
-      title: 'Repair PDF',
-      description: 'Fix and restore damaged PDF files',
+      titleKey: 'pdfTools.tools.repairPdf.title',
+      descriptionKey: 'pdfTools.tools.repairPdf.description',
       comingSoon: false,
       href: '/tools/repair-pdf'
     },
     {
       id: 'excel-to-pdf',
       icon: '/images/icons/exceltopdf.png',
-      title: 'Excel to PDF',
-      description: 'Transform excel sheets into pdfs',
+      titleKey: 'pdfTools.tools.excelToPdf.title',
+      descriptionKey: 'pdfTools.tools.excelToPdf.description',
       comingSoon: false,
       href: '/tools/excel-to-pdf'
     },
     {
       id: 'word-to-pdf',
       icon: '/images/icons/wordtopdf.png',
-      title: 'Word to PDF',
-      description: 'Convert Word documents into PDFs.',
+      titleKey: 'pdfTools.tools.wordToPdf.title',
+      descriptionKey: 'pdfTools.tools.wordToPdf.description',
       comingSoon: false,
       href: '/tools/word-to-pdf'
     },
     {
       id: 'powerpoint-to-pdf',
       icon: '/images/icons/ppttopdf.png',
-      title: 'Powerpoint to PDF',
-      description: 'Turn your Powerpoint(ppt) slides into pdf.',
+      titleKey: 'pdfTools.tools.powerpointToPdf.title',
+      descriptionKey: 'pdfTools.tools.powerpointToPdf.description',
       comingSoon: false,
       href: '/tools/powerpoint-to-pdf'
     },
     {
       id: 'image-to-pdf',
       icon: '/images/icons/imgtopdf.png',
-      title: 'Image to PDF',
-      description: 'Convert all type images(PNG, JPG, JPEG) into a PDF file.',
+      titleKey: 'pdfTools.tools.imageToPdf.title',
+      descriptionKey: 'pdfTools.tools.imageToPdf.description',
       comingSoon: false,
       href: '/tools/image-to-pdf'
     },
     {
       id: 'pdf-to-image',
       icon: '/images/icons/pdftoimg.png',
-      title: 'PDF to Image',
-      description: 'Extract all type images from PDFs as JPG, PNG, TIFF, BMP files.',
+      titleKey: 'pdfTools.tools.pdfToImage.title',
+      descriptionKey: 'pdfTools.tools.pdfToImage.description',
       comingSoon: false,
       href: '/tools/pdf-to-image'
     },
     {
       id: 'rotate-pdf',
       icon: '/images/icons/rotate.png',
-      title: 'Rotate PDF',
-      description: 'Adjust the orientation of your PDF pages.',
+      titleKey: 'pdfTools.tools.rotatePdf.title',
+      descriptionKey: 'pdfTools.tools.rotatePdf.description',
       comingSoon: false,
       href: '/tools/rotate-pdf'
     },
     {
       id: 'organize-pdf',
       icon: '/images/icons/organize.png',
-      title: 'Organize PDF',
-      description: 'Rearrange, merge, or delete pages in your PDF.',
+      titleKey: 'pdfTools.tools.organizePdf.title',
+      descriptionKey: 'pdfTools.tools.organizePdf.description',
       comingSoon: false,
       href: '/tools/organize-pdf'
     },
     {
       id: 'pdf-to-pdf-a',
       icon: '/images/icons/pdftoa.png',
-      title: 'PDF to PDF/A',
-      description: 'Archive PDFs in PDF/A format.',
+      titleKey: 'pdfTools.tools.pdfToPdfA.title',
+      descriptionKey: 'pdfTools.tools.pdfToPdfA.description',
       comingSoon: false,
       href: '/tools/pdf-to-pdfa'
     },
     {
       id: 'scan-pdf',
       icon: '/images/icons/scanpdf.png',
-      title: 'Scan PDF',
-      description: 'Scan any documents directly into PDF format.',
+      titleKey: 'pdfTools.tools.scanPdf.title',
+      descriptionKey: 'pdfTools.tools.scanPdf.description',
       comingSoon: false,
       href: '/tools/scan-pdf'
     },
     {
       id: 'sign-pdf',
       icon: '/images/icons/signture.png',
-      title: 'Sign PDF',
-      description: 'Sign yourself or request for electronic signature',
+      titleKey: 'pdfTools.tools.signPdf.title',
+      descriptionKey: 'pdfTools.tools.signPdf.description',
       comingSoon: true,
       href: '/tools/sign-pdf'
     },
     {
       id: 'watermark',
       icon: '/images/icons/watermark.png',
-      title: 'Watermark',
-      description: 'Add custom watermarks to your documents',
+      titleKey: 'pdfTools.tools.watermark.title',
+      descriptionKey: 'pdfTools.tools.watermark.description',
       comingSoon: false,
       href: '/tools/watermark-pdf'
     },
     {
       id: 'ocr-pdf',
       icon: '/images/icons/pdftoocr.png',
-      title: 'OCR PDF',
-      description: 'Extract text from PDFs.',
+      titleKey: 'pdfTools.tools.ocrPdf.title',
+      descriptionKey: 'pdfTools.tools.ocrPdf.description',
       comingSoon: false,
       href: '/tools/ocr-pdf'
     },
     {
       id: 'page-numbers',
       icon: '/images/icons/Frame.png',
-      title: 'Page Numbers',
-      description: 'Combine PDFs in the order',
+      titleKey: 'pdfTools.tools.pageNumbers.title',
+      descriptionKey: 'pdfTools.tools.pageNumbers.description',
       comingSoon: false,
       href: '/tools/add-page-numbers'
     },
     {
       id: 'edit-pdf',
       icon: '/images/icons/edit.png',
-      title: 'Edit PDF',
-      description: 'Change text and images in PDFs.',
+      titleKey: 'pdfTools.tools.editPdf.title',
+      descriptionKey: 'pdfTools.tools.editPdf.description',
       comingSoon: true,
       href: '/tools/edit-pdf'
     },
     {
       id: 'pdf-to-word',
       icon: '/images/icons/pdftoword.png',
-      title: 'PDF To Word',
-      description: 'Transform PDFs into word files',
+      titleKey: 'pdfTools.tools.pdfToWord.title',
+      descriptionKey: 'pdfTools.tools.pdfToWord.description',
       comingSoon: false,
       href: '/tools/pdf-to-word'
     },
     {
       id: 'pdf-to-powerpoint',
       icon: '/images/icons/pdftoppt.png',
-      title: 'PDF to Powerpoint',
-      description: 'Convert PDFs into editable PowerPoint(ppt).',
+      titleKey: 'pdfTools.tools.pdfToPowerpoint.title',
+      descriptionKey: 'pdfTools.tools.pdfToPowerpoint.description',
       comingSoon: false,
       href: '/tools/pdf-to-powerpoint'
     },
     {
       id: 'pdf-to-excel',
       icon: '/images/icons/pdf_to_excel.svg',
-      title: 'PDF To Excel',
-      description: 'Transform PDFs into excel sheets',
+      titleKey: 'pdfTools.tools.pdfToExcel.title',
+      descriptionKey: 'pdfTools.tools.pdfToExcel.description',
       comingSoon: false,
       href: '/tools/pdf-to-excel'
     }
@@ -202,7 +204,7 @@ const PDFTools = () => {
     setFilteredTools(tools);
   }, []);
 
-  // Handle search
+  // Handle search with translated content
   const handleSearch = (e) => {
     const term = e.target.value;
     setSearchTerm(term);
@@ -210,37 +212,41 @@ const PDFTools = () => {
     if (term.trim() === '') {
       setFilteredTools(tools);
     } else {
-      const filtered = tools.filter(tool => 
-        tool.title.toLowerCase().includes(term.toLowerCase()) || 
-        tool.description.toLowerCase().includes(term.toLowerCase())
-      );
+      const filtered = tools.filter(tool => {
+        const title = t(tool.titleKey).toLowerCase();
+        const description = t(tool.descriptionKey).toLowerCase();
+        const searchTermLower = term.toLowerCase();
+        
+        return title.includes(searchTermLower) || description.includes(searchTermLower);
+      });
       setFilteredTools(filtered);
     }
   };
   
   return (
-    
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
       <div className="container mx-auto px-4 py-12">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="mb-8">
             <h1 className="text-2xl md:text-5xl sm:text-2xl font-bold bg-black bg-clip-text text-transparent mb-4">
-              Transform Documents
+              {t('pdfTools.header.title1')}
             </h1>
             <h2 className="text-2xl md:text-5xl sm:text-2xl font-bold mb-2">
-              Seamlessly with our{' '}
+              {t('pdfTools.header.title2')}{' '}
               <span className="bg-[#DA1F10] bg-clip-text text-transparent">
-                PDF Techno
+                {t('pdfTools.header.brand')}
               </span>
             </h2>
           </div>
           
           <div className="space-y-2">
-            <h3 className="text-2xl font-bold text-gray-800 underline decoration-red-500 decoration-4 underline-offset-8">
-              A Tool For Every PDF Need
+            <h3 className="text-3xl font-bold text-gray-800 underline decoration-red-500 decoration-4 underline-offset-8">
+              {t('pdfTools.header.subtitle')}
             </h3>
-            <p className="text-2xl md:text-4xl font-bold text-[#DA1F10]">100% Free</p>
+            <p className="text-2xl md:text-4xl font-bold text-[#DA1F10]">
+              {t('pdfTools.header.freeLabel')}
+            </p>
           </div>
         </div>
 
@@ -249,7 +255,7 @@ const PDFTools = () => {
           <div className="relative group">
             <input 
               type="text" 
-              placeholder="Search tools..." 
+              placeholder={t('pdfTools.search.placeholder')}
               value={searchTerm}
               onChange={handleSearch}
               className="w-full py-4 px-6 pr-14 text-lg rounded-2xl border-2 border-red-200 focus:border-red-500 focus:outline-none bg-white shadow-lg transition-all duration-300 group-hover:shadow-xl"
@@ -269,6 +275,7 @@ const PDFTools = () => {
               isHovered={hoveredTool === tool.id}
               onHover={() => setHoveredTool(tool.id)}
               onLeave={() => setHoveredTool(null)}
+              t={t}
             />
           ))}
         </div>
@@ -277,14 +284,18 @@ const PDFTools = () => {
           <div className="text-center py-20">
             <div className="mb-6">
               <Search size={64} className="mx-auto text-gray-300 mb-4" />
-              <h3 className="text-2xl font-semibold text-gray-600 mb-2">No tools found</h3>
-              <p className="text-gray-500">No tools match your search for "{searchTerm}"</p>
+              <h3 className="text-2xl font-semibold text-gray-600 mb-2">
+                {t('pdfTools.search.noResults.title')}
+              </h3>
+              <p className="text-gray-500">
+                {t('pdfTools.search.noResults.description', { searchTerm })}
+              </p>
             </div>
             <button 
               className="px-8 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold rounded-xl hover:from-red-600 hover:to-red-700 transform hover:scale-105 transition-all duration-200 shadow-lg"
               onClick={() => setSearchTerm('')}
             >
-              Show all tools
+              {t('pdfTools.search.noResults.showAllButton')}
             </button>
           </div>
         )}
@@ -294,8 +305,8 @@ const PDFTools = () => {
   );
 };
 
-// Modern Tool Card Component with equal sizing
-function ToolCard({ tool, isHovered, onHover, onLeave }) {
+// Updated Tool Card Component with translations
+function ToolCard({ tool, isHovered, onHover, onLeave, t }) {
   return (
     <div
       className={`relative group cursor-pointer transition-all duration-300 ${
@@ -335,7 +346,7 @@ function ToolCard({ tool, isHovered, onHover, onLeave }) {
           `}>
             <img 
               src={tool.icon} 
-              alt={`${tool.title} icon`} 
+              alt={`${t(tool.titleKey)} icon`} 
               className="w-8 h-8 object-contain"
             />
           </div>
@@ -345,7 +356,7 @@ function ToolCard({ tool, isHovered, onHover, onLeave }) {
             text-2xl font-bold mb-3 transition-colors duration-200 leading-tight
             ${tool.comingSoon ? 'text-gray-500' : 'text-gray-800 group-hover:text-red-700'}
           `}>
-            {tool.title}
+            {t(tool.titleKey)}
           </h3>
           
           {/* Description */}
@@ -353,7 +364,7 @@ function ToolCard({ tool, isHovered, onHover, onLeave }) {
             text-sm leading-relaxed flex-1
             ${tool.comingSoon ? 'text-gray-400' : 'text-gray-600 group-hover:text-gray-700'}
           `}>
-            {tool.description}
+            {t(tool.descriptionKey)}
           </p>
         </div>
         
@@ -361,7 +372,7 @@ function ToolCard({ tool, isHovered, onHover, onLeave }) {
         {tool.comingSoon && (
           <div className="absolute top-4 right-4">
             <span className="bg-gradient-to-r from-gray-500 to-gray-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
-              Coming Soon
+              {t('pdfTools.badges.comingSoon')}
             </span>
           </div>
         )}
@@ -385,7 +396,7 @@ function ToolCard({ tool, isHovered, onHover, onLeave }) {
           <a 
             href={tool.href} 
             className="absolute inset-0 z-20"
-            aria-label={`Go to ${tool.title}`}
+            aria-label={`Go to ${t(tool.titleKey)}`}
           />
         )}
       </div>
@@ -396,6 +407,7 @@ function ToolCard({ tool, isHovered, onHover, onLeave }) {
 export default PDFTools;
 
 const StatisticsSection = () => {
+  const { t } = useI18n();
   const [statistics, setStatistics] = useState({
     total_conversions: 125000,
     total_users: 11000,
@@ -434,26 +446,26 @@ const StatisticsSection = () => {
     {
       id: 1,
       value: `${formatNumber(statistics.total_conversions)}+`,
-      label: 'Files Converted',
-      iconSpace: '/images/icons/file.svg' // Leave space for icon
+      labelKey: 'pdfTools.statistics.filesConverted',
+      iconSpace: '/images/icons/file.svg'
     },
     {
       id: 2,
       value: `${formatNumber(statistics.total_users)}+`,
-      label: 'Users',
-      iconSpace: '/images/icons/user.svg' // Leave space for icon
+      labelKey: 'pdfTools.statistics.users',
+      iconSpace: '/images/icons/user.svg'
     },
     {
       id: 3,
       value: '20+',
-      label: 'Tools',
-      iconSpace: '/images/icons/tools.svg' // Leave space for icon
+      labelKey: 'pdfTools.statistics.tools',
+      iconSpace: '/images/icons/tools.svg'
     },
     {
       id: 4,
       value: 'Web',
-      label: 'Cross-Platform',
-      iconSpace: '/images/icons/platform.svg' // Leave space for icon
+      labelKey: 'pdfTools.statistics.crossPlatform',
+      iconSpace: '/images/icons/platform.svg'
     }
   ];
 
@@ -463,11 +475,10 @@ const StatisticsSection = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {stats.map((stat) => (
             <div key={stat.id} className="text-center">
-              {/* Icon Space - Leave empty for now */}
+              {/* Icon Space */}
               <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                
                 <div className="w-12 h-12 rounded">
-                  <img src={stat.iconSpace} className="w-full h-full object-contain" />
+                  <img src={stat.iconSpace} className="w-full h-full object-contain" alt={t(stat.labelKey)} />
                 </div>
               </div>
               
@@ -482,7 +493,7 @@ const StatisticsSection = () => {
               
               {/* Label */}
               <div className="text-gray-600 font-medium">
-                {stat.label}
+                {t(stat.labelKey)}
               </div>
             </div>
           ))}

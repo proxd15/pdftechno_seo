@@ -88,8 +88,360 @@
         "pdfToImage": "PDF en Image",
         "mergePdf": "Fusionner PDF",
         "compressPdf": "Compresser PDF"
+      },"testimonials": {
+    "title": "Témoignages d'Utilisateurs",
+    "subtitle": "Ce que nos utilisateurs disent à propos de PDF Techno",
+    "navigation": {
+      "previous": "Témoignage précédent",
+      "next": "Témoignage suivant",
+      "goToSlide": "Aller au témoignage {number}"
+    },
+    "autoPlay": {
+      "playing": "Lecture automatique",
+      "paused": "En pause"
+    },
+    "users": {
+      "ankit": {
+        "name": "Ankit Singh",
+        "designation": "Responsable Produit Principal",
+        "review": "PDFTechno a révolutionné la façon dont notre équipe gère les documents. Les outils de fusion et de compression nous font économiser des heures chaque semaine."
+      },
+      "anam": {
+        "name": "Anam Azami",
+        "designation": "Responsable de Catégorie",
+        "review": "La capacité de diviser et d'organiser les PDF de manière transparente a rendu mon flux de travail incroyablement efficace. Fortement recommandé !"
+      },
+      "deepak": {
+        "name": "Deepak Kumar",
+        "designation": "Professionnel du Design",
+        "review": "Les fonctionnalités de protection par mot de passe sont révolutionnaires pour nos documents juridiques. Tout fonctionne parfaitement."
+      },
+      "ali": {
+        "name": "Ali Sher Waris",
+        "designation": "Responsable des Approvisionnements, Gap Inc.",
+        "review": "Ce qui distingue PDFTechno, c'est sa simplicité. Je l'utilise quotidiennement pour convertir des feuilles Excel en PDF, et la qualité de sortie est toujours excellente. Plus de problèmes de formatage !"
       }
-    },"Auth": {
+    }
+  },
+  "aiPowered": {
+    "badge": "Alimenté par l'IA",
+    "title": "Outil PDF gratuit alimenté par l'IA",
+    "description1": "Gérez et transformez sans effort vos documents PDF avec notre outil avancé alimenté par l'IA. Conçu pour la simplicité et l'efficacité, notre outil offre une gamme de fonctionnalités pour gérer tous vos besoins PDF avec facilité.",
+    "description2": "Découvrez la gestion et la transformation de documents sans faille avec la puissance de l'intelligence artificielle. De l'édition et la signature à la conversion et l'organisation, notre outil fournit une solution complète pour vos tâches PDF.",
+    "imageAlt": "Outils PDF Alimentés par l'IA"
+  }
+    },
+    "pdfTools": {
+    "header": {
+      "title1": "Transformer les Documents",
+      "title2": "Facilement avec notre",
+      "brand": "PDF Techno",
+      "subtitle": "Un Outil Pour Chaque Besoin PDF",
+      "freeLabel": "100% Gratuit"
+    },
+    "search": {
+      "placeholder": "Rechercher des outils...",
+      "noResults": {
+        "title": "Aucun outil trouvé",
+        "description": "Aucun outil ne correspond à votre recherche de \"{searchTerm}\"",
+        "showAllButton": "Afficher tous les outils"
+      }
+    },
+    "tools": {
+      "mergePdf": {
+        "title": "Fusionner PDF",
+        "description": "Fusionner plusieurs PDFs en un seul fichier."
+      },
+      "compressPdf": {
+        "title": "Compresser PDF",
+        "description": "Réduire la taille du fichier"
+      },
+      "splitPdf": {
+        "title": "Diviser PDF",
+        "description": "Séparer un PDF en pages individuelles."
+      },
+      "unlockPdf": {
+        "title": "Déverrouiller PDF",
+        "description": "Déverrouillez facilement et supprimez le mot de passe du pdf"
+      },
+      "protectPdf": {
+        "title": "Protéger PDF",
+        "description": "Sécurisez votre PDF avec un mot de passe"
+      },
+      "repairPdf": {
+        "title": "Réparer PDF",
+        "description": "Réparer et restaurer les fichiers PDF endommagés"
+      },
+      "excelToPdf": {
+        "title": "Excel vers PDF",
+        "description": "Transformer les feuilles excel en pdfs"
+      },
+      "wordToPdf": {
+        "title": "Word vers PDF",
+        "description": "Convertir les documents Word en PDFs."
+      },
+      "powerpointToPdf": {
+        "title": "Powerpoint vers PDF",
+        "description": "Transformer vos diapositives Powerpoint(ppt) en pdf."
+      },
+      "imageToPdf": {
+        "title": "Image vers PDF",
+        "description": "Convertir tous types d'images(PNG, JPG, JPEG) en fichier PDF."
+      },
+      "pdfToImage": {
+        "title": "PDF vers Image",
+        "description": "Extraire tous types d'images des PDFs en fichiers JPG, PNG, TIFF, BMP."
+      },
+      "rotatePdf": {
+        "title": "Rotation PDF",
+        "description": "Ajuster l'orientation de vos pages PDF."
+      },
+      "organizePdf": {
+        "title": "Organiser PDF",
+        "description": "Réorganiser, fusionner ou supprimer des pages de votre PDF."
+      },
+      "pdfToPdfA": {
+        "title": "PDF vers PDF/A",
+        "description": "Archiver les PDFs au format PDF/A."
+      },
+      "scanPdf": {
+        "title": "Scanner PDF",
+        "description": "Scanner tout document directement au format PDF."
+      },
+      "signPdf": {
+        "title": "Signer PDF",
+        "description": "Signez vous-même ou demandez une signature électronique"
+      },
+      "watermark": {
+        "title": "Filigrane",
+        "description": "Ajouter des filigranes personnalisés à vos documents"
+      },
+      "ocrPdf": {
+        "title": "OCR PDF",
+        "description": "Extraire le texte des PDFs."
+      },
+      "pageNumbers": {
+        "title": "Numéros de Page",
+        "description": "Combiner les PDFs dans l'ordre"
+      },
+      "editPdf": {
+        "title": "Éditer PDF",
+        "description": "Modifier le texte et les images dans les PDFs."
+      },
+      "pdfToWord": {
+        "title": "PDF vers Word",
+        "description": "Transformer les PDFs en fichiers word"
+      },
+      "pdfToPowerpoint": {
+        "title": "PDF vers Powerpoint",
+        "description": "Convertir les PDFs en PowerPoint(ppt) éditables."
+      },
+      "pdfToExcel": {
+        "title": "PDF vers Excel",
+        "description": "Transformer les PDFs en feuilles excel"
+      }
+    },
+    "badges": {
+      "comingSoon": "Bientôt Disponible"
+    },
+    "statistics": {
+      "filesConverted": "Fichiers Convertis",
+      "users": "Utilisateurs",
+      "tools": "Outils",
+      "crossPlatform": "Multi-plateforme"
+    }
+  },
+  "about": {
+    "hero": {
+      "launchBadge": "Lancé en 2025",
+      "title": "À propos de",
+      "brand": "PDF Techno",
+      "subtitle": "Nous ne sommes pas juste un autre outil PDF. Nous sommes votre centre de puissance documentaire numérique, transformant la façon dont le monde travaille avec les PDFs depuis 2025."
+    },
+    "story": {
+      "badge": "Notre Histoire",
+      "title": "Révolutionner la Gestion PDF",
+      "description": "Né de la frustration avec les outils PDF maladroits, PDF Techno a émergé comme la solution que le monde attendait. Notre équipe de développeurs, designers et experts en documents s'est unie avec une mission : rendre le travail PDF fluide, sécurisé et ultra-rapide.",
+      "features": {
+        "noDownload": "Aucun téléchargement de logiciel requis",
+        "security": "Sécurité de niveau entreprise pour tous",
+        "accessibility": "Accessibilité mondiale depuis n'importe quel appareil"
+      },
+      "mission": {
+        "title": "Notre Mission",
+        "description": "Démocratiser les outils PDF professionnels et rendre la gestion documentaire sans effort pour tous, partout."
+      }
+    },
+    "values": {
+      "badge": "Valeurs Fondamentales",
+      "title": "Ce qui nous Anime:",
+      "subtitle": "Les principes qui façonnent chaque décision que nous prenons",
+      "items": {
+        "accessibility": {
+          "title": "Accessibilité",
+          "description": "Notre plateforme est disponible où que vous soyez, quand vous en avez besoin. Aucune barrière, juste un accès fluide."
+        },
+        "simplicity": {
+          "title": "Simplicité",
+          "description": "Conçu pour tous. Aucune expertise technique requise - juste des outils intuitifs et puissants."
+        },
+        "innovation": {
+          "title": "Innovation",
+          "description": "La technologie de pointe rencontre les solutions pratiques. Nous repoussons toujours les limites."
+        },
+        "customerFocus": {
+          "title": "Focus Client",
+          "description": "Votre succès est notre mission. Nous écoutons, nous adaptons et livrons exactement ce dont vous avez besoin."
+        },
+        "security": {
+          "title": "Sécurité",
+          "description": "Sécurité de niveau bancaire pour vos documents. Votre confidentialité et protection des données ne sont pas négociables."
+        }
+      }
+    },
+    "features": {
+      "badge": "Nos Outils",
+      "title": "Fonctionnalités Puissantes, Expérience Simple",
+      "subtitle": "Tout ce dont vous avez besoin pour travailler avec les PDFs, et plus encore",
+      "items": {
+        "pdfEditing": {
+          "title": "Édition PDF Simplifiée",
+          "description": "Ajoutez du texte, des images, des signatures. Réorganisez les pages par glisser-déposer. Résultats professionnels en secondes.",
+          "highlight": "Plus Populaire"
+        },
+        "fileConversion": {
+          "title": "Conversion Universelle de Fichiers",
+          "description": "Convertissez entre PDF, Word, Excel, PowerPoint, images et plus. Formatage parfait garanti.",
+          "highlight": "Nouveau"
+        },
+        "smartCompression": {
+          "title": "Compression Intelligente",
+          "description": "Réduisez la taille des fichiers jusqu'à 90% sans perte de qualité. Optimisation alimentée par IA pour tous les cas d'usage."
+        },
+        "advancedSecurity": {
+          "title": "Sécurité Avancée",
+          "description": "Protection par mot de passe, signatures numériques et chiffrement. Sécurité de niveau entreprise pour tous.",
+          "highlight": "Entreprise"
+        },
+        "formBuilder": {
+          "title": "Créateur de Formulaires Pro",
+          "description": "Créez des formulaires interactifs, collectez des signatures et automatisez les flux de travail. Aucun codage requis."
+        },
+        "cloudIntegration": {
+          "title": "Intégration Cloud",
+          "description": "Fonctionne avec Google Drive, Dropbox, OneDrive. Accédez à vos fichiers de n'importe où, n'importe quand.",
+          "highlight": "Populaire"
+        }
+      }
+    },
+    "team": {
+      "badge": "Rencontrez l'Équipe",
+      "title": "Les Cerveaux Derrière la Magie",
+      "subtitle": "Innovateurs passionnés dédiés à votre succès",
+      "members": {
+        "kshitiz": {
+          "name": "Kshitiz Verma",
+          "role": "PDG",
+          "bio": "Leader visionnaire avec une passion pour l'innovation. Aime transformer les problèmes complexes en solutions simples."
+        },
+        "priyank": {
+          "name": "Priyank Singh",
+          "role": "Responsable des Opérations",
+          "bio": "Aime optimiser les processus et améliorer l'expérience utilisateur. Un vrai croyant dans les décisions basées sur les données."
+        },
+        "sagar": {
+          "name": "Sagar Kumar",
+          "role": "Développeur Principal",
+          "bio": "Magicien du backend avec un talent pour construire des systèmes évolutifs. Aime résoudre les problèmes complexes."
+        },
+        "anuj": {
+          "name": "Anuj Singh",
+          "role": "Tests et R&D",
+          "bio": "Dédié à la qualité du produit et à l'innovation. Aime casser les choses pour les améliorer."
+        }
+      }
+    },
+    "stats": {
+      "happyUsers": "Utilisateurs Satisfaits",
+      "filesProcessed": "Fichiers Traités",
+      "pdfTools": "Outils PDF",
+      "uptime": "Temps de Fonctionnement"
+    }
+  },
+   "contact": {
+    "header": {
+      "title": "Contactez-nous",
+      "subtitle": "Entrez en contact avec notre équipe. Nous sommes là pour vous aider avec tous vos besoins PDF."
+    },
+    "info": {
+      "title": "Entrez en Contact",
+      "description": "Avez-vous des questions sur nos outils PDF ? Besoin de support technique ? Vous voulez partager des commentaires ? Nous aimerions avoir de vos nouvelles. Envoyez-nous un message et nous répondrons dès que possible.",
+      "cards": {
+        "email": {
+          "title": "Support Email",
+          "value": "info@pdftechno.com"
+        },
+        "responseTime": {
+          "title": "Temps de Réponse",
+          "value": "Généralement dans les 24 heures"
+        },
+        "help": {
+          "title": "Nous Sommes Là pour Aider",
+          "value": "Support technique et demandes générales"
+        }
+      }
+    },
+    "form": {
+      "title": "Envoyez-nous un Message",
+      "fields": {
+        "name": {
+          "label": "Nom Complet",
+          "placeholder": "Entrez votre nom complet",
+          "required": "*"
+        },
+        "email": {
+          "label": "Adresse Email",
+          "placeholder": "Entrez votre adresse email",
+          "required": "*"
+        },
+        "subject": {
+          "label": "Sujet",
+          "required": "*"
+        },
+        "message": {
+          "label": "Message",
+          "placeholder": "Dites-nous comment nous pouvons vous aider...",
+          "required": "*",
+          "characterCount": "{count}/2000 caractères"
+        }
+      },
+      "subjects": {
+        "general": "Demande Générale",
+        "technical": "Support Technique",
+        "bug": "Rapport de Bug",
+        "feature": "Demande de Fonctionnalité",
+        "billing": "Question de Facturation",
+        "partnership": "Demande de Partenariat",
+        "other": "Autre"
+      },
+      "submit": {
+        "button": "Envoyer le Message",
+        "sending": "Envoi du Message...",
+        "success": "Merci pour votre message ! Nous vous répondrons bientôt.",
+        "error": "Il y a eu une erreur lors de l'envoi de votre message. Veuillez réessayer."
+      },
+      "validation": {
+        "nameRequired": "Le nom est requis",
+        "nameMinLength": "Le nom doit contenir au moins 2 caractères",
+        "emailRequired": "L'email est requis",
+        "emailInvalid": "Veuillez entrer un email valide",
+        "messageRequired": "Le message est requis",
+        "messageMinLength": "Le message doit contenir au moins 10 caractères"
+      }
+    }
+  },
+    
+    "Auth": {
     "login": "Connexion",
     "sign": "S'",
     "up": "inscrire",

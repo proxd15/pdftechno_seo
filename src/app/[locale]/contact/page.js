@@ -1,11 +1,11 @@
-// pages/contact.js or app/contact/page.js (depending on your Next.js version)
-
-'use client'; // Add this if using app directory
+'use client';
 
 import { useState, useEffect } from 'react';
+import { useI18n } from '@/i18n';
 import { submitContactForm, getContactSubjects } from '@/api/contact_api';
 
 const ContactUs = () => {
+  const { t } = useI18n();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -18,14 +18,32 @@ const ContactUs = () => {
   const [submitStatus, setSubmitStatus] = useState(null);
   const [errors, setErrors] = useState({});
 
+  // Default subjects with translation keys
+  const defaultSubjects = [
+    { value: 'general', labelKey: 'contact.form.subjects.general' },
+    { value: 'technical', labelKey: 'contact.form.subjects.technical' },
+    { value: 'bug', labelKey: 'contact.form.subjects.bug' },
+    { value: 'feature', labelKey: 'contact.form.subjects.feature' },
+    { value: 'billing', labelKey: 'contact.form.subjects.billing' },
+    { value: 'partnership', labelKey: 'contact.form.subjects.partnership' },
+    { value: 'other', labelKey: 'contact.form.subjects.other' }
+  ];
+
   // Load subject choices on component mount
   useEffect(() => {
     const loadSubjects = async () => {
       try {
         const subjectChoices = await getContactSubjects();
-        setSubjects(subjectChoices);
+        // If API returns subjects, use them, otherwise use default translated subjects
+        if (subjectChoices && subjectChoices.length > 0) {
+          setSubjects(subjectChoices);
+        } else {
+          setSubjects(defaultSubjects);
+        }
       } catch (error) {
         console.error('Failed to load subjects:', error);
+        // Fallback to default translated subjects
+        setSubjects(defaultSubjects);
       }
     };
     loadSubjects();
@@ -51,21 +69,21 @@ const ContactUs = () => {
     const newErrors = {};
     
     if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
+      newErrors.name = t('contact.form.validation.nameRequired');
     } else if (formData.name.trim().length < 2) {
-      newErrors.name = 'Name must be at least 2 characters';
+      newErrors.name = t('contact.form.validation.nameMinLength');
     }
     
     if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
+      newErrors.email = t('contact.form.validation.emailRequired');
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email';
+      newErrors.email = t('contact.form.validation.emailInvalid');
     }
     
     if (!formData.message.trim()) {
-      newErrors.message = 'Message is required';
+      newErrors.message = t('contact.form.validation.messageRequired');
     } else if (formData.message.trim().length < 10) {
-      newErrors.message = 'Message must be at least 10 characters';
+      newErrors.message = t('contact.form.validation.messageMinLength');
     }
     
     setErrors(newErrors);
@@ -87,7 +105,7 @@ const ContactUs = () => {
       
       setSubmitStatus({
         type: 'success',
-        message: result.message || 'Thank you for your message! We will get back to you soon.'
+        message: result.message || t('contact.form.submit.success')
       });
       
       // Reset form
@@ -101,7 +119,7 @@ const ContactUs = () => {
     } catch (error) {
       setSubmitStatus({
         type: 'error',
-        message: error.message || 'There was an error submitting your message. Please try again.'
+        message: error.message || t('contact.form.submit.error')
       });
     } finally {
       setIsSubmitting(false);
@@ -114,9 +132,11 @@ const ContactUs = () => {
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-6xl mx-auto px-4 py-12">
           <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Contact Us</h1>
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              {t('contact.header.title')}
+            </h1>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Get in touch with our team. We're here to help with all your PDF needs.
+              {t('contact.header.subtitle')}
             </p>
           </div>
         </div>
@@ -129,10 +149,11 @@ const ContactUs = () => {
           {/* Contact Information - 2 columns */}
           <div className="lg:col-span-2 space-y-10">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">Get in Touch</h2>
+              <h2 className="text-3xl font-bold text-gray-900 mb-6">
+                {t('contact.info.title')}
+              </h2>
               <p className="text-gray-600 text-lg leading-relaxed">
-                Have questions about our PDF tools? Need technical support? Want to share feedback? 
-                We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+                {t('contact.info.description')}
               </p>
             </div>
 
@@ -145,8 +166,12 @@ const ContactUs = () => {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 text-lg">Email Support</h3>
-                  <p className="text-gray-600">info@pdftechno.com</p>
+                  <h3 className="font-semibold text-gray-900 text-lg">
+                    {t('contact.info.cards.email.title')}
+                  </h3>
+                  <p className="text-gray-600">
+                    {t('contact.info.cards.email.value')}
+                  </p>
                 </div>
               </div>
 
@@ -157,8 +182,12 @@ const ContactUs = () => {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 text-lg">Response Time</h3>
-                  <p className="text-gray-600">Usually within 24 hours</p>
+                  <h3 className="font-semibold text-gray-900 text-lg">
+                    {t('contact.info.cards.responseTime.title')}
+                  </h3>
+                  <p className="text-gray-600">
+                    {t('contact.info.cards.responseTime.value')}
+                  </p>
                 </div>
               </div>
 
@@ -169,8 +198,12 @@ const ContactUs = () => {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 text-lg">We're Here to Help</h3>
-                  <p className="text-gray-600">Technical support & general inquiries</p>
+                  <h3 className="font-semibold text-gray-900 text-lg">
+                    {t('contact.info.cards.help.title')}
+                  </h3>
+                  <p className="text-gray-600">
+                    {t('contact.info.cards.help.value')}
+                  </p>
                 </div>
               </div>
             </div>
@@ -179,7 +212,9 @@ const ContactUs = () => {
           {/* Contact Form - 3 columns */}
           <div className="lg:col-span-3">
             <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-8">Send us a Message</h3>
+              <h3 className="text-2xl font-bold text-gray-900 mb-8">
+                {t('contact.form.title')}
+              </h3>
               
               {/* Success/Error Messages */}
               {submitStatus && (
@@ -209,7 +244,7 @@ const ContactUs = () => {
                   {/* Name Field */}
                   <div>
                     <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">
-                      Full Name *
+                      {t('contact.form.fields.name.label')} {t('contact.form.fields.name.required')}
                     </label>
                     <input
                       type="text"
@@ -220,7 +255,7 @@ const ContactUs = () => {
                       className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#DA1F10] focus:border-[#DA1F10] transition-colors ${
                         errors.name ? 'border-red-500' : 'border-gray-300'
                       }`}
-                      placeholder="Enter your full name"
+                      placeholder={t('contact.form.fields.name.placeholder')}
                     />
                     {errors.name && (
                       <p className="mt-1 text-sm text-red-600">{errors.name}</p>
@@ -230,7 +265,7 @@ const ContactUs = () => {
                   {/* Email Field */}
                   <div>
                     <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
-                      Email Address *
+                      {t('contact.form.fields.email.label')} {t('contact.form.fields.email.required')}
                     </label>
                     <input
                       type="email"
@@ -241,7 +276,7 @@ const ContactUs = () => {
                       className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#DA1F10] focus:border-[#DA1F10] transition-colors ${
                         errors.email ? 'border-red-500' : 'border-gray-300'
                       }`}
-                      placeholder="Enter your email address"
+                      placeholder={t('contact.form.fields.email.placeholder')}
                     />
                     {errors.email && (
                       <p className="mt-1 text-sm text-red-600">{errors.email}</p>
@@ -252,7 +287,7 @@ const ContactUs = () => {
                 {/* Subject Field */}
                 <div>
                   <label htmlFor="subject" className="block text-sm font-semibold text-gray-700 mb-2">
-                    Subject *
+                    {t('contact.form.fields.subject.label')} {t('contact.form.fields.subject.required')}
                   </label>
                   <select
                     id="subject"
@@ -263,7 +298,7 @@ const ContactUs = () => {
                   >
                     {subjects.map((subject) => (
                       <option key={subject.value} value={subject.value}>
-                        {subject.label}
+                        {subject.labelKey ? t(subject.labelKey) : subject.label}
                       </option>
                     ))}
                   </select>
@@ -272,7 +307,7 @@ const ContactUs = () => {
                 {/* Message Field */}
                 <div>
                   <label htmlFor="message" className="block text-sm font-semibold text-gray-700 mb-2">
-                    Message *
+                    {t('contact.form.fields.message.label')} {t('contact.form.fields.message.required')}
                   </label>
                   <textarea
                     id="message"
@@ -283,13 +318,13 @@ const ContactUs = () => {
                     className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#DA1F10] focus:border-[#DA1F10] transition-colors resize-none ${
                       errors.message ? 'border-red-500' : 'border-gray-300'
                     }`}
-                    placeholder="Tell us how we can help you..."
+                    placeholder={t('contact.form.fields.message.placeholder')}
                   />
                   {errors.message && (
                     <p className="mt-1 text-sm text-red-600">{errors.message}</p>
                   )}
                   <p className="mt-2 text-sm text-gray-500">
-                    {formData.message.length}/2000 characters
+                    {t('contact.form.fields.message.characterCount', { count: formData.message.length })}
                   </p>
                 </div>
 
@@ -309,10 +344,10 @@ const ContactUs = () => {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
-                      Sending Message...
+                      {t('contact.form.submit.sending')}
                     </div>
                   ) : (
-                    'Send Message'
+                    t('contact.form.submit.button')
                   )}
                 </button>
               </form>
