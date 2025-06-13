@@ -8,6 +8,8 @@ import { Eye, EyeOff } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useI18n } from '@/i18n';
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+
 export default function LoginPage() {
   const params = useParams();
   const [email, setEmail] = useState('');
@@ -71,7 +73,7 @@ export default function LoginPage() {
     sessionStorage.setItem('rememberMe', rememberMe.toString());
     
     // Redirect to Django's Google OAuth URL (keeping original URL structure)
-    window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL}/accounts/google/login/`;
+    window.location.href = `${API_BASE_URL}/accounts/google/login/`;
   };
   
   return (
@@ -171,7 +173,7 @@ export default function LoginPage() {
               </label>
             </div>
             
-            <Link href="/forgot-password" className="text-sm text-purple-600 hover:underline">
+            <Link href={`/${locale}/forgot-password`} className="text-sm text-purple-600 hover:underline">
               {t('forgotPassword')}
             </Link>
           </div>

@@ -144,24 +144,51 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       
-      // The registerUser function now handles the name splitting internally
-      const response = await registerUser(userData);
-      
-      if (response.user && response.access) {
-        setUser(response.user);
+      const response = await fetch(`${API_BASE_URL}/api/auth/register/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+
+      const data = await response.json();
+      console.log('Registration response:', data); // Debug log
+
+      if (response.ok) {
+        // Registration successful
+        setUser(data.user);
         setIsAuthenticated(true);
         
-        localStorage.setItem('user', JSON.stringify(response.user));
-        localStorage.setItem('accessToken', response.access);
-        localStorage.setItem('refreshToken', response.refresh);
+        // Store tokens
+        const storage = sessionStorage.getItem('rememberMe') === 'true' ? localStorage : sessionStorage;
+        storage.setItem('accessToken', data.access);
+        storage.setItem('refreshToken', data.refresh);
+        storage.setItem('user', JSON.stringify(data.user));
         
-        return { success: true };
+        return {
+          success: true,
+          user: data.user,
+          message: data.message
+        };
+      } else {
+        // Registration failed - return the exact error structure from backend
+        return {
+          success: false,
+          error: data.error || 'Registration failed',
+          message: data.message,
+          error_type: data.error_type,
+          has_google_account: data.has_google_account,
+          details: data.details
+        };
       }
-      
-      return { success: false, error: 'Registration failed' };
     } catch (error) {
-      setError(error.message || 'Registration failed. Please try again.');
-      return { success: false, error: error.message };
+      console.error('Registration network error:', error);
+      return {
+        success: false,
+        error: 'Network error occurred. Please try again.',
+        message: 'Unable to connect to the server'
+      };
     } finally {
       setLoading(false);
     }
@@ -189,7 +216,7 @@ export const AuthProvider = ({ children }) => {
     return isAuthenticated;
   };
 
-  const loginWithGoogle = async (code) => {
+   const loginWithGoogle = async (code) => {
     setError(null);
     try {
       setLoading(true);

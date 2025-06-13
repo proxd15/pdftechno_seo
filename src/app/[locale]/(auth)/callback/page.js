@@ -5,6 +5,8 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+
 export default function AuthCallback() {
   const router = useRouter();
   const { setUser, setIsAuthenticated } = useAuth();
@@ -13,7 +15,7 @@ export default function AuthCallback() {
     async function fetchTokens() {
       try {
         // Get tokens from your Django endpoint
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/accounts/google/callback/`, {
+        const response = await fetch(`${API_BASE_URL}/accounts/google/callback/`, {
           credentials: 'include' // Important to include cookies!
         });
         
