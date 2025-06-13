@@ -55,6 +55,8 @@ export default function ForgotPasswordPage() {
         if (data.error === 'google_user') {
           setIsGoogleUser(true);
           setError(data.message || 'This account was created with Google. Please use Google to sign in.');
+        } else if (data.error === 'email_not_found') {
+          setError(data.message || 'No account found with this email address.');
         } else {
           setError(data.message || 'Failed to send reset email. Please try again.');
         }
