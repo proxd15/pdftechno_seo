@@ -91,49 +91,54 @@
       "mergePdf": "Merge PDF",
       "compressPdf": "Compress PDF"
     },
-     "testimonials": {
-    "title": "User Testimonials",
-    "subtitle": "What our users say about PDF Techno",
-    "navigation": {
-      "previous": "Previous testimonial",
-      "next": "Next testimonial",
-      "goToSlide": "Go to testimonial {number}"
-    },
-    "autoPlay": {
-      "playing": "Auto-playing",
-      "paused": "Paused"
-    },
-    "users": {
-      "ankit": {
-        "name": "Ankit Singh",
-        "designation": "Key Product Manager",
-        "review": "PDFTechno has revolutionized how our team handles documents. The merge and compress tools save us hours every week."
+    "testimonials": {
+      "title": "User Testimonials",
+      "subtitle": "What our users say about PDF Techno",
+      "navigation": {
+        "previous": "Previous testimonial",
+        "next": "Next testimonial",
+        "goToSlide": "Go to testimonial {number}"
       },
-      "anam": {
-        "name": "Anam Azami",
-        "designation": "Category Manager",
-        "review": "The ability to split and organize PDFs seamlessly has made my workflow incredibly efficient. Highly recommend!"
+      "autoPlay": {
+        "playing": "Auto-playing",
+        "paused": "Paused"
       },
-      "deepak": {
-        "name": "Deepak Kumar",
-        "designation": "Design Professional",
-        "review": "The password protection features are game-changers for our legal documents. Everything works flawlessly."
-      },
-      "ali": {
-        "name": "Ali Sher Waris",
-        "designation": "Sourcing Manager, Gap Inc.",
-        "review": "What sets PDFTechno apart is its simplicity. I use it daily to convert Excel sheets to PDF, and the output quality is consistently excellent. No more formatting issues!"
+      "users": {
+        "ankit": {
+          "name": "Ankit Singh",
+          "designation": "Key Product Manager",
+          "review": "PDFTechno has revolutionized how our team handles documents. The merge and compress tools save us hours every week."
+        },
+        "anam": {
+          "name": "Anam Azmi",
+          "designation": "Category Manager , Marks & Spencer",
+          "review": "The ability to split and organize PDFs seamlessly has made my workflow incredibly efficient. Highly recommend!"
+        },
+        "deepak": {
+          "name": "Deepak Kumar",
+          "designation": "Design Professional",
+          "review": "The password protection features are game-changers for our legal documents. Everything works flawlessly."
+        },
+        "ali": {
+          "name": "Ali Sher Waris",
+          "designation": "Sourcing Manager, Gap Inc.",
+          "review": "What sets PDFTechno apart is its simplicity. I use it daily to convert Excel sheets to PDF, and the output quality is consistently excellent. No more formatting issues!"
+        },
+        "yr": {
+          "name": "YR Shraddha",
+          "designation": "Project lead, TextileGenesis",
+          "review": "Ah, | just wanted to drop a note of appreciation! | had to combine 92 PDFs into 1 and was struggling to do so in| love PDF and it took seconds to do the same with PDF Techno! You made a great product there! | was on a call with a customer and | forwarded the link to them as well to use your platform."
+        }
       }
+    },
+    "aiPowered": {
+      "badge": "AI Powered",
+      "title": "Free AI powered PDF Tool",
+      "description1": "Effortlessly manage and transform your PDF documents with our advanced AI-powered tool. Designed for simplicity and efficiency, our tool offers a range of features to handle all your PDF needs with ease.",
+      "description2": "Experience seamless document management and transformation with the power of artificial intelligence. From editing and signing to converting and organizing, our tool provides a comprehensive solution for your PDF tasks.",
+      "imageAlt": "AI Powered PDF Tools"
     }
-  },"aiPowered": {
-    "badge": "AI Powered",
-    "title": "Free AI powered PDF Tool",
-    "description1": "Effortlessly manage and transform your PDF documents with our advanced AI-powered tool. Designed for simplicity and efficiency, our tool offers a range of features to handle all your PDF needs with ease.",
-    "description2": "Experience seamless document management and transformation with the power of artificial intelligence. From editing and signing to converting and organizing, our tool provides a comprehensive solution for your PDF tasks.",
-    "imageAlt": "AI Powered PDF Tools"
-  }
   },
-  
   "pdfTools": {
     "header": {
       "title1": "Transform Documents",
@@ -254,7 +259,7 @@
       "crossPlatform": "Cross-Platform"
     }
   },
- "about": {
+  "about": {
     "hero": {
       "launchBadge": "Launched in 2025",
       "title": "About",
@@ -267,7 +272,7 @@
       "description": "Born from frustration with clunky PDF tools, PDF Techno emerged as the solution the world was waiting for. Our team of developers, designers, and document experts came together with one mission: make PDF work seamless, secure, and lightning-fast.",
       "features": {
         "noDownload": "No software downloads required",
-        "security": "Enterprise-grade security for everyone", 
+        "security": "Enterprise-grade security for everyone",
         "accessibility": "Global accessibility from any device"
       },
       "mission": {
@@ -285,7 +290,7 @@
           "description": "Our platform is available wherever you are, whenever you need it. No barriers, just seamless access."
         },
         "simplicity": {
-          "title": "Simplicity", 
+          "title": "Simplicity",
           "description": "Designed for everyone. No technical expertise required - just intuitive, powerful tools."
         },
         "innovation": {
@@ -354,7 +359,7 @@
         },
         "sagar": {
           "name": "Sagar Kumar",
-          "role": "Lead Developer", 
+          "role": "Lead Developer",
           "bio": "Backend wizard with a knack for building scalable systems. Loves solving complex problems."
         },
         "anuj": {
@@ -366,7 +371,7 @@
     },
     "stats": {
       "happyUsers": "Happy Users",
-      "filesProcessed": "Files Processed", 
+      "filesProcessed": "Files Processed",
       "pdfTools": "PDF Tools",
       "uptime": "Uptime"
     }

@@ -42,6 +42,14 @@ const TestimonialsSection = () => {
             image: "/images/testimonials/6.jpeg",
             reviewKey: "home.testimonials.users.ali.review",
             rating: 5
+        },
+        {
+            id: 5,
+            nameKey: "home.testimonials.users.yr.name",
+            designationKey: "home.testimonials.users.yr.designation",
+            image: "/images/testimonials/7.jpeg",
+            reviewKey: "home.testimonials.users.yr.review",
+            rating: 5
         }
     ];
 

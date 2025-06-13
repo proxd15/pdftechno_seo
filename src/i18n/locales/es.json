@@ -109,8 +109,8 @@
         "review": "PDFTechno ha revolucionado la forma en que nuestro equipo maneja documentos. Las herramientas de fusión y compresión nos ahorran horas cada semana."
       },
       "anam": {
-        "name": "Anam Azami",
-        "designation": "Gerente de Categoría",
+        "name": "Anam Azmi",
+        "designation": "Gerente de Categoría , Marks & Spencer",
         "review": "La capacidad de dividir y organizar PDFs sin problemas ha hecho que mi flujo de trabajo sea increíblemente eficiente. ¡Altamente recomendado!"
       },
       "deepak": {
@@ -122,7 +122,12 @@
         "name": "Ali Sher Waris",
         "designation": "Gerente de Abastecimiento, Gap Inc.",
         "review": "Lo que distingue a PDFTechno es su simplicidad. Lo uso diariamente para convertir hojas de Excel a PDF, y la calidad de salida es consistentemente excelente. ¡No más problemas de formato!"
-      }
+      },
+      "yr": {
+          "name": "YR Shraddha",
+          "designation": "Project lead, TextileGenesis",
+          "review": "PDFTechno ha sido un cambio de juego para nuestro equipo. La capacidad de convertir archivos PDF a Word y Excel sin perder formato es invaluable. ¡Una herramienta imprescindible!"
+        }
     }
   },
   "aiPowered": {
