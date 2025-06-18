@@ -7,8 +7,10 @@ import SelectFiles from '../tools_utility/SelectFiles';
 import DownloadSection from '../tools_utility/DownloadSection';
 import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
+import { useI18n } from '@/i18n';
 
 const PDFUnlock = () => {
+  const { t , getLocalizedHref } = useI18n();
   // State for files and UI
   const [file, setFile] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -332,7 +334,7 @@ const PDFUnlock = () => {
                   </p>
                   {isAlreadyDecrypted && (
                     <div className="mt-3">
-                      <Link href="/tools/pdf-protect">
+                      <Link href={getLocalizedHref('/protect-pdf')}>
                         <span className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer">
                           Go to Protect PDF Tool →
                         </span>
@@ -533,7 +535,7 @@ const PDFUnlock = () => {
         <EyeOff className="h-4 w-4" />
       )}
     </button>
-  </div>
+  </div>  
   <p className="text-xs text-gray-500 mt-2">
     Enter the password that was used to protect this PDF file.
   </p>
@@ -667,7 +669,7 @@ const PDFUnlock = () => {
               <h3 className="font-medium text-lg mb-3 text-blue-800">Related Tools</h3>
               <ul className="space-y-2">
                 <li>
-                  <Link href="/tools/pdf-protect" className="text-blue-600 hover:text-blue-800 flex items-center">
+                  <Link href={getLocalizedHref('/protect-pdf')} className="text-blue-600 hover:text-blue-800 flex items-center">
                     <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                     </svg>

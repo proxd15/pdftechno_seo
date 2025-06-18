@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 import { FaChevronDown, FaBars, FaTimes, FaUser } from 'react-icons/fa';
 import { useI18n } from '@/i18n';
 import { useAuth } from '@/context/AuthContext';
+import Twemoji from 'react-twemoji';
 
 export default function Navbar() {
   const [isToolsMenuOpen, setIsToolsMenuOpen] = useState(false);
@@ -15,6 +16,7 @@ export default function Navbar() {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ left: 0, right: 'auto' });
+  const [userProfile, setUserProfile] = useState(null);
   const pathname = usePathname();
   const { t, locale, changeLocale, getLocalizedHref } = useI18n();
   const { isAuthenticated, user, logout } = useAuth();
@@ -23,6 +25,107 @@ export default function Navbar() {
   const toolsMenuRef = useRef(null);
   const toolsButtonRef = useRef(null);
   const toolsMenuTimeout = useRef(null);
+
+  // Fetch user profile data including avatar
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (isAuthenticated && user) {
+        try {
+          const token = localStorage.getItem('accessToken') || sessionStorage.getItem('accessToken');
+          const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+          
+          const response = await fetch(`${API_BASE_URL}/api/profile/`, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          });
+          
+          if (response.ok) {
+            const profileData = await response.json();
+            setUserProfile(profileData);
+          } else {
+            console.error('Failed to fetch profile:', response.status);
+          }
+        } catch (error) {
+          console.error('Error fetching user profile:', error);
+        }
+      }
+    };
+
+    fetchUserProfile();
+  }, [isAuthenticated, user]);
+
+  // Helper function to get user avatar with better error handling
+  const getUserAvatar = () => {
+    // Check if user has selected a custom avatar
+    if (userProfile?.avatar && userProfile?.has_selected_avatar) {
+      const avatar = userProfile.avatar;
+      
+      // Check if avatar is a valid URL (starts with http/https or /)
+      if (avatar.startsWith('http') || avatar.startsWith('https') || avatar.startsWith('/')) {
+        return { type: 'url', value: avatar };
+      }
+      
+      // Check if it's an emoji
+      if (avatar.length <= 4 && /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/u.test(avatar)) {
+        return { type: 'emoji', value: avatar };
+      }
+      
+      // If it's neither URL nor emoji, return null
+      return null;
+    }
+    
+    // Return null for default icon
+    return null;
+  };
+
+  // Helper function to get user display name
+  const getUserDisplayName = () => {
+    if (!user) return 'User';
+    
+    // Check if user has a name field (from Google login or manual registration)
+    if (user.name && user.name.trim()) {
+      return user.name;
+    }
+    
+    // Check if userProfile has user data with name
+    if (userProfile?.user?.name && userProfile.user.name.trim()) {
+      return userProfile.user.name;
+    }
+    
+    // Fallback to first_name + last_name from user object
+    if (user.first_name && user.last_name) {
+      return `${user.first_name} ${user.last_name}`.trim();
+    }
+    
+    // Fallback to first_name + last_name from userProfile
+    if (userProfile?.user?.first_name && userProfile?.user?.last_name) {
+      return `${userProfile.user.first_name} ${userProfile.user.last_name}`.trim();
+    }
+    
+    // Fallback to just first_name
+    if (user.first_name) {
+      return user.first_name;
+    }
+    
+    // Fallback to just first_name from userProfile
+    if (userProfile?.user?.first_name) {
+      return userProfile.user.first_name;
+    }
+    
+    // Fallback to email username
+    if (user.email) {
+      return user.email.split('@')[0];
+    }
+    
+    // Final fallback to email from userProfile
+    if (userProfile?.user?.email) {
+      return userProfile.user.email.split('@')[0];
+    }
+    
+    return 'User';
+  };
 
   // Handle window resize for responsive behavior
   useEffect(() => {
@@ -160,6 +263,88 @@ export default function Navbar() {
   const cancelLogout = () => {
     setShowLogoutConfirm(false);
   };
+
+  // Render avatar or default icon
+  const renderAvatar = () => {
+    const avatar = getUserAvatar();
+    
+    if (avatar?.type === 'url') {
+      return (
+        <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
+          <Image
+            src={avatar.value}
+            alt="User Avatar"
+            width={32}
+            height={32}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              // Show default icon on error
+              const container = e.target.parentElement;
+              container.innerHTML = `<div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center"><svg class="h-4 w-4 text-red-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg></div>`;
+            }}
+          />
+        </div>
+      );
+    }
+    
+    if (avatar?.type === 'emoji') {
+      return (
+        <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
+          <Twemoji options={{ className: 'w-6 h-6' }}>
+            <span className="text-lg leading-none">{avatar.value}</span>
+          </Twemoji>
+        </div>
+      );
+    }
+    
+    return (
+      <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
+        <FaUser className="h-4 w-4 text-red-600" />
+      </div>
+    );
+  };
+
+  // Render mobile avatar (slightly larger)
+  const renderMobileAvatar = () => {
+    const avatar = getUserAvatar();
+    
+    if (avatar?.type === 'url') {
+      return (
+        <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
+          <Image
+            src={avatar.value}
+            alt="User Avatar"
+            width={40}
+            height={40}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              // Show default icon on error
+              const container = e.target.parentElement;
+              container.innerHTML = `<div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center"><svg class="h-5 w-5 text-red-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg></div>`;
+            }}
+          />
+        </div>
+      );
+    }
+    
+    if (avatar?.type === 'emoji') {
+      return (
+        <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
+          <Twemoji options={{ className: 'w-8 h-8' }}>
+            <span className="text-xl leading-none">{avatar.value}</span>
+          </Twemoji>
+        </div>
+      );
+    }
+    
+    return (
+      <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+        <FaUser className="h-5 w-5 text-red-600" />
+      </div>
+    );
+  };
+     
+  
 
   return (
     <>
@@ -658,9 +843,9 @@ export default function Navbar() {
                     onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
                     className="flex items-center px-3 py-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700"
                   >
-                    <FaUser className="h-5 w-5 text-red-600" />
-                    <span className="ml-2">{user?.name || 'User'}</span>
-                    <FaChevronDown className="ml-1 h-3 w-3" />
+                    {renderAvatar()}
+                    <span className="ml-2 max-w-32 truncate">{getUserDisplayName()}</span>
+                    <FaChevronDown className="ml-1 h-3 w-3 flex-shrink-0" />
                   </button>
 
                   {isProfileMenuOpen && (
@@ -772,11 +957,9 @@ export default function Navbar() {
                   {isAuthenticated && (
                     <div className="py-4 border-b border-gray-200">
                       <div className="flex items-center mb-4">
-                        <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mr-3">
-                          <FaUser className="h-5 w-5 text-red-600" />
-                        </div>
-                        <div>
-                          <div className="font-medium text-gray-800">{user?.name || 'User'}</div>
+                        {renderMobileAvatar()}
+                        <div className="ml-3">
+                          <div className="font-medium text-gray-800">{getUserDisplayName()}</div>
                           <div className="text-sm text-gray-600">Logged in</div>
                         </div>
                       </div>

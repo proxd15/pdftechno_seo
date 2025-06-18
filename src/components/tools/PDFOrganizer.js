@@ -1332,6 +1332,8 @@ const handleDragEnd = (event) => {
  
  // Download the organized PDF
  const handleDownload = (fileId, fileName) => {
+  console.log("clicked");
+  
    const finalFileName = fileName.toLowerCase().endsWith('.pdf') ? fileName : `${fileName}.pdf`;
    downloadOrganizedPdf(fileId, finalFileName);
  };
@@ -1705,8 +1707,8 @@ const handleDragEnd = (event) => {
       <div ref={resultSectionRef} className="mt-10">
         <DownloadSection
           files={organizationResult.files}
-          onDownload={handleDownload}
-          onPreview={handleOpenPreview}
+          downloadHandler={handleDownload}
+          previewHandler={handleOpenPreview}
           title="Organized PDF Ready"
           description="Your PDF has been successfully organized. You can preview or download it below."
         />
