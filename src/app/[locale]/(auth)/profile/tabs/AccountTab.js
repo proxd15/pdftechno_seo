@@ -14,7 +14,8 @@ const AccountTab = ({ profile, onProfileUpdate }) => {
     company: '',
     website: '',
     location: '',
-    avatar: ''
+    avatar: '',
+    has_selected_avatar: false
   });
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
@@ -56,7 +57,8 @@ const AccountTab = ({ profile, onProfileUpdate }) => {
   const handleAvatarSelect = (avatar) => {
     setFormData(prev => ({
       ...prev,
-      avatar
+      avatar,
+      has_selected_avatar: true
     }));
     setShowAvatarPicker(false);
   };
