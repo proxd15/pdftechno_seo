@@ -8,7 +8,7 @@ export const metadata = {
   metadataBase: new URL('https://www.pdftechno.com'),
   title: 'PDF Techno - Free Online PDF Tools | Merge, Split, Convert & Edit PDFs',
   description: 'Free online PDF tools to merge, split, compress, convert and edit PDF files. 100% secure, no registration required. Transform documents with PDF Techno - the best alternative to expensive PDF software.',
-  keywords: 'free PDF tools, online PDF editor, merge PDF, split PDF, compress PDF, PDF converter, Word to PDF, Excel to PDF, PowerPoint to PDF, PDF to Word, PDF to JPG, unlock PDF, protect PDF, sign PDF, watermark PDF, rotate PDF, organize PDF pages, PDF reader, OCR PDF, repair PDF, extract PDF pages, combine PDF files, PDF splitter, PDF compressor, PDF optimizer, secure PDF tools, batch PDF processing, online document converter, PDF manipulation, PDF utilities, web-based PDF editor, mobile PDF tools, PDF form filler, PDF annotation, digital signature PDF, PDF password remover, PDF page numbering, PDF bookmark editor, PDF text extraction, image to PDF converter, PDF quality enhancer, PDF file size reducer, PDF accessibility tools, PDF compliance checker, PDF archiving solution, PDF workflow automation',
+  keywords: 'free PDF tools, online PDF editor, merge PDF, split PDF, compress PDF, PDF converter, Word to PDF, Excel to PDF, PowerPoint to PDF, PDF to Word, PDF to JPG, unlock PDF, protect PDF, sign PDF, watermark PDF, rotate PDF, organize PDF pages, PDF reader, OCR PDF, repair PDF, extract PDF pages, combine PDF files, PDF splitter, PDF compressor, PDF optimizer, secure PDF tools, batch PDF processing, online document converter, PDF manipulation, PDF utilities, web-based PDF editor, mobile PDF tools, PDF form filler, PDF annotation, digital signature PDF, PDF password remover, PDF page numbering, PDF bookmark editor, PDF text extraction, image to PDF converter, PDF quality enhancer, PDF file size reducer, PDF accessibility tools, PDF compliance checker, PDF archiving solution, PDF workflow automation, PDF tools India, online PDF tools India, free PDF editor India, PDF converter India, merge PDF India, split PDF India, compress PDF India, PDF to Word India, Word to PDF India, Excel to PDF India, PowerPoint to PDF India, PDF to JPG India, unlock PDF India, protect PDF India, sign PDF India, watermark PDF India, rotate PDF India, organize PDF India, PDF reader India, OCR PDF India, repair PDF India, PDF tools for students, PDF tools for business, PDF tools for government, PDF tools for education, PDF tools for legal, PDF tools for professionals, best PDF tools India, secure PDF tools India, fast PDF tools India, no registration PDF tools India, Hindi PDF tools, PDF tools Delhi, PDF tools Mumbai, PDF tools Bangalore, PDF tools Chennai, PDF tools Kolkata',
   authors: [{ name: 'PDF Techno Team' }],
   
   // Enhanced Open Graph for better social sharing
@@ -21,7 +21,7 @@ export const metadata = {
     locale: 'en_US',
     images: [
       {
-        url: '/static/assets/pdf-techno-og-image.jpg',
+        url: '/static/assets/pdf-techno-og-image.webp',
         width: 1200,
         height: 630,
         alt: 'PDF Techno - Free Online PDF Tools',
@@ -34,7 +34,7 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'PDF Techno - Free Online PDF Tools',
     description: 'Free online PDF editor to merge, split, compress and convert PDF files. No registration required.',
-    // images: ['/static/assets/pdf-techno-twitter-card.jpg'],
+    // images: ['/static/assets/pdf-techno-twitter-card.webp'],
     creator: '@pdftechno',
   },
 
@@ -58,11 +58,11 @@ export const metadata = {
   // Icons and manifest
   icons: {
     icon: [
-      { url: '/images/techno_fav.png', sizes: '32x32', type: 'image/png' },
-      { url: '/images/techno_fav.png', sizes: '192x192', type: 'image/png' },
+      { url: '/images/techno_fav.webp', sizes: '32x32', type: 'image/png' },
+      { url: '/images/techno_fav.webp', sizes: '192x192', type: 'image/png' },
     ],
     apple: [
-      { url: '/images/techno_fav.png', sizes: '180x180', type: 'image/png' },
+      { url: '/images/techno_fav.webp', sizes: '180x180', type: 'image/png' },
     ],
   },
 

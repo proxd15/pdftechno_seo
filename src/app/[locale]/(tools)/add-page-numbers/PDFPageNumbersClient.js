@@ -2,7 +2,9 @@
 "use client"
 import Script from 'next/script';
 import DragOverlay from '@/components/tools_utility/DragOverlay';
-import PDFPageNumbering from '@/components/tools/PDFPageNumbering';
+import dynamic from 'next/dynamic';
+
+const PDFPageNumbering = dynamic(() => import('@/components/tools/PDFPageNumbering'), { ssr: false });
 
 export default function PDFPageNumbersClient() {
   return (

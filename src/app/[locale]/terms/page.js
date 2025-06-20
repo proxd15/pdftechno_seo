@@ -1,15 +1,14 @@
 import React from 'react';
-import Head from 'next/head';
+
+export const metadata = {
+  title: 'Terms & Conditions - PDFTechno',
+  description: 'Terms & Conditions for PDFTechno - Read our legal terms for using our PDF processing services',
+  keywords: 'PDFTechno terms, PDFTechno terms and conditions, PDFTechno legal, PDFTechno policies, PDFTechno user agreement, PDFTechno India terms, PDFTechno service terms, PDFTechno website terms, PDFTechno legal information, PDFTechno compliance, PDFTechno rules, PDFTechno guidelines, PDFTechno terms India, PDFTechno legal India, PDFTechno user agreement India, PDFTechno privacy terms, PDFTechno cookie terms, PDFTechno copyright, PDFTechno disclaimer, PDFTechno liability, PDFTechno user rights, PDFTechno obligations, PDFTechno service agreement, PDFTechno terms for business, PDFTechno terms for students, PDFTechno terms for government, PDFTechno terms for education, PDFTechno terms for legal, PDFTechno terms for professionals, PDFTechno company terms, PDFTechno company policies, PDFTechno company legal, PDFTechno company compliance, PDFTechno company rules, PDFTechno company guidelines, PDFTechno company agreement, PDFTechno company India, PDFTechno company legal India, PDFTechno company user agreement India, PDFTechno company privacy terms, PDFTechno company cookie terms, PDFTechno company copyright, PDFTechno company disclaimer, PDFTechno company liability, PDFTechno company user rights, PDFTechno company obligations, PDFTechno company service agreement, PDFTechno company terms for business, PDFTechno company terms for students, PDFTechno company terms for government, PDFTechno company terms for education, PDFTechno company terms for legal, PDFTechno company terms for professionals',
+};
 
 const TermsAndConditions = () => {
   return (
     <>
-      <Head>
-        <title>Terms & Conditions - PDFTechno</title>
-        <meta name="description" content="Terms & Conditions for PDFTechno - Read our legal terms for using our PDF processing services" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </Head>
-
       <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
           {/* Header */}

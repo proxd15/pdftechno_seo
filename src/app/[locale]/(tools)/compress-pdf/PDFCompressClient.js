@@ -1,8 +1,10 @@
 // app/[locale]/(tools)/compress-pdf/PDFCompressClient.js
 "use client"
 import Script from 'next/script';
-import PDFCompressor from '@/components/tools/PDFCompressor';
+import dynamic from 'next/dynamic';
 import DragOverlay from '@/components/tools_utility/DragOverlay';
+
+const PDFCompressor = dynamic(() => import('@/components/tools/PDFCompressor'), { ssr: false });
 
 export default function PDFCompressClient() {
   return (

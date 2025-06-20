@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter, useParams } from 'next/navigation';
 import { ArrowLeft, Mail, AlertCircle, CheckCircle } from 'lucide-react';
 import { useI18n } from '@/i18n';
+import Image from 'next/image';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
 
@@ -154,7 +155,7 @@ export default function ForgotPasswordPage() {
                       onClick={handleGoogleLogin}
                       className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
                     >
-                      <img src="/images/google-icon.svg" alt="Google" className="h-4 w-4 mr-2" />
+                      <Image src="/images/google-icon.svg" alt="Google" width={16} height={16} className="h-4 w-4 mr-2" />
                       Continue with Google
                     </button>
                   </div>

@@ -7,6 +7,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Eye, EyeOff } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useI18n } from '@/i18n';
+import Image from 'next/image';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
 
@@ -125,6 +126,9 @@ export default function LoginPage() {
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
+            <label htmlFor="email" className="sr-only">
+              {t('email')}
+            </label>
             <input
               type="email"
               id="email"
@@ -138,6 +142,9 @@ export default function LoginPage() {
           </div>
           
           <div className="relative">
+            <label htmlFor="password" className="sr-only">
+              {t('password')}
+            </label>
             <input
               type={showPassword ? "text" : "password"}
               id="password"
@@ -213,7 +220,7 @@ export default function LoginPage() {
             disabled={isSubmitting}
             className="mt-4 w-full flex cursor-pointer items-center justify-center p-3 border rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <img src="/images/google-icon.svg" alt="Google" className="h-5 w-5 mr-2" />
+            <Image src="/images/google-icon.svg" alt="Google" width={20} height={20} className="h-5 w-5 mr-2" />
             {isSubmitting ? 'Please wait...' : 'Continue with Google'}
           </button>
           

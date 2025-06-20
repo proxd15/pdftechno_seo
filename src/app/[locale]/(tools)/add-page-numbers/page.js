@@ -1,12 +1,13 @@
 // app/[locale]/(tools)/add-page-numbers/page.js
 import PDFPageNumbersClient from './PDFPageNumbersClient';
+import SEO from '@/components/layout/SEO';
 
 // Metadata export for App Router (Server Component)
 export const metadata = {
   metadataBase: new URL('https://www.pdftechno.com'),
   title: 'Add Page Numbers to PDF Online Free - PDF Page Numbering Tool | PDF Techno',
   description: 'Add page numbers to PDF files online for free. Choose position, dimensions, format and typography. Automatic PDF page numbering tool with custom styling options.',
-  keywords: 'add page numbers to pdf, pdf page numbering, insert page numbers in pdf, page numbers pdf online, number pdf pages, pdf page number tool, add footer page numbers to pdf, automatic page numbering pdf, online pdf page counter, free pdf page number adder, pdf page numbering online, custom page numbers pdf, pdf footer numbering, header page numbers pdf, pdf page formatting, sequential page numbering, roman numerals pdf pages, arabic numerals pdf, pdf page indexing, batch page numbering pdf',
+  keywords: 'add page numbers to pdf, pdf page numbering, insert page numbers in pdf, page numbers pdf online, number pdf pages, pdf page number tool, add footer page numbers to pdf, automatic page numbering pdf, online pdf page counter, free pdf page number adder, pdf page numbering online, custom page numbers pdf, pdf footer numbering, header page numbers pdf, pdf page formatting, sequential page numbering, roman numerals pdf pages, arabic numerals pdf, pdf page indexing, batch page numbering pdf, add page numbers to pdf India, pdf page numbering India, insert page numbers in pdf India, number pdf pages India, pdf page number tool India, add footer page numbers to pdf India, automatic page numbering pdf India, online pdf page counter India, free pdf page number adder India, pdf page numbering online India, custom page numbers pdf India, pdf footer numbering India, header page numbers pdf India, pdf page formatting India, sequential page numbering India, roman numerals pdf pages India, arabic numerals pdf India, pdf page indexing India, batch page numbering pdf India, add page numbers Hindi, add page numbers Delhi, add page numbers Mumbai, add page numbers Bangalore, add page numbers Chennai, add page numbers Kolkata',
   authors: [{ name: 'PDF Techno Team' }],
   
   // Open Graph Meta Tags
@@ -18,7 +19,7 @@ export const metadata = {
     url: '/add-page-numbers',
     images: [
       {
-        url: '/static/assets/add-page-numbers-og.jpg',
+        url: '/static/assets/add-page-numbers-og.webp',
         width: 1200,
         height: 630,
         alt: 'Add Page Numbers to PDF - PDF Techno',
@@ -32,7 +33,7 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Add Page Numbers to PDF Online Free - PDF Techno',
     description: 'Free online tool to add page numbers to PDF files. Custom position, format and typography options available.',
-    images: ['/static/assets/add-page-numbers-twitter.jpg'],
+    images: ['/static/assets/add-page-numbers-twitter.webp'],
     creator: '@pdftechno',
   },
   
@@ -52,11 +53,11 @@ export const metadata = {
   // Icons
   icons: {
     icon: [
-      { url: '/images/techno_fav.png', sizes: '32x32', type: 'image/png' },
-      { url: '/images/techno_fav.png', sizes: '192x192', type: 'image/png' },
+      { url: '/images/techno_fav.webp', sizes: '32x32', type: 'image/png' },
+      { url: '/images/techno_fav.webp', sizes: '192x192', type: 'image/png' },
     ],
     apple: [
-      { url: '/images/techno_fav.png', sizes: '180x180', type: 'image/png' },
+      { url: '/images/techno_fav.webp', sizes: '180x180', type: 'image/png' },
     ],
   },
   
@@ -88,6 +89,27 @@ export const metadata = {
 export default function PDFPageNumbersPage() {
   return (
     <>
+      <SEO
+        title="Add Page Numbers to PDF Online Free - PDF Page Numbering Tool | PDF Techno"
+        description="Add page numbers to PDF files online for free. Choose position, dimensions, format and typography. Automatic PDF page numbering tool with custom styling options."
+        keywords="add page numbers to pdf, pdf page numbering, insert page numbers in pdf, page numbers pdf online, number pdf pages, pdf page number tool, add footer page numbers to pdf, automatic page numbering pdf, online pdf page counter, free pdf page number adder, pdf page numbering online, custom page numbers pdf, pdf footer numbering, header page numbers pdf, pdf page formatting, sequential page numbering, roman numerals pdf pages, arabic numerals pdf, pdf page indexing, batch page numbering pdf, add page numbers to pdf India, pdf page numbering India, insert page numbers in pdf India, number pdf pages India, pdf page number tool India, add footer page numbers to pdf India, automatic page numbering pdf India, online pdf page counter India, free pdf page number adder India, pdf page numbering online India, custom page numbers pdf India, pdf footer numbering India, header page numbers pdf India, pdf page formatting India, sequential page numbering India, roman numerals pdf pages India, arabic numerals pdf India, pdf page indexing India, batch page numbering pdf India, add page numbers Hindi, add page numbers Delhi, add page numbers Mumbai, add page numbers Bangalore, add page numbers Chennai, add page numbers Kolkata"
+        canonical="https://www.pdftechno.com/add-page-numbers"
+        og={{
+          title: "Add Page Numbers to PDF Online - Free PDF Page Numbering Tool",
+          description: "Add page numbers to PDF files with custom position, format and styling. Free online PDF page numbering tool with advanced typography options.",
+          image: "/static/assets/add-page-numbers-og.webp",
+          url: "https://www.pdftechno.com/add-page-numbers",
+          siteName: "PDF Techno",
+          locale: "en_US"
+        }}
+        twitter={{
+          card: "summary_large_image",
+          title: "Add Page Numbers to PDF Online Free - PDF Techno",
+          description: "Free online tool to add page numbers to PDF files. Custom position, format and typography options available.",
+          image: "/static/assets/add-page-numbers-twitter.webp",
+          creator: "@pdftechno"
+        }}
+      />
       {/* JSON-LD Structured Data */}
       <script
         type="application/ld+json"
@@ -127,7 +149,7 @@ export default function PDFPageNumbersPage() {
               "@type": "HowTo",
               "name": "How to Add Page Numbers to PDF Files",
               "description": "Step-by-step guide to add page numbers to PDF documents online",
-              "image": "https://www.pdftechno.com/static/assets/how-to-add-page-numbers.jpg",
+              "image": "https://www.pdftechno.com/static/assets/how-to-add-page-numbers.webp",
               "step": [
                 {
                   "@type": "HowToStep",

@@ -1,15 +1,14 @@
 import React from 'react';
-import Head from 'next/head';
+
+export const metadata = {
+  title: 'Cookie Policy - PDFTechno',
+  description: 'Cookie Policy for PDFTechno - Learn about how we use cookies and tracking technologies',
+  keywords: 'PDFTechno cookie policy, PDFTechno cookies, PDFTechno tracking, PDFTechno cookie consent, PDFTechno cookie management, PDFTechno cookie settings, PDFTechno cookie India, PDFTechno cookie compliance, PDFTechno cookie terms, PDFTechno cookie practices, PDFTechno cookie statement, PDFTechno cookie rules, PDFTechno cookie guidelines, PDFTechno cookie agreement, PDFTechno cookie for business, PDFTechno cookie for students, PDFTechno cookie for government, PDFTechno cookie for education, PDFTechno cookie for legal, PDFTechno cookie for professionals, PDFTechno company cookie policy, PDFTechno company cookies, PDFTechno company tracking, PDFTechno company cookie consent, PDFTechno company cookie management, PDFTechno company cookie settings, PDFTechno company cookie India, PDFTechno company cookie compliance, PDFTechno company cookie terms, PDFTechno company cookie practices, PDFTechno company cookie statement, PDFTechno company cookie rules, PDFTechno company cookie guidelines, PDFTechno company cookie agreement, PDFTechno company cookie for business, PDFTechno company cookie for students, PDFTechno company cookie for government, PDFTechno company cookie for education, PDFTechno company cookie for legal, PDFTechno company cookie for professionals, PDFTechno cookies usage, PDFTechno cookies types, PDFTechno cookies third-party, PDFTechno cookies analytics, PDFTechno cookies advertising, PDFTechno cookies opt-out, PDFTechno cookies duration, PDFTechno cookies settings, PDFTechno cookies for business, PDFTechno cookies for students, PDFTechno cookies for government, PDFTechno cookies for education, PDFTechno cookies for legal, PDFTechno cookies for professionals',
+};
 
 const CookiePolicy = () => {
   return (
     <>
-      <Head>
-        <title>Cookie Policy - PDFTechno</title>
-        <meta name="description" content="Cookie Policy for PDFTechno - Learn about how we use cookies and tracking technologies" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </Head>
-
       <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
           {/* Header */}

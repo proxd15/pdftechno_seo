@@ -1,13 +1,14 @@
 // app/[locale]/(tools)/compress-pdf/page.js
 import Script from 'next/script';
 import PDFCompressClient from './PDFCompressClient';
+import SEO from '@/components/layout/SEO';
 
 // Metadata export for App Router (Server Component)
 export const metadata = {
   metadataBase: new URL('https://www.pdftechno.com'),
   title: 'Compress PDF Online Free - Reduce PDF File Size | PDF Techno',
   description: 'Compress PDF files online for free. Reduce PDF file size by up to 99% while maintaining quality. Fast, secure, and easy PDF compression tool. No registration required.',
-  keywords: 'compress PDF, PDF compressor, reduce PDF size, compress PDF online, shrink PDF file, PDF size reducer, minimize PDF file size, compress large PDF, free PDF compressor, PDF optimizer, compress PDF file, reduce file size, PDF compression tool, online PDF compressor, compress PDF without losing quality, batch PDF compression, compress multiple PDFs, PDF file compression, optimize PDF size, compress PDF documents, small PDF files, compress PDF for email, compress PDF for web',
+  keywords: 'compress PDF, PDF compressor, reduce PDF size, compress PDF online, shrink PDF file, PDF size reducer, minimize PDF file size, compress large PDF, free PDF compressor, PDF optimizer, compress PDF file, reduce file size, PDF compression tool, online PDF compressor, compress PDF without losing quality, batch PDF compression, compress multiple PDFs, PDF file compression, optimize PDF size, compress PDF documents, small PDF files, compress PDF for email, compress PDF for web, best PDF compressor India, PDF compression India, compress PDF online India, free PDF compressor India, reduce PDF size India, PDF optimizer India, PDF file size reducer India, PDF tools India, Indian PDF compressor, PDF file shrinker India, compress PDF Hindi, compress PDF Delhi, compress PDF Mumbai, compress PDF Bangalore, compress PDF Chennai, compress PDF Kolkata',
   authors: [{ name: 'PDF Techno Team' }],
   
   // Open Graph Meta Tags
@@ -19,7 +20,7 @@ export const metadata = {
     url: '/compress-pdf',
     images: [
       {
-        url: '/static/assets/compress-pdf-og.jpg',
+        url: '/static/assets/compress-pdf-og.webp',
         width: 1200,
         height: 630,
         alt: 'Compress PDF Online - PDF Techno',
@@ -33,7 +34,7 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Compress PDF Online Free - PDF Techno',
     description: 'Reduce PDF file size by up to 99% while maintaining quality. Free online PDF compressor.',
-    images: ['/static/assets/compress-pdf-twitter.jpg'],
+    images: ['/static/assets/compress-pdf-twitter.webp'],
     creator: '@pdftechno',
   },
   
@@ -53,11 +54,11 @@ export const metadata = {
   // Icons
   icons: {
     icon: [
-      { url: '/images/techno_fav.png', sizes: '32x32', type: 'image/png' },
-      { url: '/images/techno_fav.png', sizes: '192x192', type: 'image/png' },
+      { url: '/images/techno_fav.webp', sizes: '32x32', type: 'image/png' },
+      { url: '/images/techno_fav.webp', sizes: '192x192', type: 'image/png' },
     ],
     apple: [
-      { url: '/images/techno_fav.png', sizes: '180x180', type: 'image/png' },
+      { url: '/images/techno_fav.webp', sizes: '180x180', type: 'image/png' },
     ],
   },
   
@@ -89,6 +90,27 @@ export const metadata = {
 export default function PDFCompressPage() {
   return (
     <>
+      <SEO
+        title="Compress PDF Online Free - Reduce PDF File Size | PDF Techno"
+        description="Compress PDF files online for free. Reduce PDF file size by up to 99% while maintaining quality. Fast, secure, and easy PDF compression tool. No registration required."
+        keywords="compress PDF, PDF compressor, reduce PDF size, compress PDF online, shrink PDF file, PDF size reducer, minimize PDF file size, compress large PDF, free PDF compressor, PDF optimizer, compress PDF file, reduce file size, PDF compression tool, online PDF compressor, compress PDF without losing quality, batch PDF compression, compress multiple PDFs, PDF file compression, optimize PDF size, compress PDF documents, small PDF files, compress PDF for email, compress PDF for web, best PDF compressor India, PDF compression India, compress PDF online India, free PDF compressor India, reduce PDF size India, PDF optimizer India, PDF file size reducer India, PDF tools India, Indian PDF compressor, PDF file shrinker India, compress PDF Hindi, compress PDF Delhi, compress PDF Mumbai, compress PDF Bangalore, compress PDF Chennai, compress PDF Kolkata"
+        canonical="https://www.pdftechno.com/compress-pdf"
+        og={{
+          title: "Compress PDF Online Free - Reduce PDF File Size by 99%",
+          description: "Free online PDF compressor. Reduce PDF file size while maintaining quality. Fast, secure, and easy to use. Compress multiple PDFs at once.",
+          image: "/static/assets/compress-pdf-og.webp",
+          url: "https://www.pdftechno.com/compress-pdf",
+          siteName: "PDF Techno",
+          locale: "en_US"
+        }}
+        twitter={{
+          card: "summary_large_image",
+          title: "Compress PDF Online Free - PDF Techno",
+          description: "Reduce PDF file size by up to 99% while maintaining quality. Free online PDF compressor.",
+          image: "/static/assets/compress-pdf-twitter.webp",
+          creator: "@pdftechno"
+        }}
+      />
       {/* JSON-LD Structured Data */}
       <script
         type="application/ld+json"
@@ -127,7 +149,7 @@ export default function PDFCompressPage() {
               "@type": "HowTo",
               "name": "How to Compress PDF Files Online",
               "description": "Step-by-step guide to compress PDF files and reduce file size",
-              "image": "https://www.pdftechno.com/static/assets/how-to-compress-pdf.jpg",
+              "image": "https://www.pdftechno.com/static/assets/how-to-compress-pdf.webp",
               "step": [
                 {
                   "@type": "HowToStep",

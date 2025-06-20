@@ -6,6 +6,7 @@ import { useRouter, useParams, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { Eye, EyeOff, AlertTriangle, Shield } from 'lucide-react';
 import { useI18n } from '@/i18n';
+import Image from 'next/image';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
 
@@ -390,7 +391,7 @@ export default function SignUpPage() {
                       onClick={handleGoogleSignUp}
                       className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
                     >
-                      <img src="/images/google-icon.svg" alt="Google" className="h-4 w-4 mr-2" />
+                      <Image src="/images/google-icon.svg" alt="Google" width={16} height={16} className="h-4 w-4 mr-2" />
                       Login with Google
                     </button>
                   </div>
@@ -414,6 +415,7 @@ export default function SignUpPage() {
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
+            <label htmlFor="name" className="sr-only">{t('fullName')}</label>
             <input
               type="text"
               id="name"
@@ -425,10 +427,10 @@ export default function SignUpPage() {
               required
               disabled={isSubmitting}
             />
-                      
           </div>
           
           <div>
+            <label htmlFor="phone" className="sr-only">{t('phone')}</label>
             <input
               type="tel"
               id="phone"
@@ -442,6 +444,7 @@ export default function SignUpPage() {
           </div>
           
           <div>
+            <label htmlFor="email" className="sr-only">{t('email')}</label>
             <input
               type="email"
               id="email"
@@ -548,7 +551,7 @@ export default function SignUpPage() {
             disabled={isSubmitting}
             className="mt-4 w-full flex items-center justify-center p-3 border rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
-            <img src="/images/google-icon.svg" alt="Google" className="h-5 w-5 mr-2" />
+            <Image src="/images/google-icon.svg" alt="Google" width={20} height={20} className="h-5 w-5 mr-2" />
             {isSubmitting ? 'Please wait...' : 'Continue with Google'}
           </button>
           
