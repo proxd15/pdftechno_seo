@@ -5,7 +5,7 @@ import PDFMerger from '@/components/tools/PDFMerger';
 import DragOverlay from '@/components/tools_utility/DragOverlay';
 import PDFRotator from '@/components/tools/PDFRotator';
 import PDFSplitter from '@/components/tools/PDFSplitter';
-// import PDFSigner from '@/components/tools/PDFSigner';
+import PDFSigner from '@/components/tools/PDFSigner';
 
 export default function SignPDF() {
   return (
@@ -22,7 +22,7 @@ export default function SignPDF() {
       />
       
       <main className="container mx-auto px-4 py-8 bg-white min-h-screen">
-        {/* <PDFSigner/> */}
+        <PDFSigner/>
       </main>
       
       {/* Drag and drop overlay */}

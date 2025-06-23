@@ -1,73 +1,18 @@
 "use client"
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Upload, X, Plus, Send, Eye, Download, Edit3, Type, Image, Users, Mail, Check, Clock, AlertCircle, Trash2, Move, ZoomIn, ZoomOut, Search, Menu, MousePointer2, RotateCw, Maximize2 } from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
+import { Upload, X, Plus, Send, Eye, Download, Edit3, Type, Image as ImageIcon, Users, Mail, Check, Clock, AlertCircle, Trash2, Move, ZoomIn, ZoomOut, Search, Menu,RotateCcw, MousePointer2, RotateCw, Maximize2, Calendar, Timer } from 'lucide-react';
+import { addSignaturesToPDF, prepareSignatureData, getSignedPDFDownloadUrl, downloadSignedPDF, validatePDFFile, validateSignatures } from '../../api/signature_api';
+import ModalLoader from '../tools_utility/ModalLoader';
+import SelectFiles from '../tools_utility/SelectFiles';
+import DownloadSection from '../tools_utility/DownloadSection';
+import PDFPreviewModal from '../tools_utility/PDFPreviewModal.';
 
-// File Upload Component
-const FileUpload = ({ onFileSelect, error, onError }) => {
-  const [isDragging, setIsDragging] = useState(false);
-  const fileInputRef = useRef(null);
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const files = Array.from(e.dataTransfer.files);
-    handleFiles(files);
-  };
-
-  const handleFiles = (files) => {
-    onError(null);
-    const file = files[0];
-    
-    if (!file) return;
-    
-    if (file.type !== 'application/pdf') {
-      onError('Please select a PDF file only.');
-      return;
-    }
-    
-    if (file.size > 100 * 1024 * 1024) {
-      onError('File size must be less than 100MB.');
-      return;
-    }
-    
-    onFileSelect(file);
-  };
-
-  return (
-    <div className="max-w-4xl mx-auto">
-      <input
-        type="file"
-        ref={fileInputRef}
-        onChange={(e) => handleFiles(Array.from(e.target.files))}
-        accept="application/pdf"
-        className="hidden"
-      />
-      
-      <div
-        onDrop={handleDrop}
-        onDragOver={(e) => e.preventDefault()}
-        onDragEnter={() => setIsDragging(true)}
-        onDragLeave={() => setIsDragging(false)}
-        className={`border-2 border-dashed rounded-xl p-12 text-center transition-colors ${
-          isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-blue-400'
-        }`}
-      >
-        <Upload className="w-16 h-16 mx-auto mb-4 text-blue-500" />
-        <h3 className="text-xl font-semibold mb-2">Upload PDF Document</h3>
-        <p className="text-gray-600 mb-6">Drag and drop or click to browse</p>
-        <button
-          onClick={() => fileInputRef.current?.click()}
-          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          Choose File
-        </button>
-        <p className="text-sm text-gray-500 mt-4">Maximum file size: 100MB</p>
-      </div>
-    </div>
-  );
-};
+// Mock auth context for demo
+const useAuth = () => ({
+  user: { first_name: 'John', last_name: 'Doe' },
+  isAuthenticated: true
+});
 
 // Page Thumbnail Component
 const PageThumbnail = ({ pageNumber, pageData, signatures, onClick, isActive }) => {
@@ -110,7 +55,7 @@ const PageThumbnail = ({ pageNumber, pageData, signatures, onClick, isActive }) 
 
     try {
       // Smaller scale for compact thumbnails
-      const scale = 0.12;
+      const scale = 0.15;
       const viewport = pageData.getViewport({ scale });
       
       canvas.width = viewport.width;
@@ -164,15 +109,15 @@ const PageThumbnail = ({ pageNumber, pageData, signatures, onClick, isActive }) 
   return (
     <div
       ref={containerRef}
-      className="mb-2 cursor-pointer group relative"
+      className="mb-3 cursor-pointer group relative"
       onClick={handleClick}
     >
-      <div className={` relative border-2 rounded-md p-1.5 transition-all duration-200 ${
+      <div className={`relative border-2 rounded-md p-1 transition-all duration-200 ${
         isActive
-          ? 'border-blue-500 shadow-md bg-blue-50 scale-105'
+          ? 'border-[#DA1F10] shadow-md bg-red-50 scale-105'
           : hasSigs 
             ? 'border-green-300 shadow-sm bg-green-50' 
-            : 'border-gray-200 hover:border-blue-300 hover:shadow-sm'
+            : 'border-gray-200 hover:border-[#DA1F10] hover:shadow-sm'
       }`}>
         
         {/* Thumbnail Container */}
@@ -189,24 +134,14 @@ const PageThumbnail = ({ pageNumber, pageData, signatures, onClick, isActive }) 
           {/* Loading state */}
           {!isLoaded && isVisible && (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50">
-              <div className="w-4 h-4 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+              <div className="w-3 h-3 border-2 border-red-200 border-t-[#DA1F10] rounded-full animate-spin"></div>
               <span className="text-xs text-gray-400 mt-1">Loading</span>
-            </div>
-          )}
-          
-          {/* Placeholder before loading */}
-          {!isVisible && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50">
-              <svg className="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              <span className="text-xs text-gray-300 font-medium">{pageNumber}</span>
             </div>
           )}
           
           {/* Signature count badge */}
           {hasSigs && (
-            <div className="absolute top-0.5 right-0.5 z-10">
+            <div className="absolute top-1 right-1 z-10">
               <div className="bg-green-500 text-white text-xs rounded-full min-w-[16px] h-4 flex items-center justify-center px-1 font-bold shadow-sm border border-white">
                 {signatures.length}
               </div>
@@ -217,7 +152,7 @@ const PageThumbnail = ({ pageNumber, pageData, signatures, onClick, isActive }) 
         {/* Page number */}
         <div className="text-center mt-1">
           <span className={`text-xs font-medium transition-colors ${
-            isActive ? 'text-blue-700' : hasSigs ? 'text-green-700' : 'text-gray-600'
+            isActive ? 'text-[#DA1F10]' : hasSigs ? 'text-green-700' : 'text-gray-600'
           }`}>
             {pageNumber}
           </span>
@@ -227,38 +162,52 @@ const PageThumbnail = ({ pageNumber, pageData, signatures, onClick, isActive }) 
   );
 };
 
-// Signature Creation Modal
-const SignatureModal = ({ isOpen, onClose, onSave, userFullName }) => {
-  const [signatureType, setSignatureType] = useState('type'); // Default to type
-  const [textInput, setTextInput] = useState(userFullName || '');
-  const [selectedFont, setSelectedFont] = useState('cursive');
+// Signature Creation Modal with High-Quality Rendering
+const SignatureModal = ({ isOpen, onClose, onSave }) => {
+  const [signatureType, setSignatureType] = useState('type');
+  const [textInput, setTextInput] = useState('');
+  const [selectedFont, setSelectedFont] = useState('Dancing Script');
+  const [selectedColor, setSelectedColor] = useState('#000000');
   const [signature, setSignature] = useState(null);
   const canvasRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const fileInputRef = useRef(null);
 
-  // Set user name when modal opens
-  useEffect(() => {
-    if (isOpen && userFullName && !textInput) {
-      setTextInput(userFullName);
-    }
-  }, [isOpen, userFullName]);
+  // High-quality signature fonts
+  const signatureFonts = [
+    { name: 'Dancing Script', value: 'Dancing Script, cursive', preview: 'Alex Appleseed' },
+    { name: 'Great Vibes', value: 'Great Vibes, cursive', preview: 'Alex Appleseed' },
+    { name: 'Allura', value: 'Allura, cursive', preview: 'Alex Appleseed' },
+    { name: 'Alex Brush', value: 'Alex Brush, cursive', preview: 'Alex Appleseed' },
+    { name: 'Pacifico', value: 'Pacifico, cursive', preview: 'Alex Appleseed' },
+    { name: 'Sacramento', value: 'Sacramento, cursive', preview: 'Alex Appleseed' },
+    { name: 'Satisfy', value: 'Satisfy, cursive', preview: 'Alex Appleseed' },
+    { name: 'Courgette', value: 'Courgette, cursive', preview: 'Alex Appleseed' }
+  ];
 
-  // Auto-generate signature when user name is available
+  // Color options
+  const colorOptions = [
+    '#000000', '#1e40af', '#2563eb', '#3b82f6', '#6b7280', '#374151', '#111827'
+  ];
+
+  // Auto-generate signature when user types
   useEffect(() => {
-    if (signatureType === 'type' && textInput.trim() && !signature) {
+    if (signatureType === 'type' && textInput.trim()) {
       generateTextSignature();
     }
-  }, [signatureType, textInput]);
+  }, [signatureType, textInput, selectedFont, selectedColor]);
 
-  // Drawing functions
+  // Drawing functions with higher quality
   const startDrawing = (e) => {
     setIsDrawing(true);
     const canvas = canvasRef.current;
     const rect = canvas.getBoundingClientRect();
     const ctx = canvas.getContext('2d');
     ctx.beginPath();
-    ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+    ctx.moveTo(
+      (e.clientX - rect.left) * 2, // Scale up for high DPI
+      (e.clientY - rect.top) * 2
+    );
   };
 
   const draw = (e) => {
@@ -266,10 +215,14 @@ const SignatureModal = ({ isOpen, onClose, onSave, userFullName }) => {
     const canvas = canvasRef.current;
     const rect = canvas.getBoundingClientRect();
     const ctx = canvas.getContext('2d');
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 6; // Thicker line for better quality
     ctx.lineCap = 'round';
-    ctx.strokeStyle = '#000';
-    ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+    ctx.lineJoin = 'round';
+    ctx.strokeStyle = selectedColor;
+    ctx.lineTo(
+      (e.clientX - rect.left) * 2,
+      (e.clientY - rect.top) * 2
+    );
     ctx.stroke();
   };
 
@@ -313,7 +266,7 @@ const SignatureModal = ({ isOpen, onClose, onSave, userFullName }) => {
     
     if (!hasContent) return;
     
-    const padding = 10;
+    const padding = 20;
     minX = Math.max(0, minX - padding);
     minY = Math.max(0, minY - padding);
     maxX = Math.min(canvas.width, maxX + padding);
@@ -325,35 +278,43 @@ const SignatureModal = ({ isOpen, onClose, onSave, userFullName }) => {
     tempCanvas.width = width;
     tempCanvas.height = height;
     
+    // Keep transparent background
     tempCtx.drawImage(canvas, minX, minY, width, height, 0, 0, width, height);
     
-    const dataURL = tempCanvas.toDataURL('image/png');
+    const dataURL = tempCanvas.toDataURL('image/png', 1.0); // Max quality
     setSignature(dataURL);
   };
 
+  // Generate high-quality text signature
   const generateTextSignature = () => {
     if (!textInput.trim()) return;
     
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     
-    ctx.font = `48px ${selectedFont}`;
+    // Use larger font size for better quality
+    const fontSize = 96; // Double the size
+    const fontFamily = signatureFonts.find(f => f.name === selectedFont)?.value || 'Dancing Script, cursive';
+    ctx.font = `${fontSize}px ${fontFamily}`;
     const metrics = ctx.measureText(textInput);
     const textWidth = metrics.width;
-    const textHeight = 60;
+    const textHeight = fontSize * 1.5;
     
-    canvas.width = textWidth + 20;
-    canvas.height = textHeight + 20;
+    canvas.width = textWidth + 40;
+    canvas.height = textHeight + 40;
     
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Enable high-quality rendering
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
     
-    ctx.font = `48px ${selectedFont}`;
-    ctx.fillStyle = 'black';
+    // Draw text
+    ctx.font = `${fontSize}px ${fontFamily}`;
+    ctx.fillStyle = selectedColor;
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
-    ctx.fillText(textInput, 10, canvas.height / 2);
+    ctx.fillText(textInput, 20, canvas.height / 2);
     
-    const dataURL = canvas.toDataURL('image/png');
+    const dataURL = canvas.toDataURL('image/png', 1.0); // Max quality
     setSignature(dataURL);
   };
 
@@ -371,7 +332,7 @@ const SignatureModal = ({ isOpen, onClose, onSave, userFullName }) => {
       onSave(signature);
       onClose();
       setSignature(null);
-      setTextInput(userFullName || '');
+      setTextInput('');
       if (canvasRef.current) {
         clearCanvas();
       }
@@ -381,166 +342,205 @@ const SignatureModal = ({ isOpen, onClose, onSave, userFullName }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="p-6 border-b">
-          <div className="flex justify-between items-center">
-            <h3 className="text-xl font-semibold">Create Your Signature</h3>
-            <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
-              <X className="w-6 h-6" />
-            </button>
-          </div>
-        </div>
-
-        <div className="p-6">
-          {/* Signature Type Tabs */}
-          <div className="flex mb-6 bg-gray-100 rounded-lg p-1">
-            {[
-              { key: 'type', label: 'Type', icon: Type },
-              { key: 'draw', label: 'Draw', icon: Edit3 },
-              { key: 'upload', label: 'Upload', icon: Upload }
-            ].map(({ key, label, icon: Icon }) => (
-              <button
-                key={key}
-                onClick={() => setSignatureType(key)}
-                className={`flex-1 flex items-center justify-center py-2 px-4 rounded-md transition-colors ${
-                  signatureType === key ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600'
-                }`}
-              >
-                <Icon className="w-4 h-4 mr-2" />
-                {label}
+    <>
+      {/* Load Google Fonts */}
+      <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Great+Vibes&family=Allura&family=Alex+Brush&family=Pacifico&family=Sacramento&family=Satisfy&family=Courgette&display=swap" rel="stylesheet" />
+      
+      <div className="fixed inset-0 backdrop-filter backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="p-6 border-b">
+            <div className="flex justify-between items-center">
+              <h3 className="text-xl font-semibold">Create Your Signature</h3>
+              <button onClick={onClose} className="text-gray-400 cursor-pointer hover:text-gray-600">
+                <X className="w-6 h-6" />
               </button>
-            ))}
+            </div>
           </div>
 
-          {/* Type Tab */}
-          {signatureType === 'type' && (
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">Your Name:</label>
-                <input
-                  type="text"
-                  value={textInput}
-                  onChange={(e) => setTextInput(e.target.value)}
-                  placeholder="Enter your full name"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Font Style:</label>
-                <select
-                  value={selectedFont}
-                  onChange={(e) => setSelectedFont(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+          <div className="p-6">
+            {/* Signature Type Tabs */}
+            <div className="flex mb-6 bg-gray-100 rounded-lg p-1">
+              {[
+                { key: 'type', label: 'Type', icon: Type },
+                { key: 'draw', label: 'Draw', icon: Edit3 },
+                { key: 'upload', label: 'Upload', icon: Upload }
+              ].map(({ key, label, icon: Icon }) => (
+                <button
+                  key={key}
+                  onClick={() => setSignatureType(key)}
+                  className={`flex-1 flex items-center justify-center cursor-pointer py-2 px-4 rounded-md transition-colors ${
+                    signatureType === key ? 'bg-white text-[#DA1F10] shadow-sm' : 'text-gray-600'
+                  }`}
                 >
-                  <option value="cursive">Cursive</option>
-                  <option value="serif">Serif</option>
-                  <option value="sans-serif">Sans Serif</option>
-                  <option value="monospace">Monospace</option>
-                </select>
-              </div>
-              {textInput && (
-                <div className="border rounded-lg p-4 bg-gray-50">
-                  <p className="text-sm text-gray-600 mb-2">Preview:</p>
-                  <div 
-                    className="text-4xl text-center py-4 bg-transparent rounded"
-                    style={{ fontFamily: selectedFont }}
-                  >
-                    {textInput}
+                  <Icon className="w-4 h-4 mr-2" />
+                  {label}
+                </button>
+              ))}
+            </div>
+
+            {/* Type Tab */}
+            {signatureType === 'type' && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-lg font-medium mb-2">Your Name:</label>
+                  <input
+                    type="text"
+                    value={textInput}
+                    onChange={(e) => setTextInput(e.target.value)}
+                    placeholder="Enter your full name"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#DA1F10] focus:border-transparent text-lg"
+                  />
+                </div>
+
+                {/* Color Selection */}
+                <div>
+                  <label className="block text-lg font-medium mb-2">Color:</label>
+                  <div className="flex gap-2">
+                    {colorOptions.map(color => (
+                      <button
+                        key={color}
+                        onClick={() => setSelectedColor(color)}
+                        className={`w-8 h-8 rounded-full border-2 cursor-pointer transition-all ${
+                          selectedColor === color ? 'border-gray-400 scale-110' : 'border-gray-200'
+                        }`}
+                        style={{ backgroundColor: color }}
+                      />
+                    ))}
                   </div>
                 </div>
-              )}
-              <button
-                onClick={generateTextSignature}
-                disabled={!textInput.trim()}
-                className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300"
-              >
-                Generate Signature
-              </button>
-            </div>
-          )}
 
-          {/* Draw Tab */}
-          {signatureType === 'draw' && (
-            <div className="space-y-4">
-              <p className="text-sm text-gray-600">Draw your signature below:</p>
-              <div className="border rounded-lg p-4">
-                <canvas
-                  ref={canvasRef}
-                  width={500}
-                  height={150}
-                  className="border border-gray-200 w-full cursor-crosshair bg-transparent"
-                  onMouseDown={startDrawing}
-                  onMouseMove={draw}
-                  onMouseUp={stopDrawing}
-                  onMouseLeave={stopDrawing}
+                {/* Font Selection with Previews */}
+                {textInput && (
+                  <div>
+                    <label className="block text-lg font-medium mb-2">Choose Font Style:</label>
+                    <div className="grid grid-cols-2 gap-4 max-h-60 overflow-y-auto border rounded-lg p-4">
+                      {signatureFonts.map(font => (
+                        <div
+                          key={font.name}
+                          onClick={() => setSelectedFont(font.name)}
+                          className={`p-3 border rounded-lg cursor-pointer transition-all ${
+                            selectedFont === font.name 
+                              ? 'border-[#DA1F10] bg-red-50' 
+                              : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                        >
+                          <div 
+                            className="text-2xl text-center"
+                            style={{ 
+                              fontFamily: font.value,
+                              color: selectedColor
+                            }}
+                          >
+                            {textInput}
+                          </div>
+                          <p className="text-xs text-gray-500 text-center mt-1">{font.name}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Draw Tab */}
+            {signatureType === 'draw' && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-lg font-medium mb-2">Color:</label>
+                  <div className="flex gap-2 mb-4">
+                    {colorOptions.map(color => (
+                      <button
+                        key={color}
+                        onClick={() => setSelectedColor(color)}
+                        className={`w-8 h-8 rounded-full border-2 cursor-pointer transition-all ${
+                          selectedColor === color ? 'border-gray-400 scale-110' : 'border-gray-200'
+                        }`}
+                        style={{ backgroundColor: color }}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <p className="text-lg text-gray-600">Draw your signature below:</p>
+                <div className="border rounded-lg p-4 flex justify-center">
+                  <canvas
+                    ref={canvasRef}
+                    width={1000} // Double resolution
+                    height={300}
+                    style={{ width: '500px', height: '150px' }} // Display size
+                    className="border border-gray-200 w-full cursor-crosshair bg-transparent"
+                    onMouseDown={startDrawing}
+                    onMouseMove={draw}
+                    onMouseUp={stopDrawing}
+                    onMouseLeave={stopDrawing}
+                  />
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={clearCanvas}
+                    className="px-4 py-2 border cursor-pointer border-gray-300 rounded-lg hover:bg-gray-50"
+                  >
+                    Clear
+                  </button>
+                  <button
+                    onClick={saveDrawnSignature}
+                    className="px-4 py-2 bg-[#DA1F10] cursor-pointer text-white rounded-lg hover:bg-red-700"
+                  >
+                    Save Drawing
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Upload Tab */}
+            {signatureType === 'upload' && (
+              <div className="space-y-4">
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleImageUpload}
+                  accept="image/*"
+                  className="hidden"
                 />
-              </div>
-              <div className="flex gap-3">
-                <button
-                  onClick={clearCanvas}
-                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                <div 
+                  onClick={() => fileInputRef.current?.click()}
+                  className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-[#DA1F10]"
                 >
-                  Clear
-                </button>
+                  <ImageIcon className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                  <p className="text-gray-600">Click to upload signature image</p>
+                  <p className="text-xs text-gray-500 mt-2">PNG, JPG supported</p>
+                </div>
+              </div>
+            )}
+
+            {/* Signature Preview */}
+            {signature && (
+              <div className="mt-6 border-t pt-6">
+                <p className="text-lg font-medium mb-2">Signature Preview:</p>
+                <div className="border rounded-lg p-4 bg-gray-50 text-center">
+                  <img src={signature} alt="Signature" className="max-h-20 mx-auto" style={{ objectFit: 'contain' }} />
+                </div>
                 <button
-                  onClick={saveDrawnSignature}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  onClick={handleSave}
+                  className="w-full mt-4 px-4 py-2 cursor-pointer bg-green-600 text-white rounded-lg hover:bg-green-700"
                 >
-                  Save Drawing
+                  Use This Signature
                 </button>
               </div>
-            </div>
-          )}
-
-          {/* Upload Tab */}
-          {signatureType === 'upload' && (
-            <div className="space-y-4">
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleImageUpload}
-                accept="image/*"
-                className="hidden"
-              />
-              <div 
-                onClick={() => fileInputRef.current?.click()}
-                className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-blue-400"
-              >
-                <Image className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-                <p className="text-gray-600">Click to upload signature image</p>
-                <p className="text-xs text-gray-500 mt-2">PNG, JPG supported</p>
-              </div>
-            </div>
-          )}
-
-          {/* Signature Preview */}
-          {signature && (
-            <div className="mt-6 border-t pt-6">
-              <p className="text-sm font-medium mb-2">Signature Preview:</p>
-              <div className="border rounded-lg p-4 bg-gray-50 text-center">
-                <img src={signature} alt="Signature" className="max-h-20 mx-auto" />
-              </div>
-              <button
-                onClick={handleSave}
-                className="w-full mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-              >
-                Use This Signature
-              </button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
-// PDF Page Component
+// PDF Page Component with Accurate Positioning
 const PDFPageRenderer = ({ pageData, pageNumber, zoom, onSignaturePlace, signatures, onUpdateSignature, onDeleteSignature, signatureMode }) => {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [renderTask, setRenderTask] = useState(null);
+  const [pageDimensions, setPageDimensions] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
     if (!pageData || !canvasRef.current) return;
@@ -551,14 +551,29 @@ const PDFPageRenderer = ({ pageData, pageNumber, zoom, onSignaturePlace, signatu
 
     const canvas = canvasRef.current;
     const context = canvas.getContext('2d');
-    const viewport = pageData.getViewport({ scale: zoom });
     
+    // Use device pixel ratio for crisp rendering
+    const dpr = window.devicePixelRatio || 1;
+    const viewport = pageData.getViewport({ scale: zoom * dpr });
+    
+    // Set actual size in memory
     canvas.width = viewport.width;
     canvas.height = viewport.height;
+    
+    // Scale down using CSS
+    canvas.style.width = `${viewport.width / dpr}px`;
+    canvas.style.height = `${viewport.height / dpr}px`;
+    
+    // Store dimensions for signature positioning
+    setPageDimensions({
+      width: viewport.width / dpr,
+      height: viewport.height / dpr
+    });
 
     const newRenderTask = pageData.render({
       canvasContext: context,
-      viewport: viewport
+      viewport: viewport,
+      intent: 'display'
     });
 
     setRenderTask(newRenderTask);
@@ -580,7 +595,10 @@ const PDFPageRenderer = ({ pageData, pageNumber, zoom, onSignaturePlace, signatu
   }, [pageData, zoom, pageNumber]);
 
   const handlePageClick = (e) => {
-    if (!signatureMode) return;
+    if (!signatureMode || !containerRef.current) return;
+    
+    e.preventDefault();
+    e.stopPropagation();
     
     const rect = containerRef.current.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width) * 100;
@@ -592,22 +610,23 @@ const PDFPageRenderer = ({ pageData, pageNumber, zoom, onSignaturePlace, signatu
 
   return (
     <div className="relative mb-8 mx-auto" style={{ width: 'fit-content' }}>
-      <div className="absolute -left-12 top-4 text-sm text-gray-500 font-medium">
+      <div className="absolute -left-8 top-4 text-lg text-gray-500 font-medium">
         {pageNumber}
       </div>
       
       <div 
         ref={containerRef}
         className={`relative bg-white shadow-lg border ${signatureMode ? 'cursor-crosshair' : 'cursor-default'}`}
-        onClick={handlePageClick}
+        onMouseDown={handlePageClick}
+        style={{ width: `${pageDimensions.width}px`, height: `${pageDimensions.height}px` }}
       >
         <canvas ref={canvasRef} className="block" />
         
         {!isLoaded && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-100 bg-opacity-75">
             <div className="text-center">
-              <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-2"></div>
-              <span className="text-sm text-gray-600">Loading page {pageNumber}...</span>
+              <div className="w-8 h-8 border-4 border-red-200 border-t-[#DA1F10] rounded-full animate-spin mb-2"></div>
+              <span className="text-lg text-gray-600">Loading page {pageNumber}...</span>
             </div>
           </div>
         )}
@@ -619,6 +638,7 @@ const PDFPageRenderer = ({ pageData, pageNumber, zoom, onSignaturePlace, signatu
             signature={sig}
             onUpdate={onUpdateSignature}
             onDelete={onDeleteSignature}
+            pageDimensions={pageDimensions}
           />
         ))}
       </div>
@@ -626,8 +646,8 @@ const PDFPageRenderer = ({ pageData, pageNumber, zoom, onSignaturePlace, signatu
   );
 };
 
-// Enhanced Signature Overlay Component
-const SignatureOverlay = ({ signature, onUpdate, onDelete }) => {
+// Enhanced Signature Overlay Component with Better Positioning (FIXED)
+const SignatureOverlay = ({ signature, onUpdate, onDelete, pageDimensions }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
@@ -646,8 +666,8 @@ const SignatureOverlay = ({ signature, onUpdate, onDelete }) => {
       setIsResizing(true);
       setDragStart({ x: e.clientX, y: e.clientY });
       setInitialState({ 
-        width: signature.width || 120,
-        height: signature.height || 60,
+        width: signature.width || 60,  // Match new default
+        height: signature.height || 30, // Match new default
         x: signature.x, 
         y: signature.y 
       });
@@ -666,16 +686,25 @@ const SignatureOverlay = ({ signature, onUpdate, onDelete }) => {
       const deltaXPercent = (deltaX / parentRect.width) * 100;
       const deltaYPercent = (deltaY / parentRect.height) * 100;
       
-      const newX = Math.max(0, Math.min(90, initialState.x + deltaXPercent));
-      const newY = Math.max(0, Math.min(90, initialState.y + deltaYPercent));
+      const newX = Math.max(0, Math.min(95, initialState.x + deltaXPercent));
+      const newY = Math.max(0, Math.min(95, initialState.y + deltaYPercent));
       
       onUpdate(signature.id, { x: newX, y: newY });
     } else if (isResizing) {
       const deltaX = e.clientX - dragStart.x;
       const deltaY = e.clientY - dragStart.y;
       
-      const newWidth = Math.max(60, Math.min(300, initialState.width + deltaX));
-      const newHeight = Math.max(30, Math.min(150, initialState.height + deltaY));
+      // Maintain aspect ratio if signature has one stored
+      let newWidth, newHeight;
+      if (signature.aspectRatio) {
+        // Use X movement to determine size, maintain aspect ratio
+        newWidth = Math.max(40, Math.min(200, initialState.width + deltaX)); // Smaller limits
+        newHeight = Math.round(newWidth / signature.aspectRatio);
+      } else {
+        // Free resize for stamps or signatures without aspect ratio
+        newWidth = Math.max(40, Math.min(200, initialState.width + deltaX));
+        newHeight = Math.max(20, Math.min(100, initialState.height + deltaY));
+      }
       
       onUpdate(signature.id, { 
         width: newWidth,
@@ -703,8 +732,8 @@ const SignatureOverlay = ({ signature, onUpdate, onDelete }) => {
     }
   }, [isDragging, isResizing, handleMouseMove, handleMouseUp]);
 
-  const width = signature.width || 120;
-  const height = signature.height || 60;
+  const width = signature.width || 60;  // Match new default
+  const height = signature.height || 30; // Match new default
 
   return (
     <div
@@ -719,7 +748,7 @@ const SignatureOverlay = ({ signature, onUpdate, onDelete }) => {
       }}
     >
       <div
-        className="relative w-full h-full border-2 border-blue-500 border-dashed bg-blue-50 bg-opacity-20 rounded cursor-move hover:bg-opacity-30 transition-all duration-200"
+        className="relative w-full h-full border-2 border-[#DA1F10] border-dashed bg-transparent hover:bg-opacity-30 rounded cursor-move transition-all duration-200"
         onMouseDown={(e) => handleMouseDown(e, 'drag')}
       >
         <img 
@@ -727,6 +756,12 @@ const SignatureOverlay = ({ signature, onUpdate, onDelete }) => {
           alt="Signature"
           className="w-full h-full object-contain p-1"
           draggable={false}
+          style={{ 
+            background: 'transparent',
+            imageRendering: 'crisp-edges',
+            filter: 'contrast(1.1)',
+            objectFit: 'contain' // Ensure no stretching
+          }}
         />
         
         <div className="absolute -top-8 left-0 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
@@ -735,7 +770,7 @@ const SignatureOverlay = ({ signature, onUpdate, onDelete }) => {
               e.stopPropagation();
               onDelete(signature.id);
             }}
-            className="w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600 transition-colors shadow-lg"
+            className="w-6 h-6 bg-red-500 text-white cursor-pointer rounded-full flex items-center justify-center text-xs hover:bg-red-600 transition-colors shadow-lg"
             title="Remove signature"
           >
             <X className="w-3 h-3" />
@@ -744,24 +779,12 @@ const SignatureOverlay = ({ signature, onUpdate, onDelete }) => {
         
         <div className="absolute inset-0 pointer-events-none">
           <div
-            className="absolute -bottom-1 -right-1 w-4 h-4 bg-blue-500 border border-white rounded-full cursor-se-resize opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-auto hover:bg-blue-600"
+            className="absolute -bottom-1 -right-1 w-4 h-4 bg-[#DA1F10] border border-white rounded-full cursor-se-resize opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-auto hover:bg-red-700"
             onMouseDown={(e) => handleMouseDown(e, 'resize')}
             title="Resize signature"
           >
             <div className="absolute inset-1 border border-white rounded-full"></div>
           </div>
-          
-          <div
-            className="absolute top-1/2 -right-1 w-3 h-6 bg-blue-500 rounded-r cursor-e-resize opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-auto transform -translate-y-1/2"
-            onMouseDown={(e) => handleMouseDown(e, 'resize')}
-            title="Resize width"
-          ></div>
-          
-          <div
-            className="absolute -bottom-1 left-1/2 w-6 h-3 bg-blue-500 rounded-b cursor-s-resize opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-auto transform -translate-x-1/2"
-            onMouseDown={(e) => handleMouseDown(e, 'resize')}
-            title="Resize height"
-          ></div>
         </div>
         
         <div className="absolute -bottom-6 left-0 text-xs text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-white px-2 py-1 rounded shadow-sm whitespace-nowrap">
@@ -780,10 +803,14 @@ const PDFSigner = () => {
   const [pdfDoc, setPdfDoc] = useState(null);
   const [pdfPages, setPdfPages] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
-  const [zoom, setZoom] = useState(1.2);
+  const [zoom, setZoom] = useState(1.0);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const [result, setResult] = useState(null);
+  const [isEncrypted, setIsEncrypted] = useState(false);
   
   // Signature states
   const [userSignature, setUserSignature] = useState(null);
@@ -791,9 +818,23 @@ const PDFSigner = () => {
   const [showSignatureModal, setShowSignatureModal] = useState(false);
   const [signatureMode, setSignatureMode] = useState(false);
 
+  // Preview modal state
+  const [previewModal, setPreviewModal] = useState({
+    isOpen: false,
+    pdfUrl: null,
+    fileName: ''
+  });
+
   // Refs for scrolling
   const thumbnailContainerRef = useRef(null);
   const mainViewerRef = useRef(null);
+  const resultSectionRef = useRef(null);
+
+  // File size limit (in bytes)
+  const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100 MB
+  
+  // Calculate estimated upload time based on file size
+  const estimatedUploadTime = pdfFile ? Math.ceil(pdfFile.size / (400 * 1024)) : 0;
 
   // Load PDF.js
   useEffect(() => {
@@ -808,78 +849,131 @@ const PDFSigner = () => {
     }
   }, []);
 
-  // Auto-generate signature when user is logged in
+  // Scroll to results section when operation completes - FIXED to keep editor visible
   useEffect(() => {
-    if (isAuthenticated && user && !userSignature) {
-      const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim();
-      if (fullName) {
-        generateAutoSignature(fullName);
+    if (result && resultSectionRef.current) {
+      setTimeout(() => {
+        resultSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }, [result]);
+
+  // Generate preview whenever file changes
+  useEffect(() => {
+    const generatePreview = async () => {
+      if (!pdfFile || !window.pdfjsLib) return;
+      
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const arrayBuffer = await Promise.race([
+          pdfFile.arrayBuffer(),
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('File reading timed out')), 10000)
+          )
+        ]);
+        
+        try {
+          // Attempt to load the PDF
+          const loadingTask = window.pdfjsLib.getDocument({
+            data: arrayBuffer,
+            cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.4.120/cmaps/',
+            cMapPacked: true
+          });
+          
+          const pdf = await loadingTask.promise;
+          setTotalPages(pdf.numPages);
+          setPdfDoc(pdf);
+          
+          // Load all pages
+          const pages = [];
+          for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            pages.push(page);
+          }
+          setPdfPages(pages);
+          
+          setIsEncrypted(false);
+          setError(null);
+          setStep('edit');
+          
+          // Auto-open signature modal
+          setTimeout(() => {
+            setShowSignatureModal(true);
+          }, 500);
+          
+        } catch (error) {
+          console.error('Error generating preview:', error);
+          
+          // Check if the PDF is password protected
+          if (
+            error.name === 'PasswordException' || 
+            error.message.includes('password') || 
+            error.message.includes('Password')
+          ) {
+            setIsEncrypted(true);
+            setError(
+              <div>
+                <p className="font-medium mb-2">This PDF is password protected</p>
+                <p className="text-lg">Please use our <span className="font-medium text-[#DA1F10]">PDF Unlocker</span> tool first to remove the password, then try again with the unlocked PDF.</p>
+              </div>
+            );
+          } else if (error.message.includes('Invalid PDF structure')) {
+            setError(
+              <div>
+                <p className="font-medium mb-2">Invalid PDF file</p>
+                <p className="text-lg">The file appears to be corrupted or is not a valid PDF. Please check the file and try again.</p>
+              </div>
+            );
+          } else {
+            setError("Unable to process this PDF file. It may be corrupted or use unsupported features.");
+          }
+          
+          // Reset state on error
+          setPdfFile(null);
+          setStep('upload');
+        }
+      } catch (error) {
+        console.error('General error processing file:', error);
+        setError("Failed to read the file. Please make sure it's a valid PDF and try again.");
+        setPdfFile(null);
+        setStep('upload');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    if (pdfFile) {
+      generatePreview();
+    }
+  }, [pdfFile]);
+
+  // Handle files selected
+  const handleFilesSelected = (selectedFiles) => {
+    if (selectedFiles && selectedFiles.length > 0) {
+      const newFile = selectedFiles[0];
+      if (validateFile(newFile)) {
+        setPdfFile(newFile);
       }
     }
-  }, [isAuthenticated, user]);
-
-  // Generate automatic signature for logged-in user
-  const generateAutoSignature = (fullName) => {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    
-    ctx.font = '48px cursive';
-    const metrics = ctx.measureText(fullName);
-    const textWidth = metrics.width;
-    const textHeight = 60;
-    
-    canvas.width = textWidth + 20;
-    canvas.height = textHeight + 20;
-    
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.font = '48px cursive';
-    ctx.fillStyle = 'black';
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(fullName, 10, canvas.height / 2);
-    
-    const dataURL = canvas.toDataURL('image/png');
-    setUserSignature(dataURL);
   };
 
-  // Load PDF and auto-open signature modal
-  const loadPDF = async (file) => {
-    setLoading(true);
+  // Validate files before adding them
+  const validateFile = (newFile) => {
     setError(null);
-
-    try {
-      if (!window.pdfjsLib) {
-        throw new Error('PDF.js not loaded');
-      }
-
-      const arrayBuffer = await file.arrayBuffer();
-      const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-      
-      setPdfDoc(pdf);
-      setTotalPages(pdf.numPages);
-      
-      const pages = [];
-      for (let i = 1; i <= pdf.numPages; i++) {
-        const page = await pdf.getPage(i);
-        pages.push(page);
-      }
-      
-      setPdfPages(pages);
-      setPdfFile(file);
-      setStep('edit');
-      
-      // Auto-open signature modal if no signature exists
-      if (!userSignature) {
-        setTimeout(() => {
-          setShowSignatureModal(true);
-        }, 500);
-      }
-    } catch (err) {
-      console.error('Error loading PDF:', err);
-      setError('Failed to load PDF. Please try a different file.');
-    } finally {
-      setLoading(false);
+    
+    if (newFile.type !== 'application/pdf') {
+      setError(`"${newFile.name}" is not a PDF file. Only PDF files are supported.`);
+      return false;
     }
+    
+    if (newFile.size > MAX_FILE_SIZE) {
+      setError(`"${newFile.name}" exceeds the 100 MB file size limit.`);
+      return false;
+    }
+    
+    return true;
   };
 
   // Handle page navigation with thumbnail sync
@@ -905,21 +999,31 @@ const PDFSigner = () => {
     }
   };
 
-  // Handle signature placement
+  // Handle signature placement with better initial sizing - FIXED positioning
   const handleSignaturePlace = (pageNumber, x, y) => {
     if (!signatureMode || !userSignature) return;
 
-    const newSignature = {
-      id: Date.now() + Math.random(),
-      page: pageNumber,
-      x: Math.max(0, Math.min(85, x - 8)),
-      y: Math.max(0, Math.min(85, y - 4)),
-      width: 120,
-      height: 60,
-      image: userSignature
-    };
+    // Get the natural aspect ratio of the signature image
+    const img = new Image();
+    img.onload = () => {
+      const aspectRatio = img.width / img.height;
+      const baseWidth = 60; // Even smaller base width
+      const baseHeight = Math.round(baseWidth / aspectRatio);
 
-    setSignatures(prev => [...prev, newSignature]);
+      const newSignature = {
+        id: Date.now() + Math.random(),
+        page: pageNumber,
+        x: Math.max(0, Math.min(95, x - 3)), // Adjusted for smaller size
+        y: Math.max(0, Math.min(95, y - 1.5)), // Adjusted for smaller size
+        width: baseWidth,
+        height: baseHeight, // Maintain aspect ratio
+        image: userSignature,
+        aspectRatio: aspectRatio // Store for resizing
+      };
+
+      setSignatures(prev => [...prev, newSignature]);
+    };
+    img.src = userSignature;
   };
 
   // Update signature position/size
@@ -943,13 +1047,117 @@ const PDFSigner = () => {
     setSignatureMode(!signatureMode);
   };
 
-  // Complete signing
-  const completeSigning = () => {
+  // Add high-quality date stamp
+  const addDateStamp = (pageNumber) => {
+    const currentDate = new Date().toLocaleDateString();
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Higher resolution for better quality
+    const fontSize = 32;
+    ctx.font = `${fontSize}px Arial, sans-serif`;
+    const metrics = ctx.measureText(currentDate);
+    canvas.width = metrics.width + 40;
+    canvas.height = 60;
+    
+    // Enable high-quality rendering
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    
+    ctx.font = `${fontSize}px Arial, sans-serif`;
+    ctx.fillStyle = 'black';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(currentDate, 20, 30);
+    
+    const dataURL = canvas.toDataURL('image/png', 1.0);
+    
+    const newSignature = {
+      id: Date.now() + Math.random(),
+      page: pageNumber,
+      x: 75,
+      y: 90, // Closer to bottom
+      width: 80, // Smaller size
+      height: 20, // Smaller size
+      image: dataURL,
+      type: 'date'
+    };
+
+    setSignatures(prev => [...prev, newSignature]);
+  };
+
+  // Add high-quality time stamp
+  const addTimeStamp = (pageNumber) => {
+    const currentTime = new Date().toLocaleTimeString();
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Higher resolution for better quality
+    const fontSize = 32;
+    ctx.font = `${fontSize}px Arial, sans-serif`;
+    const metrics = ctx.measureText(currentTime);
+    canvas.width = metrics.width + 40;
+    canvas.height = 60;
+    
+    // Enable high-quality rendering
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    
+    ctx.font = `${fontSize}px Arial, sans-serif`;
+    ctx.fillStyle = 'black';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(currentTime, 20, 30);
+    
+    const dataURL = canvas.toDataURL('image/png', 1.0);
+    
+    const newSignature = {
+      id: Date.now() + Math.random(),
+      page: pageNumber,
+      x: 75,
+      y: 93, // Even closer to bottom
+      width: 80, // Smaller size
+      height: 20, // Smaller size
+      image: dataURL,
+      type: 'time'
+    };
+
+    setSignatures(prev => [...prev, newSignature]);
+  };
+
+  // Complete signing - Process PDF with backend
+  const completeSigning = async () => {
     if (signatures.length === 0) {
       setError('Please add at least one signature before completing.');
       return;
     }
-    setStep('complete');
+
+    setIsProcessing(true);
+    setProgress(0);
+    setError(null);
+
+    try {
+      // Validate inputs
+      validatePDFFile(pdfFile);
+      const processedSignatures = prepareSignatureData(signatures);
+      validateSignatures(processedSignatures);
+
+      // Call the API
+      const result = await addSignaturesToPDF(
+        pdfFile,
+        processedSignatures,
+        (progressValue) => setProgress(progressValue)
+      );
+
+      setResult(result);
+      // Don't change step to keep editor visible
+
+    } catch (error) {
+      console.error('Signature processing failed:', error);
+      setError(error.message || 'Failed to process signatures. Please try again.');
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   // Reset to start
@@ -963,62 +1171,127 @@ const PDFSigner = () => {
     setError(null);
     setSignatureMode(false);
     setCurrentPage(1);
+    setResult(null);
+    setIsEncrypted(false);
+    setProgress(0);
   };
 
-  // Get user's full name for signature
-  const getUserFullName = () => {
-    if (isAuthenticated && user) {
-      return `${user.name || user.first_name || ''} ${user.last_name || ''}`.trim() || 'User';
-    }
-    return '';
+  // Handle download
+  const handleDownload = (fileId, fileName) => {
+    const finalFileName = fileName.toLowerCase().endsWith('.pdf') ? fileName : `${fileName}.pdf`;
+    const downloadUrl = getSignedPDFDownloadUrl(fileId, finalFileName);
+    downloadSignedPDF(downloadUrl, finalFileName);
   };
+
+  // Handle preview
+  const handleOpenPreview = async () => {
+    if (result) {
+      try {
+        setIsProcessing(true);
+        
+        const downloadUrl = getSignedPDFDownloadUrl(result.job_id);
+        const response = await fetch(downloadUrl);
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch PDF: ${response.status} ${response.statusText}`);
+        }
+        
+        const pdfBlob = await response.blob();
+        const objectUrl = URL.createObjectURL(pdfBlob);
+        
+        setPreviewModal({
+          isOpen: true,
+          pdfUrl: objectUrl,
+          fileName: 'Signed Document.pdf'
+        });
+      } catch (error) {
+        console.error('Error preparing PDF preview:', error);
+        setError('Unable to preview the PDF. Please try downloading instead.');
+      } finally {
+        setIsProcessing(false);
+      }
+    }
+  };
+
+  // Close preview modal
+  const handleClosePreview = () => {
+    setPreviewModal({
+      isOpen: false,
+      pdfUrl: null,
+      fileName: ''
+    });
+  };
+
+  console.log(signatures);
+  
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="mx-auto px-4 py-4">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                PDF <span className="text-blue-600">Signer</span>
-              </h1>
-              <p className="text-gray-600 text-sm mt-1">
-                {step === 'upload' && 'Upload your PDF document to get started'}
-                {step === 'edit' && 'Add your signatures to the document'}
-                {step === 'complete' && 'Your document has been signed successfully'}
-              </p>
-            </div>
-            {isAuthenticated && user && (
-              <div className="text-right">
-                <p className="text-sm text-gray-600">Signed in as</p>
-                <p className="font-medium text-gray-900">{getUserFullName()}</p>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
+    <div className="max-w-full">
+      {/* Load Google Fonts */}
+      <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Great+Vibes&family=Allura&family=Alex+Brush&family=Pacifico&family=Sacramento&family=Satisfy&family=Courgette&display=swap" rel="stylesheet" />
+      
+      {/* Modal Loader */}
+      <ModalLoader
+        isVisible={isProcessing}
+        progress={progress}
+        estimatedTime={estimatedUploadTime}
+        text={"Processing signatures..."}
+      />
 
-      {/* Loading Overlay */}
+      {/* PDF Preview Modal */}
+      <PDFPreviewModal
+        isOpen={previewModal.isOpen}
+        onClose={handleClosePreview}
+        pdfUrl={previewModal.pdfUrl}
+        fileName={previewModal.fileName}
+      />
+      
+      {/* Upload Step - Show only when no file */}
+      {step === 'upload' && !loading && (
+        <>
+          {/* Title */}
+          <div className="text-center mb-8 lg:mb-10">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl mt-4 font-bold mb-2">
+              <span className="text-[#DA1F10]">PDF </span> Signer
+            </h1>
+            <p className="text-gray-600 text-lg sm:text-base">Add digital signatures to your PDF document</p>
+            <p className="text-xs sm:text-lg text-gray-500 mt-2">Max file size: 100 MB</p>
+          </div>
+          
+          <SelectFiles 
+            onFilesSelected={handleFilesSelected}
+            onError={setError}
+            buttonText="Select PDF File"
+            buttonColor="red"
+            buttonSize="large"
+            multiple={false}
+          />
+        </>
+      )}
+      
+      {/* Loading State */}
       {loading && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg p-8 text-center">
-            <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading PDF...</p>
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="w-12 h-12 border-4 border-red-200 border-t-[#DA1F10] rounded-full animate-spin mb-4"></div>
+            <p className="text-gray-600">Processing your PDF...</p>
           </div>
         </div>
       )}
-
-      {/* Error Alert */}
+      
+      {/* Error State */}
       {error && (
-        <div className="mx-auto px-2 py-4 max-w-6xl">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start">
-            <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 mr-3" />
-            <div className="flex-1">
-              <p className="text-red-800">{error}</p>
+        <div className="w-full p-4 sm:p-6 bg-red-50 rounded-xl border border-red-200 mb-6 shadow-sm max-w-2xl mx-auto">
+          <div className="flex items-start">
+            <div className="flex-shrink-0">
+              <AlertCircle className="w-5 h-5 sm:w-6 sm:h-6 text-red-600" />
+            </div>
+            <div className="ml-3 flex-1">
+              <h3 className="text-lg font-medium text-red-800 mb-1">Error</h3>
+              <div className="text-lg text-red-700">{error}</div>
               <button
                 onClick={() => setError(null)}
-                className="text-sm text-red-600 hover:text-red-800 mt-2"
+                className="mt-3 text-lg font-medium cursor-pointer text-red-600 hover:text-red-800"
               >
                 Dismiss
               </button>
@@ -1027,339 +1300,301 @@ const PDFSigner = () => {
         </div>
       )}
 
-      {/* Main Content */}
-      <div className="mx-auto px-2 py-4">
-        {/* Upload Step */}
-        {step === 'upload' && (
-          <div className="max-w-4xl mx-auto">
-            <FileUpload 
-              onFileSelect={loadPDF}
-              error={error}
-              onError={setError}
-            />
+      {/* Edit Step */}
+      {step === 'edit' && (
+        <div className="flex gap-4 h-[calc(100vh-100px)]">
+          {/* Thumbnail Sidebar */}
+          <div className="w-40 bg-white rounded-lg shadow-sm border flex flex-col">
+            <div className="p-3 border-b">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-medium text-gray-900 text-lg">Pages</h3>
+                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">{totalPages}</span>
+              </div>
+              <div className="relative">
+                <Search className="w-3 h-3 absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <input
+                  type="number"
+                  min="1"
+                  max={totalPages}
+                  placeholder="Page..."
+                  className="w-full pl-7 pr-2 py-1.5 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#DA1F10]"
+                  onChange={(e) => {
+                    const value = parseInt(e.target.value);
+                    if (value && value <= totalPages && value > 0) {
+                      handlePageNavigation(value);
+                    }
+                  }}
+                />
+              </div>
+            </div>
+            
+            <div 
+              ref={thumbnailContainerRef}
+              className="flex-1 overflow-y-auto p-2"
+              style={{ maxHeight: 'calc(100vh - 180px)' }}
+            >
+              {Array.from({ length: totalPages }, (_, index) => {
+                const pageNumber = index + 1;
+                const pageSignatures = signatures.filter(sig => sig.page === pageNumber);
+                
+                return (
+                  <div key={pageNumber} data-page={pageNumber}>
+                    <PageThumbnail
+                      pageNumber={pageNumber}
+                      pageData={pdfPages[index]}
+                      signatures={pageSignatures}
+                      isActive={currentPage === pageNumber}
+                      onClick={() => handlePageNavigation(pageNumber)}
+                    />
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        )}
 
-        {/* Edit Step */}
-        {step === 'edit' && (
-          <div className="flex gap-2 h-[calc(100vh-140px)]">
-            {/* Thumbnail Sidebar */}
-            <div className="w-56 bg-white rounded-lg shadow-sm border flex flex-col">
-              <div className="p-3 border-b">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="font-medium text-gray-900 text-sm">Pages</h3>
-                  <span className="text-xs text-gray-500">{totalPages} pages</span>
+          {/* PDF Viewer */}
+          <div className="flex-1 min-w-0">
+            <div className="bg-white rounded-lg shadow-sm border p-4 h-full flex flex-col">
+              {/* Toolbar */}
+              <div className="flex justify-between items-center mb-4 pb-3 border-b">
+                <div className="min-w-0 flex-1">
+                  <h3 className="font-semibold text-gray-900 text-lg truncate">{pdfFile?.name}</h3>
+                  <p className="text-lg text-gray-600">Page {currentPage} of {totalPages}</p>
                 </div>
-                <div className="relative">
-                  <Search className="w-3 h-3 absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Go to page..."
-                    className="w-full pl-7 pr-2 py-1.5 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      if (value && !isNaN(value) && parseInt(value) <= totalPages && parseInt(value) > 0) {
-                        handlePageNavigation(parseInt(value));
-                      }
-                    }}
-                  />
-                </div>
-              </div>
-              
-              <div 
-                ref={thumbnailContainerRef}
-                className="flex-1 overflow-y-auto p-1"
-                style={{ maxHeight: 'calc(100vh - 200px)' }}
-              >
-                {Array.from({ length: totalPages }, (_, index) => {
-                  const pageNumber = index + 1;
-                  const pageSignatures = signatures.filter(sig => sig.page === pageNumber);
+                
+                <div className="flex items-center gap-3 ml-4">
+                  {signatureMode && (
+                    <div className="flex items-center px-3 py-1.5 bg-red-100 text-[#DA1F10] rounded-full text-lg font-medium animate-pulse">
+                      <MousePointer2 className="w-4 h-4 mr-1.5" />
+                      Click to place signature
+                    </div>
+                  )}
                   
-                  return (
-                    <div key={pageNumber} data-page={pageNumber}>
-                      <PageThumbnail
-                        pageNumber={pageNumber}
-                        pageData={pdfPages[index]}
-                        signatures={pageSignatures}
-                        isActive={currentPage === pageNumber}
-                        onClick={() => handlePageNavigation(pageNumber)}
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* PDF Viewer */}
-            <div className="flex-1 min-w-0">
-              <div className="bg-white rounded-lg shadow-sm border p-4 h-full flex flex-col">
-                {/* Toolbar */}
-                <div className="flex justify-between items-center mb-4 pb-3 border-b">
-                  <div className="min-w-0 flex-1">
-                    <h3 className="font-semibold text-gray-900 text-lg truncate">{pdfFile?.name}</h3>
-                    <p className="text-sm text-gray-600">{totalPages} pages • Page {currentPage}</p>
-                  </div>
-                  
-                  <div className="flex items-center gap-3 ml-4">
-                    {signatureMode && (
-                      <div className="flex items-center px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs animate-pulse">
-                        <MousePointer2 className="w-3 h-3 mr-1" />
-                        Click anywhere to place signature
-                      </div>
-                    )}
-                    
-                    <div className="flex items-center gap-1">
-                      <button
-                        onClick={() => setZoom(Math.max(0.5, zoom - 0.2))}
-                        className="p-1.5 hover:bg-gray-100 rounded transition-colors"
-                        title="Zoom Out"
-                      >
-                        <ZoomOut className="w-4 h-4" />
-                      </button>
-                      <span className="text-sm w-10 text-center">{Math.round(zoom * 100)}%</span>
-                      <button
-                        onClick={() => setZoom(Math.min(2, zoom + 0.2))}
-                        className="p-1.5 hover:bg-gray-100 rounded transition-colors"
-                        title="Zoom In"
-                      >
-                        <ZoomIn className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* PDF Pages */}
-                <div 
-                  ref={mainViewerRef}
-                  className="flex-1 overflow-auto bg-gray-100 p-3 rounded"
-                >
-                  {pdfPages.map((pageData, index) => (
-                    <div key={index + 1} id={`page-${index + 1}`}>
-                      <PDFPageRenderer
-                        pageData={pageData}
-                        pageNumber={index + 1}
-                        zoom={zoom}
-                        onSignaturePlace={handleSignaturePlace}
-                        signatures={signatures}
-                        onUpdateSignature={updateSignature}
-                        onDeleteSignature={deleteSignature}
-                        signatureMode={signatureMode}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Tools Sidebar */}
-            <div className="w-64">
-              <div className="bg-white rounded-lg shadow-sm border p-4 space-y-4 h-full flex flex-col">
-                <h3 className="font-semibold text-base">Signature Tools</h3>
-
-                {/* Current Signature */}
-                {userSignature && (
-                  <div className="p-3 border rounded-lg bg-blue-50">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="font-medium text-sm">Your Signature</span>
-                      <button
-                        onClick={() => {
-                          setUserSignature(null);
-                          setSignatures([]);
-                          setSignatureMode(false);
-                        }}
-                        className="text-red-500 hover:text-red-700 transition-colors"
-                        title="Remove signature"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                    <div className="bg-white p-2 rounded mb-2 text-center border">
-                      <img src={userSignature} alt="Signature" className="max-h-10 mx-auto" />
-                    </div>
+                  <div>
                     <button
-                      onClick={toggleSignatureMode}
-                      className={`w-full py-2 px-2 rounded font-medium transition-all duration-200 text-sm ${
-                        signatureMode 
-                          ? 'bg-orange-500 text-white hover:bg-orange-600 shadow-md'
-                          : 'bg-blue-600 text-white hover:bg-blue-700 shadow-md'
-                      }`}
+                      onClick={reset}
+                      className="px-3 py-1.5 bg-red-700 text-white cursor-pointer rounded-lg hover:bg-red-800 transition-colors"
+                      title="Reset"
                     >
-                      {signatureMode ? 'Stop Placing' : 'Start Placing'}
+                      Choose Another PDF
                     </button>
-                    {signatureMode && (
-                      <p className="text-xs text-gray-600 mt-1 text-center">
-                        Click anywhere on any page to place signatures
-                      </p>
-                    )}
                   </div>
-                )}
+                  <div className="flex items-center gap-2 bg-gray-100 rounded-lg px-2 py-1">
+                    <button
+                      onClick={() => setZoom(Math.max(0.5, zoom - 0.1))}
+                      className="p-1.5 hover:bg-gray-200 cursor-pointer rounded transition-colors"
+                      title="Zoom Out"
+                    >
+                      <ZoomOut className="w-4 h-4" />
+                    </button>
+                    <span className="text-lg font-medium w-12 text-center">{Math.round(zoom * 100)}%</span>
+                    <button
+                      onClick={() => setZoom(Math.min(2, zoom + 0.1))}
+                      className="p-1.5 hover:bg-gray-200 cursor-pointer rounded transition-colors"
+                      title="Zoom In"
+                    >
+                      <ZoomIn className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
 
-                {/* Create Signature */}
+              {/* PDF Pages */}
+              <div 
+                ref={mainViewerRef}
+                className="flex-1 overflow-auto bg-gray-50 p-4 rounded"
+              >
+                {pdfPages.map((pageData, index) => (
+                  <div key={index + 1} id={`page-${index + 1}`}>
+                    <PDFPageRenderer
+                      pageData={pageData}
+                      pageNumber={index + 1}
+                      zoom={zoom}
+                      onSignaturePlace={handleSignaturePlace}
+                      signatures={signatures}
+                      onUpdateSignature={updateSignature}
+                      onDeleteSignature={deleteSignature}
+                      signatureMode={signatureMode}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Tools Sidebar */}
+          <div className="w-80">
+            <div className="bg-white rounded-lg shadow-sm border p-4 space-y-4 h-full flex flex-col overflow-scroll">
+              <h3 className="font-semibold text-lg">Signature Tools</h3>
+
+              {/* Current Signature */}
+              {userSignature && (
+                <div className="p-4 border rounded-lg bg-red-50">
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="font-medium text-lg">Your Signature</span>
+                    <button
+                      onClick={() => {
+                        setUserSignature(null);
+                        setSignatures([]);
+                        setSignatureMode(false);
+                      }}
+                      className="text-red-500 hover:text-red-700 cursor-pointer transition-colors"
+                      title="Remove signature"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <div className="bg-white p-3 rounded mb-3 text-center border">
+                    <img src={userSignature} alt="Signature" className="max-h-12 mx-auto" />
+                  </div>
+                  <button
+                    onClick={toggleSignatureMode}
+                    className={`w-full py-2.5 px-3 cursor-pointer rounded-lg font-medium transition-all duration-200 text-lg ${
+                      signatureMode 
+                        ? 'bg-orange-500 text-white hover:bg-orange-600 shadow-md'
+                        : 'bg-[#DA1F10] text-white hover:bg-red-700 shadow-md'
+                    }`}
+                  >
+                    {signatureMode ? '🖱️ Stop Placing' : '✍️ Start Placing'}
+                  </button>
+                  {signatureMode && (
+                    <p className="text-xs text-gray-600 mt-2 text-center">
+                      Click anywhere on the PDF to place your signature
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {/* Create/Edit Signature */}
+              <button
+                onClick={() => setShowSignatureModal(true)}
+                className="w-full flex items-center cursor-pointer justify-center py-3 px-4 bg-[#DA1F10] text-white rounded-lg hover:bg-red-700 transition-colors shadow-md text-lg font-medium"
+              >
+                <Edit3 className="w-4 h-4 mr-2" />
+                {userSignature ? 'Change Signature' : 'Create Signature'}
+              </button>
+
+              {/* Quick Stamps */}
+              <div className="space-y-2">
+                <h4 className="font-medium text-lg text-gray-700">Quick Stamps</h4>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => addDateStamp(currentPage)}
+                    className="flex items-center cursor-pointer justify-center py-2.5 px-3 bg-gray-100 hover:bg-gray-200 rounded-lg text-lg transition-colors"
+                    title="Add today's date"
+                  >
+                    <Calendar className="w-4 h-4 mr-1.5" />
+                    Date
+                  </button>
+                  <button
+                    onClick={() => addTimeStamp(currentPage)}
+                    className="flex items-center cursor-pointer justify-center py-2.5 px-3 bg-gray-100 hover:bg-gray-200 rounded-lg text-lg transition-colors"
+                    title="Add current time"
+                  >
+                    <Timer className="w-4 h-4 mr-1.5" />
+                    Time
+                  </button>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="space-y-2 pt-4 border-t">
                 <button
-                  onClick={() => setShowSignatureModal(true)}
-                  className="w-full flex items-center justify-center py-2.5 px-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-md text-sm"
+                  onClick={completeSigning}
+                  disabled={signatures.length === 0}
+                  className={`w-full py-3 px-4 rounded-lg cursor-pointer font-medium transition-colors shadow-md text-lg ${
+                    signatures.length === 0
+                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      : 'bg-green-600 text-white hover:bg-green-700'
+                  }`}
                 >
-                  <Edit3 className="w-4 h-4 mr-2" />
-                  {userSignature ? 'Edit Signature' : 'Create Signature'}
+                  {signatures.length === 0 ? 'Add Signatures First' : `Sign PDF (${signatures.length})`}
                 </button>
+                
+                <button
+                  onClick={reset}
+                  className="w-full py-2.5 px-4 cursor-pointer text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-lg font-medium"
+                >
+                  Start Over
+                </button>
+              </div>
 
-                {/* Signature Status */}
-                {signatures.length > 0 && (
-                  <div className="p-3 border rounded-lg flex-1 min-h-0">
-                    <h4 className="font-medium mb-2 text-sm">Placed Signatures ({signatures.length})</h4>
-                    <div className="space-y-1.5 max-h-32 overflow-y-auto">
+              {/* Placed Signatures List - NEW SECTION */}
+              {signatures.length > 0 && (
+                <div className="flex-1 min-h-0 border-t pt-4">
+                  <div className="h-full flex flex-col">
+                    <h4 className="font-medium mb-3 text-lg flex items-center justify-between">
+                      <span>Placed Signatures ({signatures.length})</span>
+                      <button
+                        onClick={() => setSignatures([])}
+                        className="text-xs text-red-600 cursor-pointer hover:text-red-700"
+                      >
+                        Clear All
+                      </button>
+                    </h4>
+                    <div 
+                      className="flex-1 space-y-2 pr-2"
+                      style={{ maxHeight: '200px' }}
+                    >
                       {signatures.map((sig, index) => (
-                        <div key={sig.id} className="flex justify-between items-center text-xs bg-gray-50 p-1.5 rounded">
-                          <span>#{index + 1} - Page {sig.page}</span>
+                        <div key={sig.id} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                          <div className="flex items-center space-x-2 min-w-0 flex-1">
+                            <span className="text-xs font-semibold text-gray-700">#{index + 1}</span>
+                            <div className="w-12 h-6 bg-white rounded border border-gray-200 p-0.5 flex items-center justify-center">
+                              <img 
+                                src={sig.image} 
+                                alt="Signature preview" 
+                                className="max-w-full max-h-full object-contain"
+                              />
+                            </div>
+                            <span className="text-xs text-gray-600">Page {sig.page}</span>
+                            {sig.type && (
+                              <span className="text-xs text-gray-500 capitalize">({sig.type})</span>
+                            )}
+                          </div>
                           <button
                             onClick={() => deleteSignature(sig.id)}
-                            className="text-red-500 hover:text-red-700 transition-colors"
-                            title="Delete this signature"
+                            className="text-red-500 cursor-pointer hover:text-red-700 transition-colors p-1 rounded hover:bg-red-50"
+                            title="Remove signature"
                           >
-                            <X className="w-3 h-3" />
+                            <Trash2 className="w-3.5 h-3.5" />
                           </button>
                         </div>
                       ))}
                     </div>
-                    <button
-                      onClick={() => setSignatures([])}
-                      className="w-full mt-2 py-1 px-2 text-xs text-red-600 border border-red-300 rounded hover:bg-red-50 transition-colors"
-                    >
-                      Clear All Signatures
-                    </button>
                   </div>
-                )}
-
-                {/* Instructions */}
-                <div className="p-3 bg-gray-50 rounded-lg">
-                  <h4 className="font-medium text-xs mb-1.5">How to use:</h4>
-                  <ol className="text-xs text-gray-600 space-y-0.5">
-                    <li>1. Create your signature</li>
-                    <li>2. Click "Start Placing"</li>
-                    <li>3. Click anywhere on pages</li>
-                    <li>4. Drag to move, resize with handles</li>
-                    <li>5. Complete when done</li>
-                  </ol>
                 </div>
+              )}
 
-                {/* Actions */}
-                <div className="space-y-2 pt-3 border-t mt-auto">
-                  <button
-                    onClick={completeSigning}
-                    disabled={signatures.length === 0}
-                    className={`w-full py-2.5 px-3 rounded-lg font-medium transition-colors shadow-md text-sm ${
-                      signatures.length === 0
-                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                        : 'bg-green-600 text-white hover:bg-green-700'
-                    }`}
-                  >
-                    Complete ({signatures.length})
-                  </button>
-                  
-                  <button
-                    onClick={reset}
-                    className="w-full py-2 px-3 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm"
-                  >
-                    Start Over
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Complete Step */}
-        {step === 'complete' && (
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-white rounded-lg shadow-sm border p-8 text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Check className="w-8 h-8 text-green-600" />
-              </div>
               
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                Document Signed Successfully!
-              </h2>
-              <p className="text-gray-600 mb-8">
-                Your PDF has been digitally signed with {signatures.length} signature{signatures.length !== 1 ? 's' : ''} and is ready for download.
-              </p>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-blue-600">1</p>
-                  <p className="text-sm text-gray-600">Document Signed</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-green-600">{signatures.length}</p>
-                  <p className="text-sm text-gray-600">Signatures Applied</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-yellow-600">{totalPages}</p>
-                  <p className="text-sm text-gray-600">Total Pages</p>
-                </div>
-              </div>
-
-              {/* Signature Summary */}
-              <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                <h4 className="font-medium mb-2">Signature Summary:</h4>
-                <div className="text-sm text-gray-600 space-y-1">
-                  {signatures.reduce((acc, sig) => {
-                    acc[sig.page] = (acc[sig.page] || 0) + 1;
-                    return acc;
-                  }, {}) && Object.entries(signatures.reduce((acc, sig) => {
-                    acc[sig.page] = (acc[sig.page] || 0) + 1;
-                    return acc;
-                  }, {})).map(([page, count]) => (
-                    <div key={page} className="flex justify-between">
-                      <span>Page {page}:</span>
-                      <span>{count} signature{count !== 1 ? 's' : ''}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="bg-gray-50 rounded-lg p-6 mb-8">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
-                      <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                    </div>
-                    <div className="text-left">
-                      <p className="font-medium text-gray-900">Signed_{pdfFile?.name}</p>
-                      <p className="text-sm text-gray-600">Digitally signed PDF</p>
-                    </div>
-                  </div>
-                  <div className="flex space-x-3">
-                    <button className="flex items-center px-4 py-2 text-blue-600 hover:text-blue-700 border border-blue-600 rounded-lg hover:bg-blue-50 transition-colors">
-                      <Eye className="w-4 h-4 mr-2" />
-                      Preview
-                    </button>
-                    <button className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                      <Download className="w-4 h-4 mr-2" />
-                      Download
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <button
-                onClick={reset}
-                className="w-full py-3 px-6 bg-gray-600 text-white rounded-lg hover:bg-gray-700 font-medium transition-colors"
-              >
-                Sign Another Document
-              </button>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
+      {/* Results Section - Always visible when complete */}
+      {result && (
+        <div ref={resultSectionRef} className="mt-8">
+          <DownloadSection
+            files={[{
+              id: result.job_id,
+              name: pdfFile ? pdfFile.name.replace('.pdf', '_signed.pdf') : 'Signed Document.pdf',
+              size: result.output_size
+            }]}
+            downloadHandler={handleDownload}
+            previewHandler={handleOpenPreview}
+            title="Download Signed PDF"
+            color="red"
+            startOverHandler={reset}
+          />
+        </div>
+      )}
 
       {/* Signature Modal */}
       <SignatureModal
         isOpen={showSignatureModal}
         onClose={() => setShowSignatureModal(false)}
         onSave={setUserSignature}
-        userFullName={getUserFullName()}
       />
     </div>
   );

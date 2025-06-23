@@ -19,7 +19,6 @@
 
 # production
 /build
-/PDFSigner.js
 
 # misc
 .DS_Store

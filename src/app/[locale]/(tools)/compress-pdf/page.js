@@ -17,7 +17,7 @@ export const metadata = {
     title: 'Compress PDF Online Free - Reduce PDF File Size by 99%',
     description: 'Free online PDF compressor. Reduce PDF file size while maintaining quality. Fast, secure, and easy to use. Compress multiple PDFs at once.',
     type: 'website',
-    url: '/compress-pdf',
+    url: '/en/compress-pdf',
     images: [
       {
         url: '/static/assets/compress-pdf-og.webp',
@@ -94,12 +94,12 @@ export default function PDFCompressPage() {
         title="Compress PDF Online Free - Reduce PDF File Size | PDF Techno"
         description="Compress PDF files online for free. Reduce PDF file size by up to 99% while maintaining quality. Fast, secure, and easy PDF compression tool. No registration required."
         keywords="compress PDF, PDF compressor, reduce PDF size, compress PDF online, shrink PDF file, PDF size reducer, minimize PDF file size, compress large PDF, free PDF compressor, PDF optimizer, compress PDF file, reduce file size, PDF compression tool, online PDF compressor, compress PDF without losing quality, batch PDF compression, compress multiple PDFs, PDF file compression, optimize PDF size, compress PDF documents, small PDF files, compress PDF for email, compress PDF for web, best PDF compressor India, PDF compression India, compress PDF online India, free PDF compressor India, reduce PDF size India, PDF optimizer India, PDF file size reducer India, PDF tools India, Indian PDF compressor, PDF file shrinker India, compress PDF Hindi, compress PDF Delhi, compress PDF Mumbai, compress PDF Bangalore, compress PDF Chennai, compress PDF Kolkata"
-        canonical="https://www.pdftechno.com/compress-pdf"
+        canonical="https://www.pdftechno.com/en/compress-pdf"
         og={{
           title: "Compress PDF Online Free - Reduce PDF File Size by 99%",
           description: "Free online PDF compressor. Reduce PDF file size while maintaining quality. Fast, secure, and easy to use. Compress multiple PDFs at once.",
           image: "/static/assets/compress-pdf-og.webp",
-          url: "https://www.pdftechno.com/compress-pdf",
+          url: "https://www.pdftechno.com/en/compress-pdf",
           siteName: "PDF Techno",
           locale: "en_US"
         }}
@@ -121,7 +121,7 @@ export default function PDFCompressPage() {
               "@type": "WebApplication",
               "name": "PDF Compressor - PDF Techno",
               "description": "Free online PDF compression tool to reduce file size while maintaining quality",
-              "url": "https://www.pdftechno.com/compress-pdf",
+              "url": "https://www.pdftechno.com/en/compress-pdf",
               "applicationCategory": "UtilitiesApplication",
               "operatingSystem": "Web Browser",
               "author": {
