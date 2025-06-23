@@ -139,7 +139,7 @@ const PDFTools = () => {
       icon: '/images/icons/signture.png',
       titleKey: 'pdfTools.tools.signPdf.title',
       descriptionKey: 'pdfTools.tools.signPdf.description',
-      comingSoon: true,
+      comingSoon: false,
       href: getLocalizedHref('/sign-pdf')
     },
     {
