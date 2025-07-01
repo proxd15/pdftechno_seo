@@ -82,18 +82,18 @@ export const generateWatermarkPreview = (() => {
       if (options.fileKey && !previewCache.has('lastFileKey')) {
         previewCache.set('lastFileKey', options.fileKey);
       } else if (options.fileKey && previewCache.get('lastFileKey') !== options.fileKey) {
-        console.log("File changed, clearing cache");
+        // console.log("File changed, clearing cache");
         previewCache.clear();
         previewCache.set('lastFileKey', options.fileKey);
       }
       
       // Check cache first - but be more selective about when to use cache
       if (previewCache.has(cacheKey)) {
-        console.log("Using cached preview for key:", cacheKey);
+        // console.log("Using cached preview for key:", cacheKey);
         return previewCache.get(cacheKey);
       }
       
-      console.log("Generating new preview for key:", cacheKey);
+      // console.log("Generating new preview for key:", cacheKey);
       
       let result;
       
@@ -136,7 +136,7 @@ export const generateWatermarkPreview = (() => {
       // Race between generation and timeout
       result = await Promise.race([generationPromise, timeoutPromise]);
       
-      console.log("Preview generated successfully");
+      // console.log("Preview generated successfully");
       
       // Store in cache only if generation was successful
       if (result && result.byteLength > 0) {
@@ -157,7 +157,7 @@ export const generateWatermarkPreview = (() => {
       console.error('Error generating watermark preview:', error);
       
       // Instead of throwing, return the original PDF for basic preview
-      console.log("Returning original PDF due to preview generation error");
+      // console.log("Returning original PDF due to preview generation error");
       return pdfBytes;
     }
   };
@@ -233,7 +233,7 @@ export const addWatermark = async (formData, onProgress) => {
        const token = getAuthToken();
       if (token) {
         xhr.setRequestHeader('Authorization', `Bearer ${token}`);
-        console.log(token);
+        // console.log(token);
         
       }
       xhr.send(formData);
@@ -360,7 +360,7 @@ export const applyTextWatermarkInBrowser = async (pdfBytes, options) => {
       isMosaic = false
     } = options;
     
-    console.log("Applying watermark with rotation:", rotation);
+    // console.log("Applying watermark with rotation:", rotation);
     
     const adjustedFontSize = fontSize * 0.75;
     const startPageIndex = Math.max(0, fromPage - 1);
@@ -438,7 +438,7 @@ export const applyTextWatermarkInBrowser = async (pdfBytes, options) => {
       };
       
       const drawWatermark = (centerX, centerY) => {
-        console.log(`Drawing at center: (${centerX}, ${centerY}), rotation: ${rotation}°`);
+        // console.log(`Drawing at center: (${centerX}, ${centerY}), rotation: ${rotation}°`);
         
         if (rotation !== 0) {
           // Calculate text baseline position (this is where PDF-lib places text)
@@ -498,7 +498,7 @@ export const applyTextWatermarkInBrowser = async (pdfBytes, options) => {
               opacity: opacity
             });
             
-            console.log(`Fixed underline: (${startRotated.x}, ${startRotated.y}) to (${endRotated.x}, ${endRotated.y})`);
+            // console.log(`Fixed underline: (${startRotated.x}, ${startRotated.y}) to (${endRotated.x}, ${endRotated.y})`);
           }
         } else {
           // No rotation - simple positioning
@@ -660,7 +660,7 @@ export const applyImageWatermarkInBrowser = async (pdfBytes, imageBlob, options)
       isMosaic = false
     } = options;
     
-    console.log("Applying image watermark with rotation:", rotation);
+    // console.log("Applying image watermark with rotation:", rotation);
     
     const startPageIndex = Math.max(0, fromPage - 1);
     const endPageIndex = Math.min(pdfDoc.getPageCount() - 1, toPage - 1);
@@ -673,7 +673,7 @@ export const applyImageWatermarkInBrowser = async (pdfBytes, imageBlob, options)
       const imgWidth = (width * imageSize) / 100;
       const imgHeight = (imgWidth / image.width) * image.height;
       
-      console.log(`Page ${i + 1}: ${width}x${height}, Image: ${imgWidth}x${imgHeight}`);
+      // console.log(`Page ${i + 1}: ${width}x${height}, Image: ${imgWidth}x${imgHeight}`);
       
       // Define center positions
       const centerPositions = {
@@ -689,7 +689,7 @@ export const applyImageWatermarkInBrowser = async (pdfBytes, imageBlob, options)
       };
       
       const drawImageWatermark = (centerX, centerY) => {
-        console.log(`Drawing image at center: (${centerX}, ${centerY}), rotation: ${rotation}°`);
+        // console.log(`Drawing image at center: (${centerX}, ${centerY}), rotation: ${rotation}°`);
         
         // Calculate the bottom-left position for the image
         const imgX = centerX - imgWidth / 2;
@@ -716,7 +716,7 @@ export const applyImageWatermarkInBrowser = async (pdfBytes, imageBlob, options)
           const adjustedX = centerX - rotatedCenterX;
           const adjustedY = centerY - rotatedCenterY;
           
-          console.log(`Center rotation: target center (${centerX}, ${centerY}), placing bottom-left at (${adjustedX}, ${adjustedY})`);
+          // console.log(`Center rotation: target center (${centerX}, ${centerY}), placing bottom-left at (${adjustedX}, ${adjustedY})`);
           
           page.drawImage(image, {
             x: adjustedX,
@@ -755,7 +755,7 @@ export const applyImageWatermarkInBrowser = async (pdfBytes, imageBlob, options)
     }
     
     const modifiedPdfBytes = await pdfDoc.save();
-    console.log("Image watermark applied successfully");
+    // console.log("Image watermark applied successfully");
     return modifiedPdfBytes;
     
   } catch (error) {
@@ -811,9 +811,9 @@ export const sendPreprocessedPdfToBackend = async (modifiedPdfBytes, metadata) =
       const headers = {};
       if (token) {
         headers['Authorization'] = `Bearer ${token}`;
-        console.log('Sending auth token with watermark request:', token);
+        // console.log('Sending auth token with watermark request:', token);
       } else {
-        console.log('No auth token available for watermark request');
+        // console.log('No auth token available for watermark request');
       }
       
       // Send to backend endpoint
@@ -831,7 +831,7 @@ export const sendPreprocessedPdfToBackend = async (modifiedPdfBytes, metadata) =
       }
       
       const result = await response.json();
-      console.log('Backend response:', result); // Log the response to see what IDs are returned
+      // console.log('Backend response:', result); // Log the response to see what IDs are returned
       
       return result;
     } catch (error) {
@@ -868,7 +868,7 @@ export const addTextWatermarkClientSide = async (pdfFile, options, onProgress) =
       if (onProgress) onProgress(100);
       
       // Log the exact result for debugging
-      console.log("Backend response for client-side watermarking:", result);
+      // console.log("Backend response for client-side watermarking:", result);
       
       // Store the result in sessionStorage to ensure we use the same ID consistently
       if (result.file_id) {
@@ -948,7 +948,7 @@ export const getWatermarkDownloadUrl = (fileId, customFilename = null) => {
    */
   export const downloadWatermarkedFile = (fileId, filename) => {
     const url = getWatermarkDownloadUrl(fileId, filename);
-    console.log(`Downloading watermarked PDF from: ${url}`);
+    // console.log(`Downloading watermarked PDF from: ${url}`);
     
     const link = document.createElement('a');
     link.href = url;

@@ -182,7 +182,7 @@ export const getSignedPDFDownloadUrl = (fileId, customFilename = null) => {
  * @param {string} filename - Name to save the file as
  */
 export const downloadSignedPDF = (url, filename) => {
-  console.log(`Downloading signed PDF from: ${url}`);
+  // console.log(`Downloading signed PDF from: ${url}`);
   
   const link = document.createElement('a');
   link.href = url;

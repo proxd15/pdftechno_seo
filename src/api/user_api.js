@@ -30,7 +30,7 @@ const makeAuthenticatedRequest = async (url, options = {}) => {
 
   // If unauthorized and we have a refresh token, try to refresh
   if (response.status === 401) {
-    console.log('Access token expired, attempting to refresh...');
+    // console.log('Access token expired, attempting to refresh...');
     
     try {
       const refreshToken = localStorage.getItem('refreshToken') || sessionStorage.getItem('refreshToken');

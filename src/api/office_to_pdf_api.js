@@ -159,7 +159,7 @@ export const getDownloadUrl = (fileId, customFilename = null) => {
     url += `&filename=${encodeURIComponent(customFilename)}`;
   }
 
-  console.log(`Download URL: ${url}`);
+  // console.log(`Download URL: ${url}`);
   
   return url;
 };
@@ -170,7 +170,7 @@ export const getDownloadUrl = (fileId, customFilename = null) => {
  * @param {string} filename - Suggested filename (passed in URL parameter)
  */
 export const downloadFile = (url, filename) => {
-  console.log(`Downloading from: ${url}`);
+  // console.log(`Downloading from: ${url}`);
   
   // Create a URL with the custom filename if provided
   let downloadUrl = url;

@@ -83,19 +83,6 @@ export const splitPDF = async (formData, onProgress) => {
         }
       };
       
-      // Log FormData content for debugging
-      if (process.env.NODE_ENV === 'development') {
-        console.log('FormData entries:');
-        for (let [key, value] of formData.entries()) {
-          if (key === 'pdf_file') {
-            console.log(`${key}: [File object]`);
-          } else if (key === 'ranges') {
-            console.log(`${key}:`, value);
-          } else {
-            console.log(`${key}:`, value);
-          }
-        }
-      }
       
       // Open and send the request
       xhr.open('POST', `${API_BASE_URL}/api/pdf/split/`, true);
@@ -185,7 +172,7 @@ export const getDownloadUrl = (fileId, fileType, customFilename = null) => {
     
     url += `&filename=${encodeURIComponent(customFilename)}`;
   }
-  console.log(url);
+  // console.log(url);
   
   return url;
 };

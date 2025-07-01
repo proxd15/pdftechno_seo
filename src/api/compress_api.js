@@ -132,7 +132,7 @@ export const getDownloadUrl = (fileId, fileType, customFilename = null) => {
     url += `&filename=${encodeURIComponent(customFilename)}`;
   }
   
-  console.log(`Generated URL for ${fileType} download: ${url}`);
+  // console.log(`Generated URL for ${fileType} download: ${url}`);
   return url;
 };
 
@@ -142,8 +142,8 @@ export const getDownloadUrl = (fileId, fileType, customFilename = null) => {
  * @param {string} filename - Name to save the file as
  */
 export const downloadFile = (url, filename) => {
-  console.log(`Downloading file from: ${url}`);
-  console.log(`With filename: ${filename}`);
+  // console.log(`Downloading file from: ${url}`);
+  // console.log(`With filename: ${filename}`);
   
   const link = document.createElement('a');
   link.href = url;

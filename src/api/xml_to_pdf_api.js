@@ -187,7 +187,7 @@ export const getDownloadUrl = (fileId, fileType, customFilename = null) => {
  * @param {string} filename - Name to save the file as
  */
 export const downloadFile = (url, filename) => {
-  console.log(`Downloading from: ${url}`);
+  // console.log(`Downloading from: ${url}`);
   
   const link = document.createElement('a');
   link.href = url;

@@ -106,17 +106,7 @@ export const convertPDFToImages = async (formData, onProgress) => {
         }
       };
       
-      // Log FormData content for debugging
-      if (process.env.NODE_ENV === 'development') {
-        console.log('FormData entries:');
-        for (let [key, value] of formData.entries()) {
-          if (key === 'pdf_file') {
-            console.log(`${key}: [File object]`);
-          } else {
-            console.log(`${key}:`, value);
-          }
-        }
-      }
+
       
       // Open and send the request
       xhr.open('POST', `${API_BASE_URL}/api/pdf/pdf-to-image/`, true);
@@ -206,10 +196,7 @@ export const getDownloadUrl = (fileId, fileType, customFilename = null) => {
     
     url += `&filename=${encodeURIComponent(customFilename)}`;
   }
-  
-  if (process.env.NODE_ENV === 'development') {
-    console.log('Download URL:', url);
-  }
+
   
   return url;
 };

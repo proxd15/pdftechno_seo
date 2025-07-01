@@ -117,7 +117,7 @@ export const generateHEICPreview = async (heicFile) => {
     const data = await response.json();
     
     if (data.success && data.preview_url) {
-      console.log(`Generated preview for HEIC file: ${heicFile.name}`);
+      // console.log(`Generated preview for HEIC file: ${heicFile.name}`);
       return {
         previewUrl: data.preview_url,
         originalWidth: data.original_width,
@@ -228,7 +228,7 @@ export const getDownloadUrl = (fileId, fileType, customFilename = null) => {
     url += `&filename=${encodeURIComponent(customFilename)}`;
   }
 
-  console.log(`Download URL: ${url}`);
+  // console.log(`Download URL: ${url}`);
   
   return url;
 };
@@ -239,7 +239,7 @@ export const getDownloadUrl = (fileId, fileType, customFilename = null) => {
  * @param {string} filename - Suggested filename (passed in URL parameter)
  */
 export const downloadFile = (url, filename) => {
-  console.log(`Downloading from: ${url}`);
+  // console.log(`Downloading from: ${url}`);
   
   // Create a URL with the custom filename if provided
   let downloadUrl = url;

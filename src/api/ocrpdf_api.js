@@ -89,17 +89,7 @@ export const performPDFOCR = async (formData, onProgress) => {
         }
       };
       
-      // Log FormData content for debugging
-      if (process.env.NODE_ENV === 'development') {
-        console.log('FormData entries:');
-        for (let [key, value] of formData.entries()) {
-          if (key === 'pdf_file') {
-            console.log(`${key}: [File object]`);
-          } else {
-            console.log(`${key}:`, value);
-          }
-        }
-      }
+
       
       // Open and send the request
       xhr.open('POST', `${API_BASE_URL}/api/pdf/ocr-pdf/`, true);
@@ -235,7 +225,7 @@ export const getOCRDownloadUrl = (fileId, customFilename = null) => {
   }
   
   if (process.env.NODE_ENV === 'development') {
-    console.log('Download URL:', url);
+    // console.log('Download URL:', url);
   }
   
   return url;
