@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 
 // Map of slug paths to their component imports
 const pageComponents = {
-  '': dynamic(() => import('@/components/pages/HomePage')),
+  '/': dynamic(() => import('@/components/pages/Homepage')),
   'merge-pdf': dynamic(() => import('@/components/pages/MergePdf')),
   'split-pdf': dynamic(() => import('@/components/pages/SplitPdf')),
   'compress-pdf': dynamic(() => import('@/components/pages/CompressPdf')),
