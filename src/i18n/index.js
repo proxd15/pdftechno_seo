@@ -18,7 +18,11 @@ const dictionaries = {
 
 // Function to get localized href
 export function getLocalizedHref(path, locale) {
-  // For locale URL structure, add locale prefix
+  // For default locale (English), return clean URLs
+  if (locale === defaultLocale) {
+    return path;
+  }
+  // For other locales, add the locale prefix
   if (path === '/') {
     return `/${locale}`;
   }
@@ -32,8 +36,20 @@ export function I18nProvider({ children, initialLocale }) {
   const pathname = usePathname();
   const router = useRouter();
   
-  // Use the initialLocale from URL params if available, otherwise fall back to default
-  const [locale, setLocale] = useState(initialLocale && locales.includes(initialLocale) ? initialLocale : defaultLocale);
+  // Determine the current locale from the pathname
+  const currentLocale = (() => {
+    // Check if pathname starts with a non-default locale
+    for (const locale of locales) {
+      if (locale !== defaultLocale && 
+          (pathname === `/${locale}` || pathname.startsWith(`/${locale}/`))) {
+        return locale;
+      }
+    }
+    // If no locale in path, use initialLocale or cookie or default
+    return initialLocale || Cookies.get('NEXT_LOCALE') || defaultLocale;
+  })();
+
+  const [locale, setLocale] = useState(currentLocale);
   const [dict, setDict] = useState(dictionaries[locale] || dictionaries[defaultLocale]);
 
   // Sync with cookies when component mounts or locale changes
@@ -56,18 +72,20 @@ export function I18nProvider({ children, initialLocale }) {
       setLocale(newLocale);
       setDict(dictionaries[newLocale]);
       
-      // Redirect to the new locale URL
-      if (pathname) {
-        // Extract the path without the locale prefix
-        const segments = pathname.split('/');
-        // Remove the first empty segment and the locale segment
-        segments.splice(0, 2);
-        const pathWithoutLocale = segments.length > 0 ? `/${segments.join('/')}` : '/';
-        
-        // Construct the new URL with the new locale
-        const newPath = getLocalizedHref(pathWithoutLocale, newLocale);
-        router.push(newPath);
+      // Determine the path without locale
+      let pathWithoutLocale = pathname;
+      
+      // If current path has a locale prefix, remove it
+      for (const loc of locales) {
+        if (loc !== defaultLocale && pathname.startsWith(`/${loc}`)) {
+          pathWithoutLocale = pathname.slice(loc.length + 1) || '/';
+          break;
+        }
       }
+      
+      // Construct the new URL
+      const newPath = getLocalizedHref(pathWithoutLocale, newLocale);
+      router.push(newPath);
     }
   };
 

@@ -409,7 +409,7 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <div className='flex gap-16'>
-            <Link href={getLocalizedHref('/')} className="flex items-center z-10">
+            <Link href={'/'} className="flex items-center z-10">
               <Image
                 src="/images/logo_pdf.png"
                 alt="PDF Techno"
@@ -425,20 +425,20 @@ export default function Navbar() {
             <div className="hidden lg:flex items-center gap-16">
               <div className="flex items-center">
                 <Link
-                  href={getLocalizedHref('/')}
+                  href={'/'}
                   className="px-4 py-2 text-gray-800 hover:text-red-600"
                 >
                   {t('navbar.home')}
                 </Link>
                 <Link
-                  href={getLocalizedHref('/merge-pdf')}
+                  href={'/merge-pdf'}
                   className="px-4 py-2 text-gray-800 hover:text-red-600"
                 >
                   {t('navbar.merge')}
                 </Link>
 
                 <Link
-                  href={getLocalizedHref('/compress-pdf')}
+                  href={'/compress-pdf'}
                   className="px-4 py-2 text-gray-800 hover:text-red-600"
                 >
                   {t('navbar.compress')}
@@ -480,7 +480,7 @@ export default function Navbar() {
                             <h3 className="font-bold text-gray-800 mb-3">{t('navbar.organize.title')}</h3>
                             <ul className="space-y-3">
                               <li>
-                                <Link href={getLocalizedHref('/merge-pdf')} className="flex items-center text-gray-700 hover:text-red-600">
+                                <Link href={'/merge-pdf'} className="flex items-center text-gray-700 hover:text-red-600">
                                   <span className="w-5 h-5 mr-2 inline-block">
                                     <Image
                                       src="/images/icons/merge.png"
@@ -493,7 +493,7 @@ export default function Navbar() {
                                 </Link>
                               </li>
                               <li>
-                                <Link href={getLocalizedHref('/split-pdf')} className="flex items-center text-gray-700 hover:text-red-600">
+                                <Link href={'/split-pdf'} className="flex items-center text-gray-700 hover:text-red-600">
                                   <span className="w-5 h-5 mr-2 inline-block">
                                     <Image
                                       src="/images/icons/split.png"
@@ -506,7 +506,7 @@ export default function Navbar() {
                                 </Link>
                               </li>
                               <li>
-                                <Link href={getLocalizedHref('/rotate-pdf')} className="flex items-center text-gray-700 hover:text-red-600">
+                                <Link href={'/rotate-pdf'} className="flex items-center text-gray-700 hover:text-red-600">
                                   <span className="w-5 h-5 mr-2 inline-block">
                                     <Image
                                       src="/images/icons/rotate.png"
@@ -519,7 +519,7 @@ export default function Navbar() {
                                 </Link>
                               </li>
                               <li>
-                                <Link href={getLocalizedHref('/organize-pdf')} className="flex items-center text-gray-700 hover:text-red-600">
+                                <Link href={'/organize-pdf'} className="flex items-center text-gray-700 hover:text-red-600">
                                   <span className="w-5 h-5 mr-2 inline-block">
                                     <Image
                                       src="/images/icons/organize.png"
@@ -539,7 +539,7 @@ export default function Navbar() {
                             <h3 className="font-bold text-gray-800 mb-3">{t('navbar.convertTo.title')}</h3>
                             <ul className="space-y-3">
                               <li>
-                                <Link href={getLocalizedHref('/word-to-pdf')} className="flex items-center text-gray-700 hover:text-red-600">
+                                <Link href={'/word-to-pdf'} className="flex items-center text-gray-700 hover:text-red-600">
                                   <span className="w-5 h-5 mr-2 inline-block">
                                     <Image
                                       src="/images/icons/wordtopdf.png"
@@ -552,7 +552,7 @@ export default function Navbar() {
                                 </Link>
                               </li>
                               <li>
-                                <Link href={getLocalizedHref('/excel-to-pdf')} className="flex items-center text-gray-700 hover:text-red-600">
+                                <Link href={'/excel-to-pdf'} className="flex items-center text-gray-700 hover:text-red-600">
                                   <span className="w-5 h-5 mr-2 inline-block">
                                     <Image
                                       src="/images/icons/exceltopdf.png"
@@ -565,7 +565,7 @@ export default function Navbar() {
                                 </Link>
                               </li>
                               <li>
-                                <Link href={getLocalizedHref('/powerpoint-to-pdf')} className="flex items-center text-gray-700 hover:text-red-600">
+                                <Link href={'/powerpoint-to-pdf'} className="flex items-center text-gray-700 hover:text-red-600">
                                   <span className="w-5 h-5 mr-2 inline-block">
                                     <Image
                                       src="/images/icons/ppttopdf.png"
@@ -578,7 +578,7 @@ export default function Navbar() {
                                 </Link>
                               </li>
                               <li>
-                                <Link href={getLocalizedHref('/image-to-pdf')} className="flex items-center text-gray-700 hover:text-red-600">
+                                <Link href={'/image-to-pdf'} className="flex items-center text-gray-700 hover:text-red-600">
                                   <span className="w-5 h-5 mr-2 inline-block">
                                     <Image
                                       src="/images/icons/imgtopdf.png"
@@ -590,6 +590,32 @@ export default function Navbar() {
                                   {t('navbar.convertTo.image')}
                                 </Link>
                               </li>
+                              <li>
+                                <Link href={'/xml-to-pdf'} className="flex items-center text-gray-700 hover:text-red-600">
+                                  <span className="w-5 h-5 mr-2 inline-block">
+                                    <Image
+                                      src="/images/icons/imgtopdf.png"
+                                      width={25}
+                                      height={25}
+                                      alt="Image to PDF Icon"
+                                    />
+                                  </span>
+                                  {t('navbar.convertTo.xml')}
+                                </Link>
+                              </li>
+                              <li>
+                                <Link href={'/heic-to-pdf'} className="flex items-center text-gray-700 hover:text-red-600">
+                                  <span className="w-5 h-5 mr-2 inline-block">
+                                    <Image
+                                      src="/images/icons/imgtopdf.png"
+                                      width={25}
+                                      height={25}
+                                      alt="Image to PDF Icon"
+                                    />
+                                  </span>
+                                  {t('navbar.convertTo.heic')}
+                                </Link>
+                              </li>
                             </ul>
                           </div>
 
@@ -598,7 +624,7 @@ export default function Navbar() {
                             <h3 className="font-bold text-gray-800 mb-3">{t('navbar.convertFrom.title')}</h3>
                             <ul className="space-y-3">
                               <li>
-                                <Link href={getLocalizedHref('/pdf-to-word')} className="flex items-center text-gray-700 hover:text-red-600">
+                                <Link href={'/pdf-to-word'} className="flex items-center text-gray-700 hover:text-red-600">
                                   <span className="w-5 h-5 mr-2 inline-block">
                                     <Image
                                       src="/images/icons/pdftoword.png"
@@ -611,7 +637,7 @@ export default function Navbar() {
                                 </Link>
                               </li>
                               <li>
-                                <Link href={getLocalizedHref('/pdf-to-powerpoint')} className="flex items-center text-gray-700 hover:text-red-600">
+                                <Link href={'/pdf-to-powerpoint'} className="flex items-center text-gray-700 hover:text-red-600">
                                   <span className="w-5 h-5 mr-2 inline-block">
                                     <Image
                                       src="/images/icons/pdftoppt.png"
@@ -624,7 +650,7 @@ export default function Navbar() {
                                 </Link>
                               </li>
                               <li>
-                                <Link href={getLocalizedHref('/pdf-to-image')} className="flex items-center text-gray-700 hover:text-red-600">
+                                <Link href={'/pdf-to-image'} className="flex items-center text-gray-700 hover:text-red-600">
                                   <span className="w-5 h-5 mr-2 inline-block">
                                     <Image
                                       src="/images/icons/pdftoimg.png"
@@ -637,7 +663,7 @@ export default function Navbar() {
                                 </Link>
                               </li>
                               <li>
-                                <Link href={getLocalizedHref('/pdf-to-excel')} className="flex items-center text-gray-700 hover:text-red-600">
+                                <Link href={'/pdf-to-excel'} className="flex items-center text-gray-700 hover:text-red-600">
                                   <span className="w-5 h-5 mr-2 inline-block">
                                     <Image
                                       src="/images/icons/pdf_to_excel.svg"
@@ -650,7 +676,7 @@ export default function Navbar() {
                                 </Link>
                               </li>
                               <li>
-                                <Link href={getLocalizedHref('/pdf-to-pdfa')} className="flex items-center text-gray-700 hover:text-red-600">
+                                <Link href={'/pdf-to-pdfa'} className="flex items-center text-gray-700 hover:text-red-600">
                                   <span className="w-5 h-5 mr-2 inline-block">
                                     <Image
                                       src="/images/icons/pdftoa.png"
@@ -670,7 +696,7 @@ export default function Navbar() {
                             <h3 className="font-bold text-gray-800 mb-3">{t('navbar.security.title')}</h3>
                             <ul className="space-y-3">
                               <li>
-                                <Link href={getLocalizedHref('/unlock-pdf')} className="flex items-center text-gray-700 hover:text-red-600">
+                                <Link href={'/unlock-pdf'} className="flex items-center text-gray-700 hover:text-red-600">
                                   <span className="w-5 h-5 mr-2 inline-block">
                                     <Image
                                       src="/images/icons/unllock.png"
@@ -683,7 +709,7 @@ export default function Navbar() {
                                 </Link>
                               </li>
                               <li>
-                                <Link href={getLocalizedHref('/protect-pdf')} className="flex items-center text-gray-700 hover:text-red-600">
+                                <Link href={'/protect-pdf'} className="flex items-center text-gray-700 hover:text-red-600">
                                   <span className="w-5 h-5 mr-2 inline-block">
                                     <Image
                                       src="/images/icons/protect.png"
@@ -696,7 +722,7 @@ export default function Navbar() {
                                 </Link>
                               </li>
                               <li>
-                                <Link href={getLocalizedHref('/sign-pdf')} className="flex items-center text-gray-700 hover:text-red-600">
+                                <Link href={'/sign-pdf'} className="flex items-center text-gray-700 hover:text-red-600">
                                   <span className="w-5 h-5 mr-2 inline-block">
                                     <Image
                                       src="/images/icons/signture.png"
@@ -709,7 +735,7 @@ export default function Navbar() {
                                 </Link>
                               </li>
                               <li>
-                                <Link href={getLocalizedHref('/watermark-pdf')} className="flex items-center text-gray-700 hover:text-red-600">
+                                <Link href={'/watermark-pdf'} className="flex items-center text-gray-700 hover:text-red-600">
                                   <span className="w-5 h-5 mr-2 inline-block">
                                     <Image
                                       src="/images/icons/watermark.png"
@@ -729,7 +755,7 @@ export default function Navbar() {
                             <h3 className="font-bold text-gray-800 mb-3">{t('navbar.optimize.title')}</h3>
                             <ul className="space-y-3">
                               <li>
-                                <Link href={getLocalizedHref('/compress-pdf')} className="flex items-center text-gray-700 hover:text-red-600">
+                                <Link href={'/compress-pdf'} className="flex items-center text-gray-700 hover:text-red-600">
                                   <span className="w-5 h-5 mr-2 inline-block">
                                     <Image
                                       src="/images/icons/compress.png"
@@ -742,7 +768,7 @@ export default function Navbar() {
                                 </Link>
                               </li>
                               <li>
-                                <Link href={getLocalizedHref('/repair-pdf')} className="flex items-center text-gray-700 hover:text-red-600">
+                                <Link href={'/repair-pdf'} className="flex items-center text-gray-700 hover:text-red-600">
                                   <span className="w-5 h-5 mr-2 inline-block">
                                     <Image
                                       src="/images/icons/repair.png"
@@ -755,7 +781,7 @@ export default function Navbar() {
                                 </Link>
                               </li>
                               <li>
-                                <Link href={getLocalizedHref('/ocr-pdf')} className="flex items-center text-gray-700 hover:text-red-600">
+                                <Link href={'/ocr-pdf'} className="flex items-center text-gray-700 hover:text-red-600">
                                   <span className="w-5 h-5 mr-2 inline-block">
                                     <Image
                                       src="/images/icons/pdftoocr.png"
@@ -768,17 +794,6 @@ export default function Navbar() {
                                 </Link>
                               </li>
                               <li>
-                                <Link href={getLocalizedHref('/scan-pdf')} className="flex items-center text-gray-700 hover:text-red-600">
-                                  <span className="w-5 h-5 mr-2 inline-block">
-                                    <Image
-                                      src="/images/icons/scanpdf.png"
-                                      width={25}
-                                      height={25}
-                                      alt="Scan PDF Icon"
-                                    />
-                                  </span>
-                                  {t('navbar.optimize.scan')}
-                                </Link>
                               </li>
                             </ul>
                           </div>
@@ -788,7 +803,7 @@ export default function Navbar() {
                             <h3 className="font-bold text-gray-800 mb-3">{t('navbar.edit.title')}</h3>
                             <ul className="space-y-3">
                               <li>
-                                <Link href={getLocalizedHref('/add-page-numbers')} className="flex items-center text-gray-700 hover:text-red-600">
+                                <Link href={'/add-page-numbers'} className="flex items-center text-gray-700 hover:text-red-600">
                                   <span className="w-5 h-5 mr-2 inline-block">
                                     <Image
                                       src="/images/icons/Frame.png"
@@ -801,17 +816,6 @@ export default function Navbar() {
                                 </Link>
                               </li>
                               <li>
-                                <Link href={getLocalizedHref('/edit-pdf')} className="flex items-center text-gray-700 hover:text-red-600">
-                                  <span className="w-5 h-5 mr-2 inline-block">
-                                    <Image
-                                      src="/images/icons/edit.png"
-                                      width={25}
-                                      height={25}
-                                      alt="Edit PDF Icon"
-                                    />
-                                  </span>
-                                  {t('navbar.edit.edit')}
-                                </Link>
                               </li>
                             </ul>
                           </div>
@@ -851,14 +855,14 @@ export default function Navbar() {
                   {isProfileMenuOpen && (
                     <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50">
                       <Link
-                        href={getLocalizedHref('/profile')}
+                        href={'/profile'}
                         className="block px-4 py-2 cursor-pointer text-gray-700 hover:bg-gray-100 hover:text-red-600"
                         onClick={() => setIsProfileMenuOpen(false)}
                       >
                         Profile
                       </Link>
                       <Link
-                        href={getLocalizedHref('/my-files')}
+                        href={'/my-files'}
                         className="block px-4 py-2 text-gray-700 cursor-pointer hover:bg-gray-100 hover:text-red-600"
                         onClick={() => setIsProfileMenuOpen(false)}
                       >
@@ -876,13 +880,13 @@ export default function Navbar() {
               ) : (
                 <>
                   <Link
-                    href={getLocalizedHref('/login')}
+                    href={'/login'}
                     className="px-4 py-2 text-red-600 hover:text-red-800"
                   >
                     {t('navbar.login')}
                   </Link>
                   <Link
-                    href={getLocalizedHref('/register')}
+                    href={'/register'}
                     className="ml-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
                   >
                     {t('navbar.signUp')}
@@ -946,7 +950,7 @@ export default function Navbar() {
                 <div className="mobile-menu-content p-4 space-y-6">
                   {/* Home Link */}
                   <Link
-                    href={getLocalizedHref('/')}
+                    href={'/'}
                     className="block text-lg font-medium text-gray-800 hover:text-red-600 py-2 border-b border-gray-100"
                     onClick={handleLinkClick}
                   >
@@ -965,14 +969,14 @@ export default function Navbar() {
                       </div>
                       <div className="space-y-2 ml-2">
                         <Link
-                          href={getLocalizedHref('/profile')}
+                          href={'/profile'}
                           className="block py-2 text-gray-700 hover:text-red-600 hover:bg-gray-50 rounded px-2"
                           onClick={handleLinkClick}
                         >
                           Profile
                         </Link>
                         <Link
-                          href={getLocalizedHref('/my-files')}
+                          href={'/my-files'}
                           className="block py-2 text-gray-700 hover:text-red-600 hover:bg-gray-50 rounded px-2"
                           onClick={handleLinkClick}
                         >
@@ -1017,7 +1021,7 @@ export default function Navbar() {
                       </h4>
                       <div className="space-y-1 ml-2">
                         <Link
-                          href={getLocalizedHref('/merge-pdf')}
+                          href={'/merge-pdf'}
                           className="flex items-center py-2 px-2 text-gray-600 hover:text-red-600 hover:bg-gray-50 rounded"
                           onClick={handleLinkClick}
                         >
@@ -1025,7 +1029,7 @@ export default function Navbar() {
                           {t('navbar.organize.merge')}
                         </Link>
                         <Link
-                          href={getLocalizedHref('/split-pdf')}
+                          href={'/split-pdf'}
                           className="flex items-center py-2 px-2 text-gray-600 hover:text-red-600 hover:bg-gray-50 rounded"
                           onClick={handleLinkClick}
                         >
@@ -1033,7 +1037,7 @@ export default function Navbar() {
                           {t('navbar.organize.split')}
                         </Link>
                         <Link
-                          href={getLocalizedHref('/rotate-pdf')}
+                          href={'/rotate-pdf'}
                           className="flex items-center py-2 px-2 text-gray-600 hover:text-red-600 hover:bg-gray-50 rounded"
                           onClick={handleLinkClick}
                         >
@@ -1041,7 +1045,7 @@ export default function Navbar() {
                           {t('navbar.organize.rotate')}
                         </Link>
                         <Link
-                          href={getLocalizedHref('/organize-pdf')}
+                          href={'/organize-pdf'}
                           className="flex items-center py-2 px-2 text-gray-600 hover:text-red-600 hover:bg-gray-50 rounded"
                           onClick={handleLinkClick}
                         >
@@ -1058,7 +1062,7 @@ export default function Navbar() {
                       </h4>
                       <div className="space-y-1 ml-2">
                         <Link
-                          href={getLocalizedHref('/word-to-pdf')}
+                          href={'/word-to-pdf'}
                           className="flex items-center py-2 px-2 text-gray-600 hover:text-red-600 hover:bg-gray-50 rounded"
                           onClick={handleLinkClick}
                         >
@@ -1066,7 +1070,7 @@ export default function Navbar() {
                           {t('navbar.convertTo.word')}
                         </Link>
                         <Link
-                          href={getLocalizedHref('/excel-to-pdf')}
+                          href={'/excel-to-pdf'}
                           className="flex items-center py-2 px-2 text-gray-600 hover:text-red-600 hover:bg-gray-50 rounded"
                           onClick={handleLinkClick}
                         >
@@ -1074,7 +1078,7 @@ export default function Navbar() {
                           {t('navbar.convertTo.excel')}
                         </Link>
                         <Link
-                          href={getLocalizedHref('/powerpoint-to-pdf')}
+                          href={'/powerpoint-to-pdf'}
                           className="flex items-center py-2 px-2 text-gray-600 hover:text-red-600 hover:bg-gray-50 rounded"
                           onClick={handleLinkClick}
                         >
@@ -1082,7 +1086,7 @@ export default function Navbar() {
                           {t('navbar.convertTo.powerpoint')}
                         </Link>
                         <Link
-                          href={getLocalizedHref('/image-to-pdf')}
+                          href={'/image-to-pdf'}
                           className="flex items-center py-2 px-2 text-gray-600 hover:text-red-600 hover:bg-gray-50 rounded"
                           onClick={handleLinkClick}
                         >
@@ -1099,7 +1103,7 @@ export default function Navbar() {
                       </h4>
                       <div className="space-y-1 ml-2">
                         <Link
-                          href={getLocalizedHref('/pdf-to-word')}
+                          href={'/pdf-to-word'}
                           className="flex items-center py-2 px-2 text-gray-600 hover:text-red-600 hover:bg-gray-50 rounded"
                           onClick={handleLinkClick}
                         >
@@ -1107,7 +1111,7 @@ export default function Navbar() {
                           {t('navbar.convertFrom.word')}
                         </Link>
                         <Link
-                          href={getLocalizedHref('/pdf-to-powerpoint')}
+                          href={'/pdf-to-powerpoint'}
                           className="flex items-center py-2 px-2 text-gray-600 hover:text-red-600 hover:bg-gray-50 rounded"
                           onClick={handleLinkClick}
                         >
@@ -1115,7 +1119,7 @@ export default function Navbar() {
                           {t('navbar.convertFrom.powerpoint')}
                         </Link>
                         <Link
-                          href={getLocalizedHref('/pdf-to-image')}
+                          href={'/pdf-to-image'}
                           className="flex items-center py-2 px-2 text-gray-600 hover:text-red-600 hover:bg-gray-50 rounded"
                           onClick={handleLinkClick}
                         >
@@ -1123,7 +1127,7 @@ export default function Navbar() {
                           {t('navbar.convertFrom.image')}
                         </Link>
                         <Link
-                          href={getLocalizedHref('/pdf-to-excel')}
+                          href={'/pdf-to-excel'}
                           className="flex items-center py-2 px-2 text-gray-600 hover:text-red-600 hover:bg-gray-50 rounded"
                           onClick={handleLinkClick}
                         >
@@ -1131,7 +1135,7 @@ export default function Navbar() {
                           {t('navbar.convertFrom.excel')}
                         </Link>
                         <Link
-                          href={getLocalizedHref('/pdf-to-pdfa')}
+                          href={'/pdf-to-pdfa'}
                           className="flex items-center py-2 px-2 text-gray-600 hover:text-red-600 hover:bg-gray-50 rounded"
                           onClick={handleLinkClick}
                         >
@@ -1148,7 +1152,7 @@ export default function Navbar() {
                       </h4>
                       <div className="space-y-1 ml-2">
                         <Link
-                          href={getLocalizedHref('/unlock-pdf')}
+                          href={'/unlock-pdf'}
                           className="flex items-center py-2 px-2 text-gray-600 hover:text-red-600 hover:bg-gray-50 rounded"
                           onClick={handleLinkClick}
                         >
@@ -1156,7 +1160,7 @@ export default function Navbar() {
                           {t('navbar.security.unlock')}
                         </Link>
                         <Link
-                          href={getLocalizedHref('/protect-pdf')}
+                          href={'/protect-pdf'}
                           className="flex items-center py-2 px-2 text-gray-600 hover:text-red-600 hover:bg-gray-50 rounded"
                           onClick={handleLinkClick}
                         >
@@ -1164,7 +1168,7 @@ export default function Navbar() {
                           {t('navbar.security.protect')}
                         </Link>
                         <Link
-                          href={getLocalizedHref('/sign-pdf')}
+                          href={'/sign-pdf'}
                           className="flex items-center py-2 px-2 text-gray-600 hover:text-red-600 hover:bg-gray-50 rounded"
                           onClick={handleLinkClick}
                         >
@@ -1172,7 +1176,7 @@ export default function Navbar() {
                           {t('navbar.security.sign')}
                         </Link>
                         <Link
-                          href={getLocalizedHref('/watermark-pdf')}
+                          href={'/watermark-pdf'}
                           className="flex items-center py-2 px-2 text-gray-600 hover:text-red-600 hover:bg-gray-50 rounded"
                           onClick={handleLinkClick}
                         >
@@ -1189,7 +1193,7 @@ export default function Navbar() {
                       </h4>
                       <div className="space-y-1 ml-2">
                         <Link
-                          href={getLocalizedHref('/compress-pdf')}
+                          href={'/compress-pdf'}
                           className="flex items-center py-2 px-2 text-gray-600 hover:text-red-600 hover:bg-gray-50 rounded"
                           onClick={handleLinkClick}
                         >
@@ -1197,7 +1201,7 @@ export default function Navbar() {
                           {t('navbar.optimize.compress')}
                         </Link>
                         <Link
-                          href={getLocalizedHref('/repair-pdf')}
+                          href={'/repair-pdf'}
                           className="flex items-center py-2 px-2 text-gray-600 hover:text-red-600 hover:bg-gray-50 rounded"
                           onClick={handleLinkClick}
                         >
@@ -1205,7 +1209,7 @@ export default function Navbar() {
                           {t('navbar.optimize.repair')}
                         </Link>
                         <Link
-                          href={getLocalizedHref('/ocr-pdf')}
+                          href={'/ocr-pdf'}
                           className="flex items-center py-2 px-2 text-gray-600 hover:text-red-600 hover:bg-gray-50 rounded"
                           onClick={handleLinkClick}
                         >
@@ -1213,7 +1217,7 @@ export default function Navbar() {
                           {t('navbar.optimize.ocr')}
                         </Link>
                         <Link
-                          href={getLocalizedHref('/scan-pdf')}
+                          href={'/scan-pdf'}
                           className="flex items-center py-2 px-2 text-gray-600 hover:text-red-600 hover:bg-gray-50 rounded"
                           onClick={handleLinkClick}
                         >
@@ -1230,7 +1234,7 @@ export default function Navbar() {
                       </h4>
                       <div className="space-y-1 ml-2">
                         <Link
-                          href={getLocalizedHref('/add-page-numbers')}
+                          href={'/add-page-numbers'}
                           className="flex items-center py-2 px-2 text-gray-600 hover:text-red-600 hover:bg-gray-50 rounded"
                           onClick={handleLinkClick}
                         >
@@ -1238,7 +1242,7 @@ export default function Navbar() {
                           {t('navbar.edit.pageNumbers')}
                         </Link>
                         <Link
-                          href={getLocalizedHref('/edit-pdf')}
+                          href={'/edit-pdf'}
                           className="flex items-center py-2 px-2 text-gray-600 hover:text-red-600 hover:bg-gray-50 rounded"
                           onClick={handleLinkClick}
                         >
@@ -1253,14 +1257,14 @@ export default function Navbar() {
                   {!isAuthenticated && (
                     <div className="pt-6 border-t border-gray-200 space-y-3">
                       <Link
-                        href={getLocalizedHref('/login')}
+                        href={'/login'}
                         className="block w-full py-3 px-4 bg-gray-100 text-center text-gray-800 font-medium rounded-lg hover:bg-gray-200 transition-colors"
                         onClick={handleLinkClick}
                       >
                         {t('navbar.login')}
                       </Link>
                       <Link
-                        href={getLocalizedHref('/register')}
+                        href={'/register'}
                         className="block w-full py-3 px-4 bg-red-600 text-center text-white font-medium rounded-lg hover:bg-red-700 transition-colors"
                         onClick={handleLinkClick}
                       >

@@ -42,14 +42,6 @@ const AboutUs = () => {
       linkedin: "#",
       skills: ["Cloud", "PDF Processing", "DevOps"]
     },
-    {
-      nameKey: "about.team.members.anuj.name",
-      roleKey: "about.team.members.anuj.role",
-      bioKey: "about.team.members.anuj.bio",
-      image: "/images/team/anuj.jpeg",
-      linkedin: "#",
-      skills: ["UX Design", "Support", "Analytics"]
-    }
   ];
 
   // Core values with translation keys

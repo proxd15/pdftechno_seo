@@ -21,7 +21,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-16">
           {/* Column 1: Logo and Description */}
           <div className="space-y-4">
-            <Link href={getLocalizedHref('/')} className="inline-block">
+            <Link href={'/'} className="inline-block">
               <Image
                 src="/images/logo_pdftechno.png"
                 alt="PDF Techno"
@@ -72,27 +72,27 @@ export default function Footer() {
             <h3 className="text-lg font-bold mb-4 text-black">{t('footer.popularTools')}</h3>
             <ul className="space-y-2">
               <li>
-                <Link href={getLocalizedHref('/merge-pdf')} className="text-[#787878] hover:text-red-500 transition-colors duration-300">
+                <Link href={'/merge-pdf'} className="text-[#787878] hover:text-red-500 transition-colors duration-300">
                   {t('navbar.organize.merge')}
                 </Link>
               </li>
               <li>
-                <Link href={getLocalizedHref('/compress-pdf')} className="text-[#787878] hover:text-red-500 transition-colors duration-300">
+                <Link href={'/compress-pdf'} className="text-[#787878] hover:text-red-500 transition-colors duration-300">
                   {t('navbar.optimize.compress')}
                 </Link>
               </li>
               <li>
-                <Link href={getLocalizedHref('/pdf-to-word')} className="text-[#787878] hover:text-red-500 transition-colors duration-300">
+                <Link href={'/pdf-to-word'} className="text-[#787878] hover:text-red-500 transition-colors duration-300">
                   {t('navbar.convertFrom.word')}
                 </Link>
               </li>
               <li>
-                <Link href={getLocalizedHref('/sign-pdf')} className="text-[#787878] hover:text-red-500 transition-colors duration-300">
+                <Link href={'/sign-pdf'} className="text-[#787878] hover:text-red-500 transition-colors duration-300">
                   {t('navbar.security.sign')}
                 </Link>
               </li>
               <li>
-                <Link href={getLocalizedHref('/edit-pdf')} className="text-[#787878] hover:text-red-500 transition-colors duration-300">
+                <Link href={'/edit-pdf'} className="text-[#787878] hover:text-red-500 transition-colors duration-300">
                   {t('navbar.edit.edit')}
                 </Link>
               </li>
@@ -104,22 +104,22 @@ export default function Footer() {
             <h3 className="text-lg font-bold mb-4 text-black">{t('footer.company')}</h3>
             <ul className="space-y-2">
               <li>
-                <Link href={getLocalizedHref('/about')} className="text-[#787878] hover:text-red-500 transition-colors duration-300">
+                <Link href={'/about'} className="text-[#787878] hover:text-red-500 transition-colors duration-300">
                   {t('footer.aboutUs')}
                 </Link>
               </li>
               <li>
-                <Link href={getLocalizedHref('/contact')} className="text-[#787878] hover:text-red-500 transition-colors duration-300">
+                <Link href={'/contact'} className="text-[#787878] hover:text-red-500 transition-colors duration-300">
                   {t('footer.contact')}
                 </Link>
               </li>
               <li>
-                <Link href={getLocalizedHref('/terms')} className="text-[#787878] hover:text-red-500 transition-colors duration-300">
+                <Link href={'/terms'} className="text-[#787878] hover:text-red-500 transition-colors duration-300">
                   {t('footer.termsOfService')}
                 </Link>
               </li>
               <li>
-                <Link href={getLocalizedHref('/privacy')} className="text-[#787878] hover:text-red-500 transition-colors duration-300">
+                <Link href={'/privacy'} className="text-[#787878] hover:text-red-500 transition-colors duration-300">
                   {t('footer.privacyPolicy')}
                 </Link>
               </li>
@@ -131,7 +131,7 @@ export default function Footer() {
             <h3 className="text-lg font-bold mb-4 text-black">Support</h3>
             <p className="text-[#787878] mb-4">Need help? Contact our support team.</p>
             <Link 
-              href={getLocalizedHref('/contact')} 
+              href={'/contact'} 
               className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded inline-block transition-colors duration-300"
             >
               Contact Us
@@ -146,13 +146,13 @@ export default function Footer() {
             <span className="ml-2">Made in India 🇮🇳</span>
           </div>
           <div className="mt-4 md:mt-0 flex space-x-6">
-            <Link href={getLocalizedHref('/terms')} className="text-gray-400 hover:text-black text-sm">
+            <Link href={'/terms'} className="text-gray-400 hover:text-black text-sm">
               Terms and Conditions
             </Link>
-            <Link href={getLocalizedHref('/privacy')} className="text-gray-400 hover:text-black text-sm">
+            <Link href={'/privacy'} className="text-gray-400 hover:text-black text-sm">
               Privacy Policy
             </Link>
-            <Link href={getLocalizedHref('/cookie-policy')} className="text-gray-400 hover:text-black text-sm">
+            <Link href={'/cookie-policy'} className="text-gray-400 hover:text-black text-sm">
               Cookie Policy
             </Link>
           </div>

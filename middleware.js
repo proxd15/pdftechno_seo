@@ -1,4 +1,3 @@
-// middleware.js
 import { NextResponse } from 'next/server';
 import { locales, defaultLocale } from './src/i18n/config';
 
@@ -12,50 +11,27 @@ export function middleware(request) {
   if (
     pathname.startsWith('/_next/') ||
     pathname.includes('.') ||
-    pathname.startsWith('/favicon.ico')
+    pathname.startsWith('/favicon.ico') ||
+    pathname.startsWith('/images/') ||
+    pathname.startsWith('/api/')
   ) {
     return NextResponse.next();
   }
 
-  // Check if the URL already has a valid locale
-  const pathnameHasLocale = locales.some(
-    locale => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`)
-  );
+  // Check if the path starts with a non-default locale
+  const pathnameHasLocale = locales
+    .filter(locale => locale !== defaultLocale)
+    .some(locale => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`));
 
-  // If URL doesn't have locale, redirect to add the default locale
-  if (!pathnameHasLocale) {
-    // For root path, redirect to default locale
-    if (pathname === '/') {
-      return NextResponse.redirect(new URL(`/${defaultLocale}`, request.url));
-    }
-    
-    // For other paths, add the locale prefix
-    return NextResponse.redirect(new URL(`/${defaultLocale}${pathname}`, request.url));
+  // Extract locale from pathname or use default
+  let locale = defaultLocale;
+  let pathWithoutLocale = pathname;
+
+  if (pathnameHasLocale) {
+    const segments = pathname.split('/');
+    locale = segments[1];
+    pathWithoutLocale = '/' + segments.slice(2).join('/') || '/';
   }
-
-  // Handle API authentication
-  if (pathname.startsWith('/api/auth/')) {
-    // Public API endpoints don't need authentication
-    if (pathname === '/api/auth/login/' ||
-        pathname === '/api/auth/register/' ||
-        pathname === '/api/auth/refresh/') {
-      return NextResponse.next();
-    }
-   
-    // Check for authentication token
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json(
-        { detail: 'Authentication required' },
-        { status: 401 }
-      );
-    }
-   
-    return NextResponse.next();
-  }
-
-  // Extract the locale from the pathname
-  const locale = pathnameHasLocale ? pathname.split('/')[1] : defaultLocale;
 
   // Set locale cookie
   const response = NextResponse.next();
@@ -64,12 +40,10 @@ export function middleware(request) {
     path: '/'
   });
 
-  // Extract the path without the locale prefix for route matching
-  const pathWithoutLocale = pathnameHasLocale 
-    ? pathname.substring(locale.length + 1) || '/'
-    : pathname;
+  // Add locale to headers for server components
+  response.headers.set('x-locale', locale);
 
-  // Check if it's a public route that doesn't require authentication
+  // Check if it's a public route
   const isPublicRoute = publicRoutes.some(route =>
     pathWithoutLocale === route || pathWithoutLocale.startsWith(`${route}/`)
   );
@@ -84,22 +58,17 @@ export function middleware(request) {
 
   // If not authenticated, redirect to login
   if (!hasToken) {
-    const loginUrl = new URL(`/${locale}/login`, origin);
-    // Add the 'from' parameter to redirect back after login
+    const loginPath = locale === defaultLocale ? '/login' : `/${locale}/login`;
+    const loginUrl = new URL(loginPath, origin);
     loginUrl.searchParams.set('from', pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  // User is authenticated, proceed
   return response;
 }
 
-// Configure which paths the middleware runs on
 export const config = {
   matcher: [
-    // Apply to all routes except specific static assets
     '/((?!_next/static|_next/image|favicon.ico|.*\\.svg).*)',
-    // Include API auth routes
-    '/api/auth/:path*'
   ],
 };

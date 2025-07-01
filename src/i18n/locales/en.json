@@ -18,7 +18,9 @@
       "word": "Word to PDF",
       "excel": "Excel to PDF",
       "powerpoint": "Powerpoint to PDF",
-      "image": "Image to PDF"
+      "image": "Image to PDF",
+      "xml": "XML to PDF",
+      "heic": "HEIC to PDF"
     },
     "convertFrom": {
       "title": "Convert from PDF",
@@ -350,10 +352,10 @@
         "kshitiz": {
           "name": "Kshitiz Verma",
           "role": "CEO",
-          "bio": "Visionary leader with a passion for innovation. Loves turning complex problems into simple solutions."
+          "bio": "Visionary leader with a passion for innovation. Loves turning problems into simple solutions."
         },
         "priyank": {
-          "name": "Priyank Singh",
+          "name": "Priyank Raj",
           "role": "Head of Operations",
           "bio": "Loves optimizing processes and enhancing user experience. A true believer in data-driven decisions."
         },
@@ -361,11 +363,6 @@
           "name": "Sagar Kumar",
           "role": "Lead Developer",
           "bio": "Backend wizard with a knack for building scalable systems. Loves solving complex problems."
-        },
-        "anuj": {
-          "name": "Anuj Singh",
-          "role": "Testing and R&D",
-          "bio": "Dedicated to product quality and innovation. Loves breaking things to make them better."
         }
       }
     },

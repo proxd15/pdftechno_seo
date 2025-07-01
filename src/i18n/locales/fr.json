@@ -352,7 +352,7 @@
           "bio": "Leader visionnaire avec une passion pour l'innovation. Aime transformer les problèmes complexes en solutions simples."
         },
         "priyank": {
-          "name": "Priyank Singh",
+          "name": "Priyank Raj",
           "role": "Responsable des Opérations",
           "bio": "Aime optimiser les processus et améliorer l'expérience utilisateur. Un vrai croyant dans les décisions basées sur les données."
         },
@@ -360,11 +360,6 @@
           "name": "Sagar Kumar",
           "role": "Développeur Principal",
           "bio": "Magicien du backend avec un talent pour construire des systèmes évolutifs. Aime résoudre les problèmes complexes."
-        },
-        "anuj": {
-          "name": "Anuj Singh",
-          "role": "Tests et R&D",
-          "bio": "Dédié à la qualité du produit et à l'innovation. Aime casser les choses pour les améliorer."
         }
       }
     },
