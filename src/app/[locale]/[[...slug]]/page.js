@@ -1,10 +1,11 @@
 import { notFound } from 'next/navigation';
 import { locales, defaultLocale } from '@/i18n/config';
 import dynamic from 'next/dynamic';
+import { use } from 'react';
 
 // Map of slug paths to their component imports
 const pageComponents = {
-  '/': dynamic(() => import('@/components/pages/Homepage')),
+  '': dynamic(() => import('@/components/pages/Homepage')),
   'merge-pdf': dynamic(() => import('@/components/pages/MergePdf')),
   'split-pdf': dynamic(() => import('@/components/pages/SplitPdf')),
   'compress-pdf': dynamic(() => import('@/components/pages/CompressPdf')),
@@ -28,13 +29,13 @@ const pageComponents = {
   'repair-pdf': dynamic(() => import('@/components/pages/RepairPdf')),
   'ocr-pdf': dynamic(() => import('@/components/pages/OcrPdf')),
   'add-page-numbers': dynamic(() => import('@/components/pages/PageNumbers')),
-//   'edit-pdf': dynamic(() => import('@/components/pages/EditPdf')),
+  // 'edit-pdf': dynamic(() => import('@/components/pages/EditPdf')),
   'login': dynamic(() => import('@/components/pages/Auth/Login')),
   'register': dynamic(() => import('@/components/pages/Auth/Register')),
-//   'profile': dynamic(() => import('@/components/pages/Profile')),
+  // 'profile': dynamic(() => import('@/components/pages/Profile')),
   'my-files': dynamic(() => import('@/components/pages/Auth/MyFiles')),
   'about': dynamic(() => import('@/components/pages/Extras/About')),
-  'privacy': dynamic(() => import('@/components/pages/Extras/TermsAndConditions')),
+  'privacy': dynamic(() => import('@/components/pages/Extras/PrivacyPolicy')),
   'terms': dynamic(() => import('@/components/pages/Extras/TermsAndConditions')),
 };
 
@@ -59,7 +60,9 @@ export async function generateStaticParams() {
 }
 
 export default function LocalizedPage({ params }) {
-  const { locale, slug } = params;
+  // Use React.use to unwrap the params promise in Next.js 15
+  const unwrappedParams = use(params);
+  const { locale, slug } = unwrappedParams;
   
   // Validate locale
   if (!locales.includes(locale) || locale === defaultLocale) {

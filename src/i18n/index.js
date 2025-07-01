@@ -72,19 +72,32 @@ export function I18nProvider({ children, initialLocale }) {
       setLocale(newLocale);
       setDict(dictionaries[newLocale]);
       
-      // Determine the path without locale
+      // Determine the current path without locale
       let pathWithoutLocale = pathname;
       
-      // If current path has a locale prefix, remove it
+      // Remove locale prefix if present
       for (const loc of locales) {
-        if (loc !== defaultLocale && pathname.startsWith(`/${loc}`)) {
-          pathWithoutLocale = pathname.slice(loc.length + 1) || '/';
-          break;
+        if (loc !== defaultLocale) {
+          if (pathname === `/${loc}`) {
+            pathWithoutLocale = '/';
+            break;
+          } else if (pathname.startsWith(`/${loc}/`)) {
+            pathWithoutLocale = pathname.slice(loc.length + 1);
+            break;
+          }
         }
       }
       
-      // Construct the new URL
-      const newPath = getLocalizedHref(pathWithoutLocale, newLocale);
+      // Construct the new URL based on the new locale
+      let newPath;
+      if (newLocale === defaultLocale) {
+        // For default locale, use clean URLs
+        newPath = pathWithoutLocale;
+      } else {
+        // For other locales, add the locale prefix
+        newPath = pathWithoutLocale === '/' ? `/${newLocale}` : `/${newLocale}${pathWithoutLocale}`;
+      }
+      
       router.push(newPath);
     }
   };
