@@ -4,7 +4,7 @@ import Script from 'next/script';
 import dynamic from 'next/dynamic';
 import DragOverlay from '@/components/tools_utility/DragOverlay';
 
-const PDFUnlock = dynamic(() => import('@/components/tools/PDFUnlock'), { ssr: false });
+// const PDFUnlock = dynamic(() => import('@/components/tools/PDFUnlock'), { ssr: false });
 
 export default function UnlockPdf() {
   return (
@@ -21,7 +21,7 @@ export default function UnlockPdf() {
       />
       
       <main className="container mx-auto px-4 py-8 bg-white min-h-screen">
-        <PDFUnlock />
+        {/* <PDFUnlock /> */}
       </main>
       
       {/* Drag and drop overlay */}

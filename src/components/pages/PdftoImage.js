@@ -4,7 +4,7 @@ import Script from 'next/script';
 import dynamic from 'next/dynamic';
 import DragOverlay from '@/components/tools_utility/DragOverlay';
 
-const PDFToImage = dynamic(() => import('@/components/tools/PDFToImage'), { ssr: false });
+// const PDFToImage = dynamic(() => import('@/components/tools/PDFToImage'), { ssr: false });
 
 export default function PdftoImage() {
   return (
@@ -21,7 +21,7 @@ export default function PdftoImage() {
       />
       
       <main className="container mx-auto px-4 py-8 bg-white min-h-screen">
-        <PDFToImage />
+        {/* <PDFToImage /> */}
       </main>
       
       {/* Drag and drop overlay */}

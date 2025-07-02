@@ -1,4 +1,4 @@
-import PdftoPPT from '@/components/pages/PdftoPPT';
+import PdftoPdfa from '@/components/pages/PdftoPdfa';
 
 export const metadata = {
   title: 'Convert PDF to PowerPoint Online Free - PDF to PPT | PDF Techno',
@@ -57,7 +57,7 @@ export default function PdfToPowerpointPage() {
           })
         }}
       />
-      <PdftoPPT />
+      <PdftoPdfa />
     </>
   );
 }

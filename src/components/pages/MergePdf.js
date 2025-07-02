@@ -4,7 +4,7 @@ import Script from 'next/script';
 import dynamic from 'next/dynamic';
 import DragOverlay from '@/components/tools_utility/DragOverlay';
 
-const PDFMerger = dynamic(() => import('@/components/tools/PDFMerger'), { ssr: false });
+// const PDFMerger = dynamic(() => import('@/components/tools/PDFMerger'), { ssr: false });
 
 export default function MergePdf() {
   return (
@@ -21,7 +21,7 @@ export default function MergePdf() {
       />
       
       <main className="container mx-auto px-4 py-8 bg-white min-h-screen">
-        <PDFMerger />
+        {/* <PDFMerger /> */}
       </main>
       
       {/* Drag and drop overlay */}

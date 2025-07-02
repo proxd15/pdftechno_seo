@@ -4,7 +4,7 @@ import Script from 'next/script';
 import dynamic from 'next/dynamic';
 import DragOverlay from '@/components/tools_utility/DragOverlay';
 
-const PDFOCR = dynamic(() => import('@/components/tools/PDFOCR'), { ssr: false });
+// const PDFOCR = dynamic(() => import('@/components/tools/PDFOCR'), { ssr: false });
 
 export default function OcrPdf() {
   return (
@@ -21,7 +21,7 @@ export default function OcrPdf() {
       />
       
       <main className="container mx-auto px-4 py-8 bg-white min-h-screen">
-        <PDFOCR />
+        {/* <PDFOCR /> */}
       </main>
       
       {/* Drag and drop overlay */}

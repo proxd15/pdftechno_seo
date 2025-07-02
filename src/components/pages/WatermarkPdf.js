@@ -4,7 +4,7 @@ import Script from 'next/script';
 import dynamic from 'next/dynamic';
 import DragOverlay from '@/components/tools_utility/DragOverlay';
 
-const PDFWatermark  = dynamic(() => import('@/components/tools/PDFWatermark'), { ssr: false });
+// const PDFWatermark  = dynamic(() => import('@/components/tools/PDFWatermark'), { ssr: false });
 
 export default function WatermarkPdf() {
   return (
@@ -21,7 +21,7 @@ export default function WatermarkPdf() {
       />
       
       <main className="container mx-auto px-4 py-8 bg-white min-h-screen">
-        <PDFWatermark />
+        {/* <PDFWatermark /> */}
       </main>
       
       {/* Drag and drop overlay */}

@@ -4,7 +4,7 @@ import Script from 'next/script';
 import dynamic from 'next/dynamic';
 import DragOverlay from '@/components/tools_utility/DragOverlay';
 
-const PdfToExcelConverter = dynamic(() => import('@/components/tools/PdfToExcelConverter'), { ssr: false });
+// const PdfToExcelConverter = dynamic(() => import('@/components/tools/PdfToExcelConverter'), { ssr: false });
 
 export default function PdftoExcel() {
   return (
@@ -21,7 +21,7 @@ export default function PdftoExcel() {
       />
       
       <main className="container mx-auto px-4 py-8 bg-white min-h-screen">
-        <PdfToExcelConverter />
+        {/* <PdfToExcelConverter /> */}
       </main>
       
       {/* Drag and drop overlay */}

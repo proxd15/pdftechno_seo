@@ -4,7 +4,7 @@ import Script from 'next/script';
 import dynamic from 'next/dynamic';
 import DragOverlay from '@/components/tools_utility/DragOverlay';
 
-const PDFSplitter = dynamic(() => import('@/components/tools/PDFSplitter'), { ssr: false });
+// const PDFSplitter = dynamic(() => import('@/components/tools/PDFSplitter'), { ssr: false });
 
 export default function SplitPdf() {
   return (
@@ -21,7 +21,7 @@ export default function SplitPdf() {
       />
       
       <main className="container mx-auto px-4 py-8 bg-white min-h-screen">
-        <PDFSplitter />
+        {/* <PDFSplitter /> */}
       </main>
       
       {/* Drag and drop overlay */}

@@ -4,7 +4,7 @@ import Script from 'next/script';
 import dynamic from 'next/dynamic';
 import DragOverlay from '@/components/tools_utility/DragOverlay';
 
-const PDFRotator = dynamic(() => import('@/components/tools/PDFRotator'), { ssr: false });
+// const PDFRotator = dynamic(() => import('@/components/tools/PDFRotator'), { ssr: false });
 
 export default function RotatePdf() {
   return (
@@ -21,7 +21,7 @@ export default function RotatePdf() {
       />
       
       <main className="container mx-auto px-4 py-8 bg-white min-h-screen">
-        <PDFRotator />
+        {/* <PDFRotator /> */}
       </main>
       
       {/* Drag and drop overlay */}

@@ -4,7 +4,7 @@ import Script from 'next/script';
 import dynamic from 'next/dynamic';
 import DragOverlay from '@/components/tools_utility/DragOverlay';
 
-const PDFRepair = dynamic(() => import('@/components/tools/PDFRepair'), { ssr: false });
+// const PDFRepair = dynamic(() => import('@/components/tools/PDFRepair'), { ssr: false });
 
 export default function RepairPdf() {
   return (
@@ -21,7 +21,7 @@ export default function RepairPdf() {
       />
       
       <main className="container mx-auto px-4 py-8 bg-white min-h-screen">
-        <PDFRepair />
+        {/* <PDFRepair /> */}
       </main>
       
       {/* Drag and drop overlay */}
