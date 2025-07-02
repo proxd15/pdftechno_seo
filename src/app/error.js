@@ -14,6 +14,8 @@ export default function Error({ error, reset }) {
   }, [error]);
 
   return (
+    <>
+        <div className='h-8'></div>
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center px-4">
       <div className="max-w-2xl w-full text-center">
         {/* Error Icon */}
@@ -21,9 +23,6 @@ export default function Error({ error, reset }) {
           <div className="relative">
             <div className="w-32 h-32 bg-red-100 rounded-full flex items-center justify-center animate-pulse">
               <FaTools className="w-16 h-16 text-red-600" />
-            </div>
-            <div className="absolute -bottom-2 -right-2 bg-white rounded-full p-3 shadow-lg">
-              <span className="text-3xl font-bold text-gray-800">500</span>
             </div>
           </div>
         </div>
@@ -91,5 +90,6 @@ export default function Error({ error, reset }) {
         </div>
       </div>
     </div>
+    </>
   );
 }

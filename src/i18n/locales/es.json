@@ -324,6 +324,14 @@
         "title": "Rotation PDF",
         "description": "Ajuster l'orientation de vos pages PDF."
       },
+      "heictopdf": {
+        "title": "HEIC to PDF",
+        "description": "Convert all type iphone images(HEIC , HEIF) into a PDF file."
+      },
+      "xmlToPdf": {
+        "title": "XML to PDF",
+        "description": "Convert all type XML files into a PDF file."
+      },
       "organizePdf": {
         "title": "Organiser PDF",
         "description": "Réorganiser, fusionner ou supprimer des pages de votre PDF."
@@ -562,6 +570,335 @@
         "messageMinLength": "El mensaje debe tener al menos 10 caracteres"
       }
     }
+  },
+  "profile": {
+    "title": "Configuración del Perfil",
+    "subtitle": "Gestiona la configuración de tu cuenta y preferencias",
+    "loading": "Cargando perfil...",
+    "auth": {
+      "required": "Autenticación Requerida",
+      "loginMessage": "Por favor inicia sesión para ver tu perfil.",
+      "goToLogin": "Ir al Inicio de Sesión"
+    },
+    "errors": {
+      "loadFailed": "Error al cargar los datos del perfil"
+    },
+    "tabs": {
+      "account": "Cuenta",
+      "security": "Seguridad",
+      "statistics": "Estadísticas",
+      "activity": "Actividad"
+    },
+    "account": {
+      "title": "Información Personal",
+      "subtitle": "Actualiza los detalles de tu cuenta e información personal.",
+      "avatar": {
+        "title": "Foto de Perfil",
+        "change": "Cambiar Avatar",
+        "select": "Seleccionar un Avatar",
+        "description": "Elige entre las opciones de avatar disponibles"
+      },
+      "fields": {
+        "firstName": "Nombre",
+        "lastName": "Apellido",
+        "email": "Dirección de Correo Electrónico",
+        "bio": "Biografía",
+        "phone": "Número de Teléfono",
+        "location": "Ubicación",
+        "company": "Empresa",
+        "website": "Sitio Web"
+      },
+      "placeholders": {
+        "firstName": "Ingresa tu nombre",
+        "lastName": "Ingresa tu apellido",
+        "email": "Ingresa tu dirección de correo electrónico",
+        "bio": "Cuéntanos sobre ti...",
+        "phone": "Ingresa tu número de teléfono",
+        "location": "Ciudad, País",
+        "company": "Ingresa el nombre de tu empresa",
+        "website": "https://tu-sitio-web.com"
+      },
+      "googleAccount": {
+        "title": "Cuenta de Google:",
+        "description": "Tu dirección de correo electrónico es gestionada por Google y no se puede cambiar aquí.",
+        "emailNote": "El correo electrónico es gestionado por Google y no se puede cambiar"
+      },
+      "bioNote": "Breve descripción para tu perfil (máximo 500 caracteres)",
+      "saveChanges": "Guardar Cambios",
+      "saving": "Guardando...",
+      "updateSuccess": "¡Perfil actualizado exitosamente!",
+      "updateError": "Error al actualizar el perfil"
+    },
+    "security": {
+      "title": "Configuración de Seguridad",
+      "subtitle": "Gestiona la seguridad de tu cuenta y ve la actividad de inicio de sesión.",
+      "changePassword": {
+        "title": "Cambiar Contraseña",
+        "currentPassword": "Contraseña Actual",
+        "newPassword": "Nueva Contraseña",
+        "confirmPassword": "Confirmar Nueva Contraseña",
+        "currentPlaceholder": "Ingresa tu contraseña actual",
+        "newPlaceholder": "Ingresa tu nueva contraseña",
+        "confirmPlaceholder": "Confirma tu nueva contraseña",
+        "lengthNote": "La contraseña debe tener al menos 8 caracteres",
+        "button": "Cambiar Contraseña",
+        "changing": "Cambiando...",
+        "success": "¡Contraseña cambiada exitosamente!",
+        "error": "Error al cambiar la contraseña",
+        "mismatch": "Las nuevas contraseñas no coinciden",
+        "minLength": "La contraseña debe tener al menos 8 caracteres"
+      },
+      "googleSecurity": {
+        "title": "Seguridad de Cuenta de Google",
+        "description": "Tu cuenta está asegurada por Google. Los cambios de contraseña deben hacerse a través de la configuración de tu cuenta de Google."
+      },
+      "sessions": {
+        "title": "Sesiones Activas",
+        "hideButton": "Ocultar Sesiones",
+        "showButton": "Mostrar Sesiones",
+        "revokeAll": "Revocar Todas las Otras",
+        "revoke": "Revocar",
+        "current": "Actual",
+        "browser": "Navegador Desconocido",
+        "location": "Ubicación Desconocida",
+        "lastActive": "Última actividad:",
+        "loading": "Cargando sesiones...",
+        "empty": "No se encontraron sesiones activas",
+        "revokeSuccess": "Sesión revocada exitosamente",
+        "revokeAllSuccess": "Todas las otras sesiones revocadas exitosamente",
+        "revokeError": "Error al revocar la sesión"
+      },
+      "recentActivity": {
+        "title": "Actividad de Seguridad Reciente",
+        "empty": "No hay actividad de seguridad reciente"
+      },
+      "tips": {
+        "title": "Consejos de Seguridad",
+        "items": [
+          "Usa una contraseña fuerte y única para tu cuenta",
+          "Cierra sesión en dispositivos compartidos o públicos",
+          "Revisa regularmente tus sesiones activas",
+          "Habilita la autenticación de dos factores cuando esté disponible",
+          "Mantén actualizado el software de tu navegador y dispositivo"
+        ]
+      }
+    },
+    "activity": {
+      "title": "Actividad de la Cuenta",
+      "subtitle": "Rastrea la actividad de tu cuenta y sesiones de inicio de sesión.",
+      "filters": {
+        "title": "Filtrar Actividad",
+        "all": "Toda la Actividad",
+        "login": "Eventos de Inicio de Sesión",
+        "security": "Seguridad",
+        "profile": "Cambios de Perfil",
+        "files": "Actividad de Archivos"
+      },
+      "timeline": {
+        "title": "Actividad Reciente",
+        "empty": "Aún No Hay Actividad",
+        "emptyFiltered": "No se Encontró {filter}",
+        "emptyMessage": "Comienza a usar nuestras herramientas para ver tu actividad aquí.",
+        "emptyFilterMessage": "Intenta seleccionar un filtro diferente para ver más actividades.",
+        "showAll": "Mostrar Toda la Actividad",
+        "loadMore": "Cargar Más Actividad",
+        "showing": "Mostrando las últimas 50 actividades"
+      },
+      "summary": {
+        "title": "Resumen de Actividad",
+        "totalActivities": "Actividades Totales",
+        "logins": "Inicios de Sesión",
+        "activeSessions": "Sesiones Activas",
+        "securityEvents": "Eventos de Seguridad"
+      },
+      "monitoring": {
+        "title": "Monitoreo de Seguridad",
+        "description": "Monitorea regularmente la actividad de tu cuenta para detectar comportamientos sospechosos:",
+        "items": [
+          "Verifica ubicaciones o dispositivos de inicio de sesión no reconocidos",
+          "Busca cambios inesperados de contraseña o actualizaciones de perfil",
+          "Monitorea la actividad de archivos para acceso no autorizado",
+          "Reporta inmediatamente cualquier actividad sospechosa"
+        ]
+      },
+      "actions": {
+        "login": "Inicio de Sesión",
+        "logout": "Cerrar Sesión",
+        "passwordChange": "Cambio de Contraseña",
+        "profileUpdate": "Actualización de Perfil",
+        "avatarChange": "Cambio de Avatar",
+        "emailChange": "Cambio de Correo Electrónico",
+        "fileUpload": "Subida de Archivo",
+        "fileDownload": "Descarga de Archivo",
+        "fileDelete": "Eliminación de Archivo"
+      }
+    },
+    "stats": {
+      "title": "Estadísticas de Uso",
+      "subtitle": "Resumen de la actividad de tu cuenta e historial de procesamiento de archivos.",
+      "overview": {
+        "totalFiles": "Archivos Totales",
+        "storageUsed": "Almacenamiento Usado",
+        "thisMonth": "Este Mes",
+        "memberSince": "Miembro Desde"
+      },
+      "filesByType": {
+        "title": "Archivos por Tipo"
+      },
+      "recentFiles": {
+        "title": "Archivos Recientes"
+      },
+      "accountSummary": {
+        "title": "Resumen de la Cuenta",
+        "accountInfo": "Información de la Cuenta",
+        "usageSummary": "Resumen de Uso",
+        "accountType": "Tipo de Cuenta",
+        "lastLogin": "Último Inicio de Sesión",
+        "totalConversions": "Conversiones Totales",
+        "averageFileSize": "Tamaño Promedio de Archivo",
+        "googleAccount": "Cuenta de Google",
+        "standardAccount": "Cuenta Estándar",
+        "never": "Nunca"
+      },
+      "noData": {
+        "title": "Aún No Hay Estadísticas",
+        "description": "Comienza a usar nuestras herramientas PDF para ver tus estadísticas de uso aquí.",
+        "exploreButton": "Explorar Herramientas"
+      },
+      "loading": "Cargando estadísticas...",
+      "error": "Error al cargar las estadísticas"
+    },
+    "sidebar": {
+      "memberSince": "Miembro desde",
+      "filesProcessed": "Archivos Procesados",
+      "storageUsed": "Almacenamiento Usado",
+      "accountStatus": "Estado de la Cuenta",
+      "accountType": "Tipo de Cuenta",
+      "status": "Estado",
+      "thisMonth": "Este Mes",
+      "active": "Activo",
+      "google": "Google",
+      "standard": "Estándar",
+      "quickActions": "Acciones Rápidas",
+      "editProfile": "Editar Perfil",
+      "changePassword": "Cambiar Contraseña",
+      "updatePreferences": "Actualizar Preferencias",
+      "viewFiles": "Ver Mis Archivos"
+    }
+  },
+  "common": {
+    "error": "Error",
+    "tryAgain": "Intentar de Nuevo",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "loading": "Cargando...",
+    "success": "Éxito",
+    "email": "Correo Electrónico",
+    "password": "Contraseña"
+  },
+   "forgotPassword": {
+    "title": "¿Olvidaste tu Contraseña?",
+    "subtitle": "¡No te preocupes! Ingresa tu dirección de correo electrónico y te enviaremos un enlace para restablecer tu contraseña.",
+    "form": {
+      "emailLabel": "Dirección de Correo Electrónico",
+      "emailPlaceholder": "Ingresa tu dirección de correo electrónico",
+      "submit": "Enviar Enlace de Restablecimiento",
+      "sending": "Enviando Enlace de Restablecimiento..."
+    },
+    "validation": {
+      "emailRequired": "El correo electrónico es obligatorio",
+      "emailInvalid": "Por favor ingresa una dirección de correo electrónico válida"
+    },
+    "errors": {
+      "googleUser": "Esta cuenta fue creada con Google. Por favor usa Google para iniciar sesión.",
+      "emailNotFound": "No se encontró ninguna cuenta con esta dirección de correo electrónico.",
+      "sendFailed": "Error al enviar el correo de restablecimiento. Por favor intenta de nuevo.",
+      "unexpected": "Ocurrió un error inesperado. Por favor intenta de nuevo."
+    },
+    "success": {
+      "title": "Revisa tu Correo Electrónico",
+      "description": "Hemos enviado un enlace de restablecimiento de contraseña a {email}",
+      "nextSteps": {
+        "title": "Siguientes Pasos:",
+        "checkInbox": "Revisa tu bandeja de entrada para el enlace de restablecimiento",
+        "checkSpam": "No olvides revisar tu carpeta de spam/correo no deseado",
+        "expiration": "El enlace expirará en 24 horas"
+      },
+      "sendDifferent": "Enviar a Correo Diferente"
+    },
+    "continueWithGoogle": "Continuar con Google",
+    "backToLogin": "Volver al Inicio de Sesión",
+    "noAccount": {
+      "text": "¿No tienes una cuenta?",
+      "signUpLink": "Regístrate aquí"
+    }
+  },
+  "resetPassword": {
+    "validating": {
+      "title": "Validando Enlace de Restablecimiento",
+      "subtitle": "Por favor espera mientras verificamos tu enlace de restablecimiento de contraseña..."
+    },
+    "form": {
+      "title": "Crear Nueva Contraseña",
+      "subtitle": "Elige una contraseña fuerte para mantener tu cuenta segura.",
+      "newPasswordLabel": "Nueva Contraseña",
+      "newPasswordPlaceholder": "Ingresa tu nueva contraseña",
+      "confirmPasswordLabel": "Confirmar Nueva Contraseña",
+      "confirmPasswordPlaceholder": "Confirma tu nueva contraseña",
+      "submit": "Actualizar Contraseña",
+      "updating": "Actualizando Contraseña..."
+    },
+    "passwordStrength": {
+      "label": "Fuerza de la Contraseña",
+      "weak": "Débil",
+      "fair": "Regular",
+      "good": "Buena",
+      "strong": "Fuerte"
+    },
+    "requirements": {
+      "length": "8+ caracteres",
+      "uppercase": "Letra mayúscula",
+      "lowercase": "Letra minúscula",
+      "number": "Número",
+      "special": "Carácter especial (!@#$%^&*)"
+    },
+    "feedback": {
+      "passwordsMatch": "Las contraseñas coinciden",
+      "passwordsDontMatch": "Las contraseñas no coinciden"
+    },
+    "validation": {
+      "passwordRequired": "La nueva contraseña es obligatoria",
+      "passwordTooShort": "La contraseña debe tener al menos 8 caracteres",
+      "passwordsDontMatch": "Las contraseñas no coinciden",
+      "passwordTooCommon": "Esta contraseña es demasiado común. Por favor elige una contraseña más segura."
+    },
+    "errors": {
+      "invalidLink": "Enlace de restablecimiento inválido. El enlace parece estar malformado o incompleto.",
+      "expiredLink": "Este enlace de restablecimiento ha expirado o es inválido. Los enlaces de restablecimiento de contraseña solo son válidos por 24 horas.",
+      "validationFailed": "No se pudo validar el enlace de restablecimiento. Por favor verifica tu conexión a internet e intenta de nuevo.",
+      "resetFailed": "Error al restablecer la contraseña. Por favor intenta de nuevo o solicita un nuevo enlace de restablecimiento.",
+      "unexpected": "Ocurrió un error inesperado. Por favor verifica tu conexión e intenta de nuevo."
+    },
+    "success": {
+      "title": "¡Restablecimiento de Contraseña Completo!",
+      "subtitle": "Tu contraseña ha sido actualizada exitosamente. Ahora puedes iniciar sesión con tu nueva contraseña.",
+      "securityMessage": "Tu cuenta ahora está segura con la nueva contraseña",
+      "continueToLogin": "Continuar al Inicio de Sesión",
+      "signInNote": "Por razones de seguridad, necesitarás iniciar sesión nuevamente con tu nueva contraseña."
+    },
+    "invalid": {
+      "title": "Enlace de Restablecimiento Inválido",
+      "requestNew": "Solicitar Nuevo Enlace de Restablecimiento",
+      "needHelp": "¿Necesitas ayuda?",
+      "contactSupport": "Contactar Soporte"
+    },
+    "securityTips": {
+      "title": "Consejos de Seguridad",
+      "unique": "Usa una contraseña única que no hayas usado en otro lugar",
+      "manager": "Considera usar un administrador de contraseñas",
+      "share": "No compartas tu contraseña con nadie"
+    },
+    "backToLogin": "Volver al Inicio de Sesión"
   },
   "Auth": {
     "login": "Iniciar Sesión",

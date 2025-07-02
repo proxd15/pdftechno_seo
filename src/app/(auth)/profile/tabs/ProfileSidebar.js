@@ -1,9 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import { useI18n } from '@/i18n';
 import { formatFileSize, getRelativeTime } from '@/services/profileService';
 
 const ProfileSidebar = ({ profile, activeTab, setActiveTab, tabs }) => {
+  const { t } = useI18n();
   const [imageError, setImageError] = useState(false);
 
   // Get user's initials for fallback avatar
@@ -80,7 +82,7 @@ const ProfileSidebar = ({ profile, activeTab, setActiveTab, tabs }) => {
           
           {/* Member Since */}
           <p className="text-gray-500 text-xs mt-2">
-            Member since {getRelativeTime(profile?.user?.date_joined)}
+            {t('profile.sidebar.memberSince')} {getRelativeTime(profile?.user?.date_joined)}
           </p>
           
           {/* Quick Stats */}
@@ -90,13 +92,13 @@ const ProfileSidebar = ({ profile, activeTab, setActiveTab, tabs }) => {
                 <p className="text-2xl font-bold text-red-600">
                   {profile?.total_files_processed || 0}
                 </p>
-                <p className="text-xs text-gray-600">Files Processed</p>
+                <p className="text-xs text-gray-600">{t('profile.sidebar.filesProcessed')}</p>
               </div>
               <div className="text-center">
                 <p className="text-2xl font-bold text-blue-600">
                   {formatFileSize(profile?.total_storage_used || 0)}
                 </p>
-                <p className="text-xs text-gray-600">Storage Used</p>
+                <p className="text-xs text-gray-600">{t('profile.sidebar.storageUsed')}</p>
               </div>
             </div>
           </div>
@@ -130,20 +132,20 @@ const ProfileSidebar = ({ profile, activeTab, setActiveTab, tabs }) => {
 
       {/* Account Status */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-        <h4 className="font-medium text-gray-900 mb-3">Account Status</h4>
+        <h4 className="font-medium text-gray-900 mb-3">{t('profile.sidebar.accountStatus')}</h4>
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600">Account Type</span>
+            <span className="text-sm text-gray-600">{t('profile.sidebar.accountType')}</span>
             <span className="text-sm font-medium text-green-600">
-              {profile?.is_google_user ? 'Google' : 'Standard'}
+              {profile?.is_google_user ? t('profile.sidebar.google') : t('profile.sidebar.standard')}
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600">Status</span>
-            <span className="text-sm font-medium text-green-600">Active</span>
+            <span className="text-sm text-gray-600">{t('profile.sidebar.status')}</span>
+            <span className="text-sm font-medium text-green-600">{t('profile.sidebar.active')}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600">This Month</span>
+            <span className="text-sm text-gray-600">{t('profile.sidebar.thisMonth')}</span>
             <span className="text-sm font-medium text-blue-600">
               {profile?.files_this_month || 0} files
             </span>
@@ -153,31 +155,31 @@ const ProfileSidebar = ({ profile, activeTab, setActiveTab, tabs }) => {
 
       {/* Quick Actions */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-        <h4 className="font-medium text-gray-900 mb-3">Quick Actions</h4>
+        <h4 className="font-medium text-gray-900 mb-3">{t('profile.sidebar.quickActions')}</h4>
         <div className="space-y-2">
           <button
             onClick={() => setActiveTab('account')}
             className="w-full text-left text-sm text-gray-600 hover:text-red-600 transition-colors"
           >
-            Edit Profile
+            {t('profile.sidebar.editProfile')}
           </button>
           <button
             onClick={() => setActiveTab('security')}
             className="w-full text-left text-sm text-gray-600 hover:text-red-600 transition-colors"
           >
-            Change Password
+            {t('profile.sidebar.changePassword')}
           </button>
           <button
             onClick={() => setActiveTab('settings')}
             className="w-full text-left text-sm text-gray-600 hover:text-red-600 transition-colors"
           >
-            Update Preferences
+            {t('profile.sidebar.updatePreferences')}
           </button>
           <button
             onClick={() => setActiveTab('files')}
             className="w-full text-left text-sm text-gray-600 hover:text-red-600 transition-colors"
           >
-            View My Files
+            {t('profile.sidebar.viewFiles')}
           </button>
         </div>
       </div>

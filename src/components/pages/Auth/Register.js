@@ -33,11 +33,11 @@ export default function SignUpPage() {
   const { register, setUser, setIsAuthenticated } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectPath = searchParams.get('from') || '/';
+  const redirectPath = searchParams.get('Auth.from') || '/';
 
   // Check for authentication errors from URL params and handle OAuth success
   useEffect(() => {
-    const error = searchParams.get('error');
+    const error = searchParams.get('Auth.error');
     if (error === 'authentication_failed') {
       setFormError('Google authentication failed. Please try again.');
       setIsGoogleLoading(false);
@@ -50,9 +50,9 @@ export default function SignUpPage() {
     const handleOAuthTokens = () => {
       const hash = window.location.hash.substring(1);
       const params = new URLSearchParams(hash);
-      const accessToken = params.get('access_token');
-      const refreshToken = params.get('refresh_token');
-      const userData = params.get('user');
+      const accessToken = params.get('Auth.access_token');
+      const refreshToken = params.get('Auth.refresh_token');
+      const userData = params.get('Auth.user');
 
       if (accessToken && refreshToken && userData) {
         try {
@@ -113,7 +113,7 @@ export default function SignUpPage() {
     }
     
     // Check if password is too similar to email or name
-    if (email && password.toLowerCase().includes(email.split('@')[0].toLowerCase())) {
+    if (email && password.toLowerCase().includes(email.split('Auth.@')[0].toLowerCase())) {
       warnings.push('Password is too similar to your email address');
     }
     
@@ -369,7 +369,7 @@ export default function SignUpPage() {
 
       <div className="w-full max-w-md">
         <h1 className="text-4xl font-bold mb-8 text-center">
-          <span style={{ color: '#DA1F10' }}>{t('sign')}</span> {t('up')}
+          <span style={{ color: '#DA1F10' }}>{t('Auth.sign')}</span> {t('Auth.up')}
         </h1>
         
         {formError && (
@@ -401,7 +401,7 @@ export default function SignUpPage() {
                 {(formError.toLowerCase().includes('already exists') && !formError.toLowerCase().includes('login with google')) && (
                   <div className="mt-2">
                     <Link 
-                      href={`/${locale}/login`} 
+                      href={`/login`} 
                       className="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline"
                     >
                       Go to Login →
@@ -415,12 +415,12 @@ export default function SignUpPage() {
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="name" className="sr-only">{t('fullName')}</label>
+            <label htmlFor="name" className="sr-only">{t('Auth.fullName')}</label>
             <input
               type="text"
               id="name"
               name="name"
-              placeholder={t('fullNamePlaceholder')}
+              placeholder={t('Auth.fullNamePlaceholder')}
               value={formData.name}
               onChange={handleChange}
               className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-200"
@@ -430,12 +430,12 @@ export default function SignUpPage() {
           </div>
           
           <div>
-            <label htmlFor="phone" className="sr-only">{t('phone')}</label>
+            <label htmlFor="phone" className="sr-only">{t('Auth.phone')}</label>
             <input
               type="tel"
               id="phone"
               name="phone"
-              placeholder={t('phonePlaceholder')}
+              placeholder={t('Auth.phonePlaceholder')}
               value={formData.phone}
               onChange={handleChange}
               className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-200"
@@ -444,12 +444,12 @@ export default function SignUpPage() {
           </div>
           
           <div>
-            <label htmlFor="email" className="sr-only">{t('email')}</label>
+            <label htmlFor="email" className="sr-only">{t('Auth.email')}</label>
             <input
               type="email"
               id="email"
               name="email"
-              placeholder={t('emailPlaceholder')}
+              placeholder={t('Auth.emailPlaceholder')}
               value={formData.email}
               onChange={handleChange}
               className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-200"
@@ -463,7 +463,7 @@ export default function SignUpPage() {
               type={showPassword ? "text" : "password"}
               id="password"
               name="password"
-              placeholder={t('passwordPlaceholder')}
+              placeholder={t('Auth.passwordPlaceholder')}
               value={formData.password}
               onChange={handleChange}
               className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-200"
@@ -485,7 +485,7 @@ export default function SignUpPage() {
               type={showConfirmPassword ? "text" : "password"}
               id="password_confirm"
               name="password_confirm"
-              placeholder={t('confirmPasswordPlaceholder')}
+              placeholder={t('Auth.confirmPasswordPlaceholder')}
               value={formData.password_confirm}
               onChange={handleChange}
               className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-200"
@@ -512,7 +512,7 @@ export default function SignUpPage() {
               disabled={isSubmitting}
             />
             <label htmlFor="remember" className="text-sm text-gray-600 cursor-pointer select-none">
-              {t('rememberMe')}
+              {t('Auth.rememberMe')}
             </label>
           </div>
           
@@ -528,10 +528,10 @@ export default function SignUpPage() {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                {t('signingUp')}
+                {t('Auth.signingUp')}
               </>
             ) : (
-              t('signUp')
+              t('Auth.signUp')
             )}
           </button>
         </form>
@@ -542,7 +542,7 @@ export default function SignUpPage() {
               <div className="w-full border-t border-gray-300"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white text-gray-500">{t('or')}</span>
+              <span className="px-4 bg-white text-gray-500">{t('Auth.or')}</span>
             </div>
           </div>
           
@@ -556,9 +556,9 @@ export default function SignUpPage() {
           </button>
           
           <p className="mt-6 text-sm text-gray-600">
-            {t('haveAccount')}{' '}
-            <Link href={`/${locale}/login`} className="text-purple-600 hover:underline cursor-pointer">
-              {t('loginToAccount')}
+            {t('Auth.haveAccount')}{' '}
+            <Link href={`/login`} className="text-purple-600 hover:underline cursor-pointer">
+              {t('Auth.loginToAccount')}
             </Link>
           </p>
         </div>

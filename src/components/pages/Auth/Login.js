@@ -25,11 +25,11 @@ export default function LoginPage() {
   const { login, setUser, setIsAuthenticated } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectPath = searchParams.get('from') || '/';
+  const redirectPath = searchParams.get('Auth.from') || '/';
 
   // Check for authentication errors from URL params
   useEffect(() => {
-    const error = searchParams.get('error');
+    const error = searchParams.get('Auth.error');
     if (error === 'authentication_failed') {
       setFormError('Google authentication failed. Please try again.');
     } else if (error === 'server_error') {
@@ -115,7 +115,7 @@ export default function LoginPage() {
       
       <div className="w-full max-w-md">
         <h1 className="text-4xl font-bold mb-8 text-center" style={{ color: '#DA1F10' }}>
-          {t('login')}
+          {t('Auth.login')}
         </h1>
         
         {formError && (
@@ -127,12 +127,12 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="email" className="sr-only">
-              {t('email')}
+              {t('Auth.email')}
             </label>
             <input
               type="email"
               id="email"
-              placeholder={t('emailPlaceholder')}
+              placeholder={t('Auth.emailPlaceholder')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-200"
@@ -143,12 +143,12 @@ export default function LoginPage() {
           
           <div className="relative">
             <label htmlFor="password" className="sr-only">
-              {t('password')}
+              {t('Auth.password')}
             </label>
             <input
               type={showPassword ? "text" : "password"}
               id="password"
-              placeholder={t('passwordPlaceholder')}
+              placeholder={t('Auth.passwordPlaceholder')}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-200"
@@ -176,12 +176,12 @@ export default function LoginPage() {
                 disabled={isSubmitting}
               />
               <label htmlFor="remember" className="text-sm text-gray-600">
-                {t('rememberMe')}
+                {t('Auth.rememberMe')}
               </label>
             </div>
             
-            <Link href={`/${locale}/forgot-password`} className="text-sm text-purple-600 hover:underline">
-              {t('forgotPassword')}
+            <Link href={`/forgot-password`} className="text-sm text-purple-600 hover:underline">
+              {t('Auth.forgotPassword')}
             </Link>
           </div>
           
@@ -197,10 +197,10 @@ export default function LoginPage() {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                {t('loggingIn')}
+                {t('Auth.loggingIn')}
               </>
             ) : (
-              t('login')
+              t('Auth.login')
             )}
           </button>
         </form>
@@ -211,7 +211,7 @@ export default function LoginPage() {
               <div className="w-full border-t border-gray-300"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white text-gray-500">{t('or')}</span>
+              <span className="px-4 bg-white text-gray-500">{t('Auth.or')}</span>
             </div>
           </div>
           
@@ -225,9 +225,9 @@ export default function LoginPage() {
           </button>
           
           <p className="mt-6 text-sm text-gray-600">
-            {t('noAccount')}{' '}
-            <Link href={`/${locale}/register`} className="text-purple-600 hover:underline">
-              {t('createAccount')}
+            {t('Auth.noAccount')}{' '}
+            <Link href={`/register`} className="text-purple-600 hover:underline">
+              {t('Auth.createAccount')}
             </Link>
           </p>
         </div>

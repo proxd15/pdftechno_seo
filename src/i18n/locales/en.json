@@ -198,6 +198,14 @@
         "title": "Image to PDF",
         "description": "Convert all type images(PNG, JPG, JPEG) into a PDF file."
       },
+      "heictopdf": {
+        "title": "HEIC to PDF",
+        "description": "Convert all type iphone images(HEIC , HEIF) into a PDF file."
+      },
+      "xmlToPdf": {
+        "title": "XML to PDF",
+        "description": "Convert all type XML files into a PDF file."
+      },
       "pdfToImage": {
         "title": "PDF to Image",
         "description": "Extract all type images from PDFs as JPG, PNG, TIFF, BMP files."
@@ -417,7 +425,7 @@
           "label": "Message",
           "placeholder": "Tell us how we can help you...",
           "required": "*",
-          "characterCount": "{count}/2000 characters"
+          "characterCount": "/2000 characters"
         }
       },
       "subjects": {
@@ -445,6 +453,339 @@
       }
     }
   },
+
+  "profile": {
+    "title": "Profile Settings",
+    "subtitle": "Manage your account settings and preferences",
+    "loading": "Loading profile...",
+    "auth": {
+      "required": "Authentication Required",
+      "loginMessage": "Please log in to view your profile.",
+      "goToLogin": "Go to Login"
+    },
+    "errors": {
+      "loadFailed": "Failed to load profile data"
+    },
+    "tabs": {
+      "account": "Account",
+      "security": "Security",
+      "statistics": "Statistics",
+      "activity": "Activity"
+    },
+    "account": {
+      "title": "Personal Information",
+      "subtitle": "Update your account details and personal information.",
+      "avatar": {
+        "title": "Profile Picture",
+        "change": "Change Avatar",
+        "select": "Select an Avatar",
+        "description": "Choose from available avatar options"
+      },
+      "fields": {
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "email": "Email Address",
+        "bio": "Bio",
+        "phone": "Phone Number",
+        "location": "Location",
+        "company": "Company",
+        "website": "Website"
+      },
+      "placeholders": {
+        "firstName": "Enter your first name",
+        "lastName": "Enter your last name",
+        "email": "Enter your email address",
+        "bio": "Tell us about yourself...",
+        "phone": "Enter your phone number",
+        "location": "City, Country",
+        "company": "Enter your company name",
+        "website": "https://your-website.com"
+      },
+      "googleAccount": {
+        "title": "Google Account:",
+        "description": "Your email address is managed by Google and cannot be changed here.",
+        "emailNote": "Email is managed by Google and cannot be changed"
+      },
+      "bioNote": "Brief description for your profile (max 500 characters)",
+      "saveChanges": "Save Changes",
+      "saving": "Saving...",
+      "updateSuccess": "Profile updated successfully!",
+      "updateError": "Failed to update profile"
+    },
+    "security": {
+      "title": "Security Settings",
+      "subtitle": "Manage your account security and view login activity.",
+      "changePassword": {
+        "title": "Change Password",
+        "currentPassword": "Current Password",
+        "newPassword": "New Password",
+        "confirmPassword": "Confirm New Password",
+        "currentPlaceholder": "Enter your current password",
+        "newPlaceholder": "Enter your new password",
+        "confirmPlaceholder": "Confirm your new password",
+        "lengthNote": "Password must be at least 8 characters long",
+        "button": "Change Password",
+        "changing": "Changing...",
+        "success": "Password changed successfully!",
+        "error": "Failed to change password",
+        "mismatch": "New passwords do not match",
+        "minLength": "Password must be at least 8 characters long"
+      },
+      "googleSecurity": {
+        "title": "Google Account Security",
+        "description": "Your account is secured by Google. Password changes must be made through your Google account settings."
+      },
+      "sessions": {
+        "title": "Active Sessions",
+        "hideButton": "Hide Sessions",
+        "showButton": "Show Sessions",
+        "revokeAll": "Revoke All Others",
+        "revoke": "Revoke",
+        "current": "Current",
+        "browser": "Unknown Browser",
+        "location": "Unknown Location",
+        "lastActive": "Last active:",
+        "loading": "Loading sessions...",
+        "empty": "No active sessions found",
+        "revokeSuccess": "Session revoked successfully",
+        "revokeAllSuccess": "All other sessions revoked successfully",
+        "revokeError": "Failed to revoke session"
+      },
+      "recentActivity": {
+        "title": "Recent Security Activity",
+        "empty": "No recent security activity"
+      },
+      "tips": {
+        "title": "Security Tips",
+        "items": [
+          "Use a strong, unique password for your account",
+          "Log out from shared or public devices",
+          "Regularly review your active sessions",
+          "Enable two-factor authentication when available",
+          "Keep your browser and device software updated"
+        ]
+      }
+    },
+    "activity": {
+      "title": "Account Activity",
+      "subtitle": "Track your account activity and login sessions.",
+      "filters": {
+        "title": "Filter Activity",
+        "all": "All Activity",
+        "login": "Login Events",
+        "security": "Security",
+        "profile": "Profile Changes",
+        "files": "File Activity"
+      },
+      "timeline": {
+        "title": "Recent Activity",
+        "empty": "No Activity Yet",
+        "emptyFiltered": "No {filter} Found",
+        "emptyMessage": "Start using our tools to see your activity here.",
+        "emptyFilterMessage": "Try selecting a different filter to see more activities.",
+        "showAll": "Show All Activity",
+        "loadMore": "Load More Activity",
+        "showing": "Showing the last 50 activities"
+      },
+      "summary": {
+        "title": "Activity Summary",
+        "totalActivities": "Total Activities",
+        "logins": "Logins",
+        "activeSessions": "Active Sessions",
+        "securityEvents": "Security Events"
+      },
+      "monitoring": {
+        "title": "Security Monitoring",
+        "description": "Regularly monitor your account activity for any suspicious behavior:",
+        "items": [
+          "Check for unrecognized login locations or devices",
+          "Look for unexpected password changes or profile updates",
+          "Monitor file activity for unauthorized access",
+          "Report any suspicious activity immediately"
+        ]
+      },
+      "actions": {
+        "login": "Login",
+        "logout": "Logout",
+        "passwordChange": "Password Change",
+        "profileUpdate": "Profile Update",
+        "avatarChange": "Avatar Change",
+        "emailChange": "Email Change",
+        "fileUpload": "File Upload",
+        "fileDownload": "File Download",
+        "fileDelete": "File Delete"
+      }
+    },
+    "stats": {
+      "title": "Usage Statistics",
+      "subtitle": "Overview of your account activity and file processing history.",
+      "overview": {
+        "totalFiles": "Total Files",
+        "storageUsed": "Storage Used",
+        "thisMonth": "This Month",
+        "memberSince": "Member Since"
+      },
+      "filesByType": {
+        "title": "Files by Type"
+      },
+      "recentFiles": {
+        "title": "Recent Files"
+      },
+      "accountSummary": {
+        "title": "Account Summary",
+        "accountInfo": "Account Information",
+        "usageSummary": "Usage Summary",
+        "accountType": "Account Type",
+        "lastLogin": "Last Login",
+        "totalConversions": "Total Conversions",
+        "averageFileSize": "Average File Size",
+        "googleAccount": "Google Account",
+        "standardAccount": "Standard Account",
+        "never": "Never"
+      },
+      "noData": {
+        "title": "No Statistics Yet",
+        "description": "Start using our PDF tools to see your usage statistics here.",
+        "exploreButton": "Explore Tools"
+      },
+      "loading": "Loading statistics...",
+      "error": "Failed to load statistics"
+    },
+    "sidebar": {
+      "memberSince": "Member since",
+      "filesProcessed": "Files Processed",
+      "storageUsed": "Storage Used",
+      "accountStatus": "Account Status",
+      "accountType": "Account Type",
+      "status": "Status",
+      "thisMonth": "This Month",
+      "active": "Active",
+      "google": "Google",
+      "standard": "Standard",
+      "quickActions": "Quick Actions",
+      "editProfile": "Edit Profile",
+      "changePassword": "Change Password",
+      "updatePreferences": "Update Preferences",
+      "viewFiles": "View My Files"
+    }
+  },
+  "common": {
+    "error": "Error",
+    "tryAgain": "Try Again",
+    "save": "Save",
+    "cancel": "Cancel",
+    "loading": "Loading...",
+    "success": "Success",
+    "email": "Email",
+    "password": "Password"
+  },
+   "forgotPassword": {
+    "title": "Forgot Password?",
+    "subtitle": "No worries! Enter your email address and we'll send you a link to reset your password.",
+    "form": {
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "Enter your email address",
+      "submit": "Send Reset Link",
+      "sending": "Sending Reset Link..."
+    },
+    "validation": {
+      "emailRequired": "Email is required",
+      "emailInvalid": "Please enter a valid email address"
+    },
+    "errors": {
+      "googleUser": "This account was created with Google. Please use Google to sign in.",
+      "emailNotFound": "No account found with this email address.",
+      "sendFailed": "Failed to send reset email. Please try again.",
+      "unexpected": "An unexpected error occurred. Please try again."
+    },
+    "success": {
+      "title": "Check Your Email",
+      "description": "We've sent a password reset link to {email}",
+      "nextSteps": {
+        "title": "Next Steps:",
+        "checkInbox": "Check your email inbox for the reset link",
+        "checkSpam": "Don't forget to check your spam/junk folder",
+        "expiration": "The link will expire in 24 hours"
+      },
+      "sendDifferent": "Send to Different Email"
+    },
+    "continueWithGoogle": "Continue with Google",
+    "backToLogin": "Back to Login",
+    "noAccount": {
+      "text": "Don't have an account?",
+      "signUpLink": "Sign up here"
+    }
+  },
+
+  "resetPassword": {
+    "validating": {
+      "title": "Validating Reset Link",
+      "subtitle": "Please wait while we verify your password reset link..."
+    },
+    "form": {
+      "title": "Create New Password",
+      "subtitle": "Choose a strong password to keep your account secure.",
+      "newPasswordLabel": "New Password",
+      "newPasswordPlaceholder": "Enter your new password",
+      "confirmPasswordLabel": "Confirm New Password",
+      "confirmPasswordPlaceholder": "Confirm your new password",
+      "submit": "Update Password",
+      "updating": "Updating Password..."
+    },
+    "passwordStrength": {
+      "label": "Password Strength",
+      "weak": "Weak",
+      "fair": "Fair",
+      "good": "Good",
+      "strong": "Strong"
+    },
+    "requirements": {
+      "length": "8+ characters",
+      "uppercase": "Uppercase letter",
+      "lowercase": "Lowercase letter",
+      "number": "Number",
+      "special": "Special character (!@#$%^&*)"
+    },
+    "feedback": {
+      "passwordsMatch": "Passwords match",
+      "passwordsDontMatch": "Passwords don't match"
+    },
+    "validation": {
+      "passwordRequired": "New password is required",
+      "passwordTooShort": "Password must be at least 8 characters long",
+      "passwordsDontMatch": "Passwords do not match",
+      "passwordTooCommon": "This password is too common. Please choose a more secure password."
+    },
+    "errors": {
+      "invalidLink": "Invalid reset link. The link appears to be malformed or incomplete.",
+      "expiredLink": "This reset link has expired or is invalid. Password reset links are only valid for 24 hours.",
+      "validationFailed": "Unable to validate reset link. Please check your internet connection and try again.",
+      "resetFailed": "Failed to reset password. Please try again or request a new reset link.",
+      "unexpected": "An unexpected error occurred. Please check your connection and try again."
+    },
+    "success": {
+      "title": "Password Reset Complete!",
+      "subtitle": "Your password has been successfully updated. You can now sign in with your new password.",
+      "securityMessage": "Your account is now secure with the new password",
+      "continueToLogin": "Continue to Login",
+      "signInNote": "For security reasons, you'll need to sign in again with your new password."
+    },
+    "invalid": {
+      "title": "Reset Link Invalid",
+      "requestNew": "Request New Reset Link",
+      "needHelp": "Need help?",
+      "contactSupport": "Contact Support"
+    },
+    "securityTips": {
+      "title": "Security Tips",
+      "unique": "Use a unique password you haven't used elsewhere",
+      "manager": "Consider using a password manager",
+      "share": "Don't share your password with anyone"
+    },
+    "backToLogin": "Back to Login"
+  },
+
+"Auth": {
   "login": "Login",
   "sign": "Sign",
   "up": "Up",
@@ -473,4 +814,5 @@
   "loginFailed": "Login failed. Please check your credentials.",
   "registrationFailed": "Registration failed. Please try again.",
   "unexpectedError": "An unexpected error occurred"
+}
 }

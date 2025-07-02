@@ -91,11 +91,6 @@ export default function Footer() {
                   {t('navbar.security.sign')}
                 </Link>
               </li>
-              <li>
-                <Link href={'/edit-pdf'} className="text-[#787878] hover:text-red-500 transition-colors duration-300">
-                  {t('navbar.edit.edit')}
-                </Link>
-              </li>
             </ul>
           </div>
           

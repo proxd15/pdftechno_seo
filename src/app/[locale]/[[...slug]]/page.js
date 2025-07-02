@@ -32,11 +32,14 @@ const pageComponents = {
   // 'edit-pdf': dynamic(() => import('@/components/pages/EditPdf')),
   'login': dynamic(() => import('@/components/pages/Auth/Login')),
   'register': dynamic(() => import('@/components/pages/Auth/Register')),
-  // 'profile': dynamic(() => import('@/components/pages/Profile')),
+  'forgot-password': dynamic(() => import('@/components/pages/Auth/ForgotPassword')),
+  'reset-password': dynamic(() => import('@/components/pages/Auth/ResetPassword')),
+  'profile': dynamic(() => import('@/components/pages/Auth/Profile')),
   'my-files': dynamic(() => import('@/components/pages/Auth/MyFiles')),
   'about': dynamic(() => import('@/components/pages/Extras/About')),
   'privacy': dynamic(() => import('@/components/pages/Extras/PrivacyPolicy')),
   'terms': dynamic(() => import('@/components/pages/Extras/TermsAndConditions')),
+  'contact': dynamic(() => import('@/components/pages/Extras/Contact')),
 };
 
 export async function generateStaticParams() {

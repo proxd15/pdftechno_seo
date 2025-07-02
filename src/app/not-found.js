@@ -19,9 +19,6 @@ export default function NotFound() {
             <div className="w-32 h-32 bg-red-100 rounded-full flex items-center justify-center">
               <FaExclamationTriangle className="w-16 h-16 text-red-600" />
             </div>
-            <div className="absolute -bottom-2 -right-2 bg-white rounded-full p-3 shadow-lg">
-              <span className="text-4xl font-bold text-gray-800">404</span>
-            </div>
           </div>
         </div>
 

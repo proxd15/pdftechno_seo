@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useI18n } from '@/i18n';
 import { getUserActivity, getUserSessions, formatDate, getRelativeTime } from '@/services/profileService';
 import { 
   Activity, 
@@ -22,6 +23,7 @@ import {
 } from 'lucide-react';
 
 const ActivityTab = ({ profile }) => {
+  const { t } = useI18n();
   const [activities, setActivities] = useState([]);
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -29,13 +31,13 @@ const ActivityTab = ({ profile }) => {
   const [activeFilter, setActiveFilter] = useState('all');
   const [showSessions, setShowSessions] = useState(false);
 
-  // Activity filter options
+  // Activity filter options with translations
   const filterOptions = [
-    { value: 'all', label: 'All Activity', icon: Activity },
-    { value: 'login', label: 'Login Events', icon: LogIn },
-    { value: 'security', label: 'Security', icon: Shield },
-    { value: 'profile', label: 'Profile Changes', icon: User },
-    { value: 'files', label: 'File Activity', icon: FileText }
+    { value: 'all', label: t('profile.activity.filters.all'), icon: Activity },
+    { value: 'login', label: t('profile.activity.filters.login'), icon: LogIn },
+    { value: 'security', label: t('profile.activity.filters.security'), icon: Shield },
+    { value: 'profile', label: t('profile.activity.filters.profile'), icon: User },
+    { value: 'files', label: t('profile.activity.filters.files'), icon: FileText }
   ];
 
   // Load activity data
@@ -52,14 +54,14 @@ const ActivityTab = ({ profile }) => {
         setError(null);
       } catch (err) {
         console.error('Error loading activity data:', err);
-        setError('Failed to load activity data');
+        setError(t('profile.errors.loadFailed'));
       } finally {
         setLoading(false);
       }
     };
 
     loadActivityData();
-  }, []);
+  }, [t]);
 
   // Filter activities based on selected filter
   const filteredActivities = activities.filter(activity => {
@@ -96,6 +98,23 @@ const ActivityTab = ({ profile }) => {
     return iconMap[action] || <Activity className="w-4 h-4 text-gray-500" />;
   };
 
+  // Get translated action display name
+  const getActionDisplayName = (action) => {
+    const actionMap = {
+      'login': t('profile.activity.actions.login'),
+      'logout': t('profile.activity.actions.logout'),
+      'password_change': t('profile.activity.actions.passwordChange'),
+      'profile_update': t('profile.activity.actions.profileUpdate'),
+      'avatar_change': t('profile.activity.actions.avatarChange'),
+      'email_change': t('profile.activity.actions.emailChange'),
+      'file_upload': t('profile.activity.actions.fileUpload'),
+      'file_download': t('profile.activity.actions.fileDownload'),
+      'file_delete': t('profile.activity.actions.fileDelete')
+    };
+    
+    return actionMap[action] || action;
+  };
+
   // Get device icon based on device type
   const getDeviceIcon = (deviceType) => {
     if (deviceType?.toLowerCase().includes('mobile')) {
@@ -125,7 +144,7 @@ const ActivityTab = ({ profile }) => {
     return (
       <div className="text-center py-8">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto mb-4"></div>
-        <p className="text-gray-600">Loading activity...</p>
+        <p className="text-gray-600">{t('profile.loading')}</p>
       </div>
     );
   }
@@ -144,9 +163,11 @@ const ActivityTab = ({ profile }) => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h3 className="text-lg font-medium text-gray-900">Account Activity</h3>
+          <h3 className="text-lg font-medium text-gray-900">
+            {t('profile.activity.title')}
+          </h3>
           <p className="text-sm text-gray-600 mt-1">
-            Track your account activity and login sessions.
+            {t('profile.activity.subtitle')}
           </p>
         </div>
         
@@ -159,7 +180,10 @@ const ActivityTab = ({ profile }) => {
                 : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
             }`}
           >
-            {showSessions ? 'Hide Sessions' : 'Show Sessions'}
+            {showSessions 
+              ? t('profile.security.sessions.hideButton')
+              : t('profile.security.sessions.showButton')
+            }
           </button>
         </div>
       </div>
@@ -168,7 +192,9 @@ const ActivityTab = ({ profile }) => {
       <div className="bg-white border border-gray-200 rounded-lg p-4">
         <div className="flex items-center mb-3">
           <Filter className="w-4 h-4 text-gray-600 mr-2" />
-          <h4 className="text-sm font-medium text-gray-900">Filter Activity</h4>
+          <h4 className="text-sm font-medium text-gray-900">
+            {t('profile.activity.filters.title')}
+          </h4>
         </div>
         <div className="flex flex-wrap gap-2">
           {filterOptions.map((filter) => {
@@ -196,7 +222,9 @@ const ActivityTab = ({ profile }) => {
         <div className="bg-white border border-gray-200 rounded-lg p-6">
           <div className="flex items-center mb-4">
             <Monitor className="w-5 h-5 text-red-600 mr-2" />
-            <h4 className="text-lg font-medium text-gray-900">Active Sessions</h4>
+            <h4 className="text-lg font-medium text-gray-900">
+              {t('profile.security.sessions.title')}
+            </h4>
             <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
               {sessions.length}
             </span>
@@ -218,11 +246,11 @@ const ActivityTab = ({ profile }) => {
                     <div>
                       <div className="flex items-center space-x-2">
                         <h5 className="text-sm font-medium text-gray-900">
-                          {session.browser || 'Unknown Browser'}
+                          {session.browser || t('profile.security.sessions.browser')}
                         </h5>
                         {session.is_current && (
                           <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-                            Current
+                            {t('profile.security.sessions.current')}
                           </span>
                         )}
                       </div>
@@ -239,7 +267,9 @@ const ActivityTab = ({ profile }) => {
                       </div>
                       <div className="flex items-center text-xs text-gray-400 mt-1">
                         <Clock className="w-3 h-3 mr-1" />
-                        <span>Last active: {getRelativeTime(session.last_activity)}</span>
+                        <span>
+                          {t('profile.security.sessions.lastActive')} {getRelativeTime(session.last_activity)}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -251,7 +281,9 @@ const ActivityTab = ({ profile }) => {
           {sessions.length === 0 && (
             <div className="text-center py-6">
               <Monitor className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-              <p className="text-sm text-gray-500">No active sessions found</p>
+              <p className="text-sm text-gray-500">
+                {t('profile.security.sessions.empty')}
+              </p>
             </div>
           )}
         </div>
@@ -261,7 +293,9 @@ const ActivityTab = ({ profile }) => {
       <div className="bg-white border border-gray-200 rounded-lg p-6">
         <div className="flex items-center mb-4">
           <Activity className="w-5 h-5 text-red-600 mr-2" />
-          <h4 className="text-lg font-medium text-gray-900">Recent Activity</h4>
+          <h4 className="text-lg font-medium text-gray-900">
+            {t('profile.activity.timeline.title')}
+          </h4>
           <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
             {filteredActivities.length}
           </span>
@@ -288,7 +322,7 @@ const ActivityTab = ({ profile }) => {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
                     <h5 className="text-sm font-medium text-gray-900">
-                      {activity.action_display}
+                      {activity.action_display || getActionDisplayName(activity.action)}
                     </h5>
                     <time className="text-xs text-gray-500">
                       {getRelativeTime(activity.timestamp)}
@@ -321,12 +355,17 @@ const ActivityTab = ({ profile }) => {
             <div className="text-center py-8">
               <Activity className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">
-                {activeFilter === 'all' ? 'No Activity Yet' : `No ${filterOptions.find(f => f.value === activeFilter)?.label} Found`}
+                {activeFilter === 'all' 
+                  ? t('profile.activity.timeline.empty')
+                  : t('profile.activity.timeline.emptyFiltered', { 
+                      filter: filterOptions.find(f => f.value === activeFilter)?.label 
+                    })
+                }
               </h3>
               <p className="text-gray-600 mb-6">
                 {activeFilter === 'all' 
-                  ? 'Start using our tools to see your activity here.'
-                  : 'Try selecting a different filter to see more activities.'
+                  ? t('profile.activity.timeline.emptyMessage')
+                  : t('profile.activity.timeline.emptyFilterMessage')
                 }
               </p>
               {activeFilter !== 'all' && (
@@ -334,7 +373,7 @@ const ActivityTab = ({ profile }) => {
                   onClick={() => setActiveFilter('all')}
                   className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700"
                 >
-                  Show All Activity
+                  {t('profile.activity.timeline.showAll')}
                 </button>
               )}
             </div>
@@ -345,10 +384,10 @@ const ActivityTab = ({ profile }) => {
         {filteredActivities.length >= 50 && (
           <div className="mt-6 text-center">
             <button className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-              Load More Activity
+              {t('profile.activity.timeline.loadMore')}
             </button>
             <p className="text-xs text-gray-500 mt-2">
-              Showing the last 50 activities
+              {t('profile.activity.timeline.showing')}
             </p>
           </div>
         )}
@@ -358,7 +397,9 @@ const ActivityTab = ({ profile }) => {
       <div className="bg-white border border-gray-200 rounded-lg p-6">
         <div className="flex items-center mb-4">
           <Shield className="w-5 h-5 text-red-600 mr-2" />
-          <h4 className="text-lg font-medium text-gray-900">Activity Summary</h4>
+          <h4 className="text-lg font-medium text-gray-900">
+            {t('profile.activity.summary.title')}
+          </h4>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -367,7 +408,9 @@ const ActivityTab = ({ profile }) => {
             <div className="text-2xl font-bold text-blue-600">
               {activities.length}
             </div>
-            <div className="text-sm text-blue-800">Total Activities</div>
+            <div className="text-sm text-blue-800">
+              {t('profile.activity.summary.totalActivities')}
+            </div>
           </div>
 
           {/* Login Count */}
@@ -375,7 +418,9 @@ const ActivityTab = ({ profile }) => {
             <div className="text-2xl font-bold text-green-600">
               {activities.filter(a => a.action === 'login').length}
             </div>
-            <div className="text-sm text-green-800">Logins</div>
+            <div className="text-sm text-green-800">
+              {t('profile.activity.summary.logins')}
+            </div>
           </div>
 
           {/* Active Sessions */}
@@ -383,7 +428,9 @@ const ActivityTab = ({ profile }) => {
             <div className="text-2xl font-bold text-purple-600">
               {sessions.length}
             </div>
-            <div className="text-sm text-purple-800">Active Sessions</div>
+            <div className="text-sm text-purple-800">
+              {t('profile.activity.summary.activeSessions')}
+            </div>
           </div>
 
           {/* Security Events */}
@@ -391,7 +438,9 @@ const ActivityTab = ({ profile }) => {
             <div className="text-2xl font-bold text-orange-600">
               {activities.filter(a => ['password_change', 'email_change'].includes(a.action)).length}
             </div>
-            <div className="text-sm text-orange-800">Security Events</div>
+            <div className="text-sm text-orange-800">
+              {t('profile.activity.summary.securityEvents')}
+            </div>
           </div>
         </div>
       </div>
@@ -403,16 +452,17 @@ const ActivityTab = ({ profile }) => {
             <Shield className="w-5 h-5 text-yellow-600 mt-0.5" />
           </div>
           <div className="ml-3">
-            <h4 className="text-sm font-medium text-yellow-800">Security Monitoring</h4>
+            <h4 className="text-sm font-medium text-yellow-800">
+              {t('profile.activity.monitoring.title')}
+            </h4>
             <div className="mt-2 text-sm text-yellow-700">
               <p className="mb-2">
-                Regularly monitor your account activity for any suspicious behavior:
+                {t('profile.activity.monitoring.description')}
               </p>
               <ul className="list-disc list-inside space-y-1">
-                <li>Check for unrecognized login locations or devices</li>
-                <li>Look for unexpected password changes or profile updates</li>
-                <li>Monitor file activity for unauthorized access</li>
-                <li>Report any suspicious activity immediately</li>
+                {t('profile.activity.monitoring.items', { returnObjects: true }).map((item, index) => (
+                  <li key={index}>{item}</li>
+                ))}
               </ul>
             </div>
           </div>

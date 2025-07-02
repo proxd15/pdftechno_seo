@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useI18n } from '@/i18n';
 import { updateUserProfile } from '@/services/profileService';
 import { Save, Upload, User, Mail, Phone, Building, Globe, MapPin, FileText, CheckCircle, XCircle } from 'lucide-react';
 
 const AccountTab = ({ profile, onProfileUpdate }) => {
+  const { t } = useI18n();
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -74,12 +76,12 @@ const AccountTab = ({ profile, onProfileUpdate }) => {
       onProfileUpdate(updatedProfile);
       setMessage({
         type: 'success',
-        text: 'Profile updated successfully!'
+        text: t('profile.account.updateSuccess')
       });
     } catch (error) {
       setMessage({
         type: 'error',
-        text: error.message || 'Failed to update profile'
+        text: error.message || t('profile.account.updateError')
       });
     } finally {
       setIsLoading(false);
@@ -125,9 +127,11 @@ const AccountTab = ({ profile, onProfileUpdate }) => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h3 className="text-lg font-medium text-gray-900">Personal Information</h3>
+        <h3 className="text-lg font-medium text-gray-900">
+          {t('profile.account.title')}
+        </h3>
         <p className="text-sm text-gray-600 mt-1">
-          Update your account details and personal information.
+          {t('profile.account.subtitle')}
         </p>
       </div>
 
@@ -164,7 +168,7 @@ const AccountTab = ({ profile, onProfileUpdate }) => {
             </div>
             <div className="ml-3">
               <p className="text-sm text-blue-700">
-                <strong>Google Account:</strong> Your email address is managed by Google and cannot be changed here.
+                <strong>{t('profile.account.googleAccount.title')}</strong> {t('profile.account.googleAccount.description')}
               </p>
             </div>
           </div>
@@ -176,7 +180,7 @@ const AccountTab = ({ profile, onProfileUpdate }) => {
         {/* Avatar Section */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-3">
-            Profile Picture
+            {t('profile.account.avatar.title')}
           </label>
           <div className="flex items-center space-x-4">
             {renderCurrentAvatar()}
@@ -186,10 +190,10 @@ const AccountTab = ({ profile, onProfileUpdate }) => {
                 onClick={() => setShowAvatarPicker(!showAvatarPicker)}
                 className="bg-white border border-gray-300 rounded-md px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
               >
-                Change Avatar
+                {t('profile.account.avatar.change')}
               </button>
               <p className="text-xs text-gray-500 mt-1">
-                Choose from available avatar options
+                {t('profile.account.avatar.description')}
               </p>
             </div>
           </div>
@@ -197,7 +201,9 @@ const AccountTab = ({ profile, onProfileUpdate }) => {
           {/* Avatar Picker */}
           {showAvatarPicker && (
             <div className="mt-4 p-4 border border-gray-200 rounded-md bg-gray-50">
-              <h4 className="text-sm font-medium text-gray-700 mb-3">Select an Avatar</h4>
+              <h4 className="text-sm font-medium text-gray-700 mb-3">
+                {t('profile.account.avatar.select')}
+              </h4>
               <div className="grid grid-cols-8 gap-2">
                 {avatarOptions.map((avatar, index) => (
                   <button
@@ -221,7 +227,7 @@ const AccountTab = ({ profile, onProfileUpdate }) => {
           <div>
             <label htmlFor="first_name" className="block text-sm font-medium text-gray-700 mb-1">
               <User className="w-4 h-4 inline mr-1" />
-              First Name
+              {t('profile.account.fields.firstName')}
             </label>
             <input
               type="text"
@@ -230,129 +236,14 @@ const AccountTab = ({ profile, onProfileUpdate }) => {
               value={formData.first_name}
               onChange={handleInputChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
-              placeholder="Enter your first name"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="last_name" className="block text-sm font-medium text-gray-700 mb-1">
-              <User className="w-4 h-4 inline mr-1" />
-              Last Name
-            </label>
-            <input
-              type="text"
-              id="last_name"
-              name="last_name"
-              value={formData.last_name}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
-              placeholder="Enter your last name"
-            />
-          </div>
-        </div>
-
-        {/* Email */}
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-            <Mail className="w-4 h-4 inline mr-1" />
-            Email Address
-          </label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            disabled={profile?.is_google_user}
-            className={`w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 ${
-              profile?.is_google_user ? 'bg-gray-50 cursor-not-allowed' : ''
-            }`}
-            placeholder="Enter your email address"
-          />
-          {profile?.is_google_user && (
-            <p className="text-xs text-gray-500 mt-1">
-              Email is managed by Google and cannot be changed
-            </p>
-          )}
-        </div>
-
-        {/* Bio */}
-        <div>
-          <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-1">
-            <FileText className="w-4 h-4 inline mr-1" />
-            Bio
-          </label>
-          <textarea
-            id="bio"
-            name="bio"
-            rows={3}
-            value={formData.bio}
-            onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
-            placeholder="Tell us about yourself..."
-          />
-          <p className="text-xs text-gray-500 mt-1">
-            Brief description for your profile (max 500 characters)
-          </p>
-        </div>
-
-        {/* Contact Information */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-              <Phone className="w-4 h-4 inline mr-1" />
-              Phone Number
-            </label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
-              placeholder="Enter your phone number"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-1">
-              <MapPin className="w-4 h-4 inline mr-1" />
-              Location
-            </label>
-            <input
-              type="text"
-              id="location"
-              name="location"
-              value={formData.location}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
-              placeholder="City, Country"
-            />
-          </div>
-        </div>
-
-        {/* Professional Information */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-1">
-              <Building className="w-4 h-4 inline mr-1" />
-              Company
-            </label>
-            <input
-              type="text"
-              id="company"
-              name="company"
-              value={formData.company}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
-              placeholder="Enter your company name"
+              placeholder={t('profile.account.placeholders.company')}
             />
           </div>
 
           <div>
             <label htmlFor="website" className="block text-sm font-medium text-gray-700 mb-1">
               <Globe className="w-4 h-4 inline mr-1" />
-              Website
+              {t('profile.account.fields.website')}
             </label>
             <input
               type="url"
@@ -361,7 +252,7 @@ const AccountTab = ({ profile, onProfileUpdate }) => {
               value={formData.website}
               onChange={handleInputChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500"
-              placeholder="https://your-website.com"
+              placeholder={t('profile.account.placeholders.website')}
             />
           </div>
         </div>
@@ -380,12 +271,12 @@ const AccountTab = ({ profile, onProfileUpdate }) => {
             {isLoading ? (
               <>
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                Saving...
+                {t('profile.account.saving')}
               </>
             ) : (
               <>
                 <Save className="w-4 h-4 mr-2" />
-                Save Changes
+                {t('profile.account.saveChanges')}
               </>
             )}
           </button>

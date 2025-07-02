@@ -820,7 +820,7 @@ const SelectFiles = ({
               <p className="text-gray-500 text-xs mt-4">
                 {acceptedFileTypes === "application/pdf" 
                   ? "Only PDF files. " 
-                  : `Only ${acceptedFileTypes} files. `}
+                  : `Only PDF files. `}
               </p>
             </>
           )}

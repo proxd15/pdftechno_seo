@@ -183,6 +183,14 @@
         "title": "Excel vers PDF",
         "description": "Transformer les feuilles excel en pdfs"
       },
+      "heictopdf": {
+        "title": "HEIC to PDF",
+        "description": "Convert all type iphone images(HEIC , HEIF) into a PDF file."
+      },
+      "xmlToPdf": {
+        "title": "XML to PDF",
+        "description": "Convert all type XML files into a PDF file."
+      },
       "wordToPdf": {
         "title": "Word vers PDF",
         "description": "Convertir les documents Word en PDFs."
@@ -442,6 +450,338 @@
       }
     }
   },
+  "profile": {
+    "title": "Paramètres du Profil",
+    "subtitle": "Gérez les paramètres de votre compte et vos préférences",
+    "loading": "Chargement du profil...",
+    "auth": {
+      "required": "Authentification Requise",
+      "loginMessage": "Veuillez vous connecter pour voir votre profil.",
+      "goToLogin": "Aller à la Connexion"
+    },
+    "errors": {
+      "loadFailed": "Échec du chargement des données du profil"
+    },
+    "tabs": {
+      "account": "Compte",
+      "security": "Sécurité",
+      "statistics": "Statistiques",
+      "activity": "Activité"
+    },
+    "account": {
+      "title": "Informations Personnelles",
+      "subtitle": "Mettez à jour les détails de votre compte et vos informations personnelles.",
+      "avatar": {
+        "title": "Photo de Profil",
+        "change": "Changer l'Avatar",
+        "select": "Sélectionner un Avatar",
+        "description": "Choisissez parmi les options d'avatar disponibles"
+      },
+      "fields": {
+        "firstName": "Prénom",
+        "lastName": "Nom de famille",
+        "email": "Adresse E-mail",
+        "bio": "Biographie",
+        "phone": "Numéro de Téléphone",
+        "location": "Localisation",
+        "company": "Entreprise",
+        "website": "Site Web"
+      },
+      "placeholders": {
+        "firstName": "Entrez votre prénom",
+        "lastName": "Entrez votre nom de famille",
+        "email": "Entrez votre adresse e-mail",
+        "bio": "Parlez-nous de vous...",
+        "phone": "Entrez votre numéro de téléphone",
+        "location": "Ville, Pays",
+        "company": "Entrez le nom de votre entreprise",
+        "website": "https://votre-site-web.com"
+      },
+      "googleAccount": {
+        "title": "Compte Google :",
+        "description": "Votre adresse e-mail est gérée par Google et ne peut pas être modifiée ici.",
+        "emailNote": "L'e-mail est géré par Google et ne peut pas être modifié"
+      },
+      "bioNote": "Brève description de votre profil (maximum 500 caractères)",
+      "saveChanges": "Enregistrer les Modifications",
+      "saving": "Enregistrement...",
+      "updateSuccess": "Profil mis à jour avec succès !",
+      "updateError": "Échec de la mise à jour du profil"
+    },
+    "security": {
+      "title": "Paramètres de Sécurité",
+      "subtitle": "Gérez la sécurité de votre compte et consultez l'activité de connexion.",
+      "changePassword": {
+        "title": "Changer le Mot de Passe",
+        "currentPassword": "Mot de Passe Actuel",
+        "newPassword": "Nouveau Mot de Passe",
+        "confirmPassword": "Confirmer le Nouveau Mot de Passe",
+        "currentPlaceholder": "Entrez votre mot de passe actuel",
+        "newPlaceholder": "Entrez votre nouveau mot de passe",
+        "confirmPlaceholder": "Confirmez votre nouveau mot de passe",
+        "lengthNote": "Le mot de passe doit contenir au moins 8 caractères",
+        "button": "Changer le Mot de Passe",
+        "changing": "Modification...",
+        "success": "Mot de passe modifié avec succès !",
+        "error": "Échec de la modification du mot de passe",
+        "mismatch": "Les nouveaux mots de passe ne correspondent pas",
+        "minLength": "Le mot de passe doit contenir au moins 8 caractères"
+      },
+      "googleSecurity": {
+        "title": "Sécurité du Compte Google",
+        "description": "Votre compte est sécurisé par Google. Les modifications de mot de passe doivent être effectuées via les paramètres de votre compte Google."
+      },
+      "sessions": {
+        "title": "Sessions Actives",
+        "hideButton": "Masquer les Sessions",
+        "showButton": "Afficher les Sessions",
+        "revokeAll": "Révoquer Toutes les Autres",
+        "revoke": "Révoquer",
+        "current": "Actuelle",
+        "browser": "Navigateur Inconnu",
+        "location": "Localisation Inconnue",
+        "lastActive": "Dernière activité :",
+        "loading": "Chargement des sessions...",
+        "empty": "Aucune session active trouvée",
+        "revokeSuccess": "Session révoquée avec succès",
+        "revokeAllSuccess": "Toutes les autres sessions révoquées avec succès",
+        "revokeError": "Échec de la révocation de la session"
+      },
+      "recentActivity": {
+        "title": "Activité de Sécurité Récente",
+        "empty": "Aucune activité de sécurité récente"
+      },
+      "tips": {
+        "title": "Conseils de Sécurité",
+        "items": [
+          "Utilisez un mot de passe fort et unique pour votre compte",
+          "Déconnectez-vous des appareils partagés ou publics",
+          "Vérifiez régulièrement vos sessions actives",
+          "Activez l'authentification à deux facteurs lorsqu'elle est disponible",
+          "Maintenez à jour le logiciel de votre navigateur et de votre appareil"
+        ]
+      }
+    },
+    "activity": {
+      "title": "Activité du Compte",
+      "subtitle": "Suivez l'activité de votre compte et les sessions de connexion.",
+      "filters": {
+        "title": "Filtrer l'Activité",
+        "all": "Toute l'Activité",
+        "login": "Événements de Connexion",
+        "security": "Sécurité",
+        "profile": "Modifications du Profil",
+        "files": "Activité des Fichiers"
+      },
+      "timeline": {
+        "title": "Activité Récente",
+        "empty": "Aucune Activité Encore",
+        "emptyFiltered": "Aucun {filter} Trouvé",
+        "emptyMessage": "Commencez à utiliser nos outils pour voir votre activité ici.",
+        "emptyFilterMessage": "Essayez de sélectionner un filtre différent pour voir plus d'activités.",
+        "showAll": "Afficher Toute l'Activité",
+        "loadMore": "Charger Plus d'Activité",
+        "showing": "Affichage des 50 dernières activités"
+      },
+      "summary": {
+        "title": "Résumé de l'Activité",
+        "totalActivities": "Activités Totales",
+        "logins": "Connexions",
+        "activeSessions": "Sessions Actives",
+        "securityEvents": "Événements de Sécurité"
+      },
+      "monitoring": {
+        "title": "Surveillance de la Sécurité",
+        "description": "Surveillez régulièrement l'activité de votre compte pour détecter tout comportement suspect :",
+        "items": [
+          "Vérifiez les emplacements ou appareils de connexion non reconnus",
+          "Recherchez des modifications inattendues de mot de passe ou des mises à jour de profil",
+          "Surveillez l'activité des fichiers pour les accès non autorisés",
+          "Signalez immédiatement toute activité suspecte"
+        ]
+      },
+      "actions": {
+        "login": "Connexion",
+        "logout": "Déconnexion",
+        "passwordChange": "Changement de Mot de Passe",
+        "profileUpdate": "Mise à Jour du Profil",
+        "avatarChange": "Changement d'Avatar",
+        "emailChange": "Changement d'E-mail",
+        "fileUpload": "Téléchargement de Fichier",
+        "fileDownload": "Téléchargement de Fichier",
+        "fileDelete": "Suppression de Fichier"
+      }
+    },
+    "stats": {
+      "title": "Statistiques d'Utilisation",
+      "subtitle": "Aperçu de l'activité de votre compte et de l'historique de traitement des fichiers.",
+      "overview": {
+        "totalFiles": "Fichiers Totaux",
+        "storageUsed": "Stockage Utilisé",
+        "thisMonth": "Ce Mois",
+        "memberSince": "Membre Depuis"
+      },
+      "filesByType": {
+        "title": "Fichiers par Type"
+      },
+      "recentFiles": {
+        "title": "Fichiers Récents"
+      },
+      "accountSummary": {
+        "title": "Résumé du Compte",
+        "accountInfo": "Informations du Compte",
+        "usageSummary": "Résumé d'Utilisation",
+        "accountType": "Type de Compte",
+        "lastLogin": "Dernière Connexion",
+        "totalConversions": "Conversions Totales",
+        "averageFileSize": "Taille Moyenne des Fichiers",
+        "googleAccount": "Compte Google",
+        "standardAccount": "Compte Standard",
+        "never": "Jamais"
+      },
+      "noData": {
+        "title": "Aucune Statistique Encore",
+        "description": "Commencez à utiliser nos outils PDF pour voir vos statistiques d'utilisation ici.",
+        "exploreButton": "Explorer les Outils"
+      },
+      "loading": "Chargement des statistiques...",
+      "error": "Échec du chargement des statistiques"
+    },
+    "sidebar": {
+      "memberSince": "Membre depuis",
+      "filesProcessed": "Fichiers Traités",
+      "storageUsed": "Stockage Utilisé",
+      "accountStatus": "Statut du Compte",
+      "accountType": "Type de Compte",
+      "status": "Statut",
+      "thisMonth": "Ce Mois",
+      "active": "Actif",
+      "google": "Google",
+      "standard": "Standard",
+      "quickActions": "Actions Rapides",
+      "editProfile": "Modifier le Profil",
+      "changePassword": "Changer le Mot de Passe",
+      "updatePreferences": "Mettre à Jour les Préférences",
+      "viewFiles": "Voir Mes Fichiers"
+    }
+  },
+  "common": {
+    "error": "Erreur",
+    "tryAgain": "Réessayer",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "loading": "Chargement...",
+    "success": "Succès",
+    "email": "E-mail",
+    "password": "Mot de Passe"
+  },
+  
+  "forgotPassword": {
+    "title": "Mot de Passe Oublié ?",
+    "subtitle": "Pas de souci ! Entrez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+    "form": {
+      "emailLabel": "Adresse E-mail",
+      "emailPlaceholder": "Entrez votre adresse e-mail",
+      "submit": "Envoyer le Lien de Réinitialisation",
+      "sending": "Envoi du Lien de Réinitialisation..."
+    },
+    "validation": {
+      "emailRequired": "L'e-mail est requis",
+      "emailInvalid": "Veuillez entrer une adresse e-mail valide"
+    },
+    "errors": {
+      "googleUser": "Ce compte a été créé avec Google. Veuillez utiliser Google pour vous connecter.",
+      "emailNotFound": "Aucun compte trouvé avec cette adresse e-mail.",
+      "sendFailed": "Échec de l'envoi de l'e-mail de réinitialisation. Veuillez réessayer.",
+      "unexpected": "Une erreur inattendue s'est produite. Veuillez réessayer."
+    },
+    "success": {
+      "title": "Vérifiez Votre E-mail",
+      "description": "Nous avons envoyé un lien de réinitialisation de mot de passe à {email}",
+      "nextSteps": {
+        "title": "Prochaines Étapes :",
+        "checkInbox": "Vérifiez votre boîte de réception pour le lien de réinitialisation",
+        "checkSpam": "N'oubliez pas de vérifier votre dossier spam/courrier indésirable",
+        "expiration": "Le lien expirera dans 24 heures"
+      },
+      "sendDifferent": "Envoyer à un E-mail Différent"
+    },
+    "continueWithGoogle": "Continuer avec Google",
+    "backToLogin": "Retour à la Connexion",
+    "noAccount": {
+      "text": "Vous n'avez pas de compte ?",
+      "signUpLink": "Inscrivez-vous ici"
+    }
+  },
+  
+  "resetPassword": {
+    "validating": {
+      "title": "Validation du Lien de Réinitialisation",
+      "subtitle": "Veuillez patienter pendant que nous vérifions votre lien de réinitialisation de mot de passe..."
+    },
+    "form": {
+      "title": "Créer un Nouveau Mot de Passe",
+      "subtitle": "Choisissez un mot de passe fort pour sécuriser votre compte.",
+      "newPasswordLabel": "Nouveau Mot de Passe",
+      "newPasswordPlaceholder": "Entrez votre nouveau mot de passe",
+      "confirmPasswordLabel": "Confirmer le Nouveau Mot de Passe",
+      "confirmPasswordPlaceholder": "Confirmez votre nouveau mot de passe",
+      "submit": "Mettre à Jour le Mot de Passe",
+      "updating": "Mise à Jour du Mot de Passe..."
+    },
+    "passwordStrength": {
+      "label": "Force du Mot de Passe",
+      "weak": "Faible",
+      "fair": "Correct",
+      "good": "Bon",
+      "strong": "Fort"
+    },
+    "requirements": {
+      "length": "8+ caractères",
+      "uppercase": "Lettre majuscule",
+      "lowercase": "Lettre minuscule",
+      "number": "Chiffre",
+      "special": "Caractère spécial (!@#$%^&*)"
+    },
+    "feedback": {
+      "passwordsMatch": "Les mots de passe correspondent",
+      "passwordsDontMatch": "Les mots de passe ne correspondent pas"
+    },
+    "validation": {
+      "passwordRequired": "Le nouveau mot de passe est requis",
+      "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères",
+      "passwordsDontMatch": "Les mots de passe ne correspondent pas",
+      "passwordTooCommon": "Ce mot de passe est trop commun. Veuillez choisir un mot de passe plus sécurisé."
+    },
+    "errors": {
+      "invalidLink": "Lien de réinitialisation invalide. Le lien semble être malformé ou incomplet.",
+      "expiredLink": "Ce lien de réinitialisation a expiré ou est invalide. Les liens de réinitialisation de mot de passe ne sont valides que pendant 24 heures.",
+      "validationFailed": "Impossible de valider le lien de réinitialisation. Veuillez vérifier votre connexion internet et réessayer.",
+      "resetFailed": "Échec de la réinitialisation du mot de passe. Veuillez réessayer ou demander un nouveau lien de réinitialisation.",
+      "unexpected": "Une erreur inattendue s'est produite. Veuillez vérifier votre connexion et réessayer."
+    },
+    "success": {
+      "title": "Réinitialisation du Mot de Passe Terminée !",
+      "subtitle": "Votre mot de passe a été mis à jour avec succès. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.",
+      "securityMessage": "Votre compte est maintenant sécurisé avec le nouveau mot de passe",
+      "continueToLogin": "Continuer vers la Connexion",
+      "signInNote": "Pour des raisons de sécurité, vous devrez vous reconnecter avec votre nouveau mot de passe."
+    },
+    "invalid": {
+      "title": "Lien de Réinitialisation Invalide",
+      "requestNew": "Demander un Nouveau Lien de Réinitialisation",
+      "needHelp": "Besoin d'aide ?",
+      "contactSupport": "Contacter le Support"
+    },
+    "securityTips": {
+      "title": "Conseils de Sécurité",
+      "unique": "Utilisez un mot de passe unique que vous n'avez pas utilisé ailleurs",
+      "manager": "Envisagez d'utiliser un gestionnaire de mots de passe",
+      "share": "Ne partagez jamais votre mot de passe avec personne"
+    },
+    "backToLogin": "Retour à la Connexion"
+  },
+
     
     "Auth": {
     "login": "Connexion",
