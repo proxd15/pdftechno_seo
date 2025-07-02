@@ -237,7 +237,7 @@ export default function ResetPassword() {
           
           <div className="space-y-3">
             <Link
-              href={`/${locale}/login`}
+              href={`/login`}
               className="w-full inline-flex items-center justify-center p-4 rounded-lg font-semibold text-white transition-colors hover:opacity-90 shadow-sm"
               style={{ backgroundColor: '#DA1F10' }}
             >
@@ -272,7 +272,7 @@ export default function ResetPassword() {
           
           <div className="space-y-3">
             <Link
-              href={`/${locale}/forgot-password`}
+              href={`/forgot-password`}
               className="w-full inline-flex items-center justify-center p-4 rounded-lg font-semibold text-white transition-colors hover:opacity-90"
               style={{ backgroundColor: '#DA1F10' }}
             >
@@ -280,7 +280,7 @@ export default function ResetPassword() {
             </Link>
             
             <Link
-              href={`/${locale}/login`}
+              href={`/login`}
               className="w-full inline-flex items-center justify-center p-3 border-2 border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors font-medium"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
@@ -475,7 +475,7 @@ export default function ResetPassword() {
         
         <div className="mt-6 text-center">
           <Link
-            href={`/${locale}/login`}
+            href={`/login`}
             className="inline-flex items-center text-sm text-gray-600 hover:text-gray-800 transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-1" />

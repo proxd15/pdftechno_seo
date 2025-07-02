@@ -119,7 +119,7 @@ export default function ForgotPassword() {
             </button>
             
             <Link
-              href={`/${locale}/login`}
+              href={`/login`}
               className="inline-flex items-center text-sm text-blue-600 hover:text-blue-800"
             >
               <ArrowLeft className="w-4 h-4 mr-1" />
@@ -211,7 +211,7 @@ export default function ForgotPassword() {
         
         <div className="mt-6 text-center">
           <Link
-            href={`/${locale}/login`}
+            href={'/login'}
             className="inline-flex items-center text-sm text-gray-600 hover:text-gray-800"
           >
             <ArrowLeft className="w-4 h-4 mr-1" />
@@ -222,7 +222,7 @@ export default function ForgotPassword() {
         <div className="mt-8 text-center">
           <p className="text-sm text-gray-600">
             {t('forgotPassword.noAccount.text')}{' '}
-            <Link href={`/${locale}/register`} className="text-blue-600 hover:text-blue-800 font-medium">
+            <Link href={`/register`} className="text-blue-600 hover:text-blue-800 font-medium">
               {t('forgotPassword.noAccount.signUpLink')}
             </Link>
           </p>
