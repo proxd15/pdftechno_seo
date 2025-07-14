@@ -1,9 +1,9 @@
 import PdftoExcel from '@/components/pages/PdftoExcel';
 
 export const metadata = {
-  title: 'Convert PDF to Excel Online Free - PDF to XLSX | PDF Techno',
-  description: 'Convert PDF tables to Excel spreadsheets online. Extract data from PDF to XLS/XLSX format. Free, fast, and accurate.',
-  keywords: 'PDF to Excel, PDF to XLSX, PDF to XLS, convert PDF to Excel, extract PDF tables, PDF data extraction',
+  title: 'PDF to PowerPoint Converter – Free & No Email Needed',
+  description: 'Convert PDF to PowerPoint online for free without email. Fast, secure, and easy-to-use tool—no registration or downloads required. Try it now!',
+  keywords: 'pdf to powerpoint converter online free without email, best pdf to excel converter online, PDF to Excel, PDF to XLSX, PDF to XLS, convert PDF to Excel, extract PDF tables, PDF data extraction',
   openGraph: {
     title: 'Convert PDF to Excel Online Free - PDF to XLSX | PDF Techno',
     description: 'Convert PDF tables to Excel spreadsheets online. Extract data from PDF to Excel format.',

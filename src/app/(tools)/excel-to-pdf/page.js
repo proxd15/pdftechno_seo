@@ -1,9 +1,9 @@
 import ExceltoPdf from '@/components/pages/ExceltoPdf';
 
 export const metadata = {
-  title: 'Convert Excel to PDF Online Free - XLSX to PDF | PDF Techno',
-  description: 'Convert Excel spreadsheets to PDF online. Support for XLS and XLSX files. Free, fast, and secure Excel to PDF converter.',
-  keywords: 'Excel to PDF, XLSX to PDF, XLS to PDF, convert Excel to PDF, Excel converter, spreadsheet to PDF',
+  title: 'Excel to PDF Converter Free – No Login Required',
+  description: 'Convert Excel to PDF online for free without login. Quick, secure, and easy tool with no sign-up or installation needed. Try it instantly!',
+  keywords: 'excel to pdf converter free without login, online excel to pdf converter without changing font, excel to pdf converter without email, Excel to PDF, XLSX to PDF, XLS to PDF, convert Excel to PDF, Excel converter, spreadsheet to PDF',
   openGraph: {
     title: 'Convert Excel to PDF Online Free - XLSX to PDF | PDF Techno',
     description: 'Convert Excel spreadsheets to PDF online. Support for XLS and XLSX files. Free and secure.',

@@ -1,9 +1,9 @@
 import XMLtoPdf from '@/components/pages/XMLtoPdf';
 
 export const metadata = {
-  title: 'Convert XML to PDF Online Free - XML to PDF | PDF Techno',
-  description: 'Convert XML files to PDF online. Transform structured data into readable PDF documents. Free, fast, and secure.',
-  keywords: 'XML to PDF, convert XML to PDF, XML converter, data to PDF, XML transformation',
+  title: 'XML to PDF Converter Online Free – Fast & Easy Tool',
+  description: 'Convert XML files to PDF online for free. Simple, fast, and secure tool with no registration or software download required. Start your conversion now!',
+  keywords: 'office open xml to pdf converter online, Xml to pdf converter online free, XML to PDF, convert XML to PDF, XML converter, data to PDF, XML transformation',
   openGraph: {
     title: 'Convert XML to PDF Online Free - XML to PDF | PDF Techno',
     description: 'Convert XML files to PDF online. Transform structured data into readable PDF documents.',

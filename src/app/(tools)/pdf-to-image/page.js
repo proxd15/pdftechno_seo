@@ -1,9 +1,9 @@
 import PdftoImage from '@/components/pages/PdftoImage';
 
 export const metadata = {
-  title: 'Convert PDF to Image Online Free - PDF to JPG/PNG | PDF Techno',
-  description: 'Convert PDF pages to images online. Export PDF as JPG, PNG, or other image formats. Free, fast, and secure.',
-  keywords: 'PDF to Image, PDF to JPG, PDF to PNG, convert PDF to image, PDF to picture, extract PDF images',
+  title: 'Convert PDF to JPG Online Free – High Quality Images',
+  description: 'Easily convert PDF to JPG online for free. Get high-quality image output with fast and secure processing. No downloads or sign-up required.',
+  keywords: 'convert pdf to jpg online free high quality, PDF to Image, PDF to JPG, PDF to PNG, convert PDF to image, PDF to picture, extract PDF images',
   openGraph: {
     title: 'Convert PDF to Image Online Free - PDF to JPG/PNG | PDF Techno',
     description: 'Convert PDF pages to images online. Export PDF as JPG, PNG, or other image formats.',

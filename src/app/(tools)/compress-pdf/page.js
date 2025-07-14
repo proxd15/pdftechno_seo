@@ -1,9 +1,9 @@
 import CompressPdf from '@/components/pages/CompressPdf';
 
 export const metadata = {
-  title: 'Compress PDF Files Online Free - Reduce PDF Size | PDF Techno',
-  description: 'Compress PDF files online to reduce file size without losing quality. Free, fast, and secure PDF compression tool. No registration required.',
-  keywords: 'compress PDF, reduce PDF size, PDF compressor, shrink PDF, optimize PDF, PDF compression online',
+  title: 'Compress PDF File Online – Fast, Free & Easy PDF Reducer',
+  description: 'Compress PDF files online for free. Reduce file size quickly without losing quality. Easy-to-use tool for fast, secure, and efficient PDF compression.',
+  keywords: 'Compress PDF File Online, compress PDF, reduce PDF size, PDF compressor, shrink PDF, optimize PDF, PDF compression online',
   openGraph: {
     title: 'Compress PDF Files Online Free - Reduce PDF Size | PDF Techno',
     description: 'Compress PDF files online to reduce file size without losing quality. Free, fast, and secure PDF compression tool.',

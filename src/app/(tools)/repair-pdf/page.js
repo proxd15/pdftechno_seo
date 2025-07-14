@@ -1,9 +1,9 @@
 import RepairPdf from '@/components/pages/RepairPdf';
 
 export const metadata = {
-  title: 'Repair PDF Online Free - Fix Corrupted PDFs | PDF Techno',
-  description: 'Repair corrupted or damaged PDF files online. Recover data from broken PDFs and fix errors. Free and secure.',
-  keywords: 'repair PDF, fix PDF, corrupted PDF, damaged PDF, PDF recovery, restore PDF',
+  title: 'Repair Damaged PDF Online Free – Quick & Secure Tool',
+  description: 'Fix corrupted or damaged PDF files online for free. Restore content quickly with our secure, easy-to-use repair tool. No downloads or sign-up needed.',
+  keywords: 'repair damaged pdf online free, how to repair a damaged pdf file online, repair PDF, fix PDF, corrupted PDF, damaged PDF, PDF recovery, restore PDF',
   openGraph: {
     title: 'Repair PDF Online Free - Fix Corrupted PDFs | PDF Techno',
     description: 'Repair corrupted or damaged PDF files online. Recover data from broken PDFs.',

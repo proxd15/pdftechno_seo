@@ -2,9 +2,9 @@
 import MergePdf from '@/components/pages/MergePdf';
 
 export const metadata = {
-  title: 'Merge PDF Files Online Free - Combine PDFs | PDF Techno',
-  description: 'Merge multiple PDF files into a single document online for free. Fast, secure, and easy PDF merging tool. No registration required.',
-  keywords: 'merge PDF, combine PDF, PDF merger, merge PDF files online, combine PDFs, free PDF merger, PDF joiner, batch PDF merge, online PDF merger, secure PDF merge',
+  title: 'Merge PDF Documents Online for Free – Quick & Easy',
+  description: 'Combine multiple PDF files into one online for free. Fast, secure, and easy-to-use PDF merger with no sign-up or downloads required. Start now!',
+  keywords: 'merge pdf documents online for free, merge PDF, combine PDF, PDF merger, merge PDF files online, combine PDFs, free PDF merger, PDF joiner, batch PDF merge, online PDF merger, secure PDF merge',
   openGraph: {
     title: 'Merge PDF Files Online Free - Combine PDFs | PDF Techno',
     description: 'Merge multiple PDF files into a single document online for free. Fast, secure, and easy PDF merging tool. No registration required.',

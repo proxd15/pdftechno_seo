@@ -1,9 +1,9 @@
 import ProtectPdf from '@/components/pages/ProtectPdf';
 
 export const metadata = {
-  title: 'Protect PDF Online Free - Add Password to PDF | PDF Techno',
-  description: 'Add password protection to PDF files online. Encrypt PDFs and restrict editing, copying, and printing. Free and secure.',
-  keywords: 'protect PDF, add PDF password, encrypt PDF, PDF security, password protect PDF, secure PDF',
+  title: 'Protect PDF Online – Secure Your Files with Passwords',
+  description: 'Protect your PDF files online with strong passwords. Easy, fast, and free tool to encrypt your documents and keep your data safe from unauthorized access.',
+  keywords: 'Protect PDF Online, protect PDF, add PDF password, encrypt PDF, PDF security, password protect PDF, secure PDF',
   openGraph: {
     title: 'Protect PDF Online Free - Add Password to PDF | PDF Techno',
     description: 'Add password protection to PDF files online. Encrypt PDFs and restrict access.',

@@ -1,9 +1,9 @@
 import OrganizePdf from '@/components/pages/OrganizePdf';
 
 export const metadata = {
-  title: 'Organize PDF Pages Online Free - Reorder Pages | PDF Techno',
-  description: 'Organize and reorder PDF pages online. Rearrange, delete, or add pages to your PDF. Free, fast, and secure.',
-  keywords: 'organize PDF, reorder PDF pages, rearrange PDF, PDF page organizer, sort PDF pages',
+  title: 'Free Adobe PDF Conversion Software – Fast & Easy to Use',
+  description: 'Convert files effortlessly with our free Adobe PDF conversion software. Fast, secure, and easy to use for all your document needs. Try it now!',
+  keywords: 'Free Adobe PDF Conversion Software, organize PDF, reorder PDF pages, rearrange PDF, PDF page organizer, sort PDF pages',
   openGraph: {
     title: 'Organize PDF Pages Online Free - Reorder Pages | PDF Techno',
     description: 'Organize and reorder PDF pages online. Rearrange, delete, or add pages to your PDF. Free and secure.',

@@ -1,9 +1,9 @@
 import HeictoPdf from '@/components/pages/HeictoPdf';
 
 export const metadata = {
-  title: 'Convert HEIC to PDF Online Free - HEIC to PDF | PDF Techno',
-  description: 'Convert HEIC images to PDF online. Support for iPhone and Apple device photos. Free, fast, and secure HEIC to PDF converter.',
-  keywords: 'HEIC to PDF, convert HEIC to PDF, iPhone photo to PDF, Apple image to PDF, HEIF to PDF',
+  title: 'HEIC to PDF Converter Online – Free, Fast & Easy Tool',
+  description: 'Convert HEIC images to PDF online for free. Quick, high-quality conversion with no downloads or registration. Secure & easy to use—try it now',
+  keywords: 'HEIC to PDF converter online, HEIC to PDF, convert HEIC to PDF, iPhone photo to PDF, Apple image to PDF, HEIF to PDF',
   openGraph: {
     title: 'Convert HEIC to PDF Online Free - HEIC to PDF | PDF Techno',
     description: 'Convert HEIC images to PDF online. Support for iPhone and Apple device photos.',
